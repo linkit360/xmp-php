@@ -1,0 +1,6 @@
+{
+  "host": "pgsql",
+  "database": "linkit_test",
+  "user": "test",
+  "password": "test"
+}

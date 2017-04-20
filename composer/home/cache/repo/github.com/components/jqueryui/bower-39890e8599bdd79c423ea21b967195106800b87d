@@ -1,0 +1,1 @@
+{"name":"jquery-ui","version":"1.11.1","main":["jquery-ui.js"],"ignore":[],"dependencies":{"jquery":">=1.6"},"time":"2014-08-13T21:01:50Z","support":{"source":"https:\/\/github.com\/components\/jqueryui\/tree\/1.11.1","issues":"https:\/\/github.com\/components\/jqueryui\/issues"}}

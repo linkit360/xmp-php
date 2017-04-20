@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<!--
+	temp1
+-->
+<html>
+<head>
+    <title>Temp1</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="assets/css/main.css"/>
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+    <noscript>
+        <link rel="stylesheet" href="assets/css/noscript.css"/>
+    </noscript>
+</head>
+<body class="is-loading">
+
+<!-- Wrapper -->
+<div id="wrapper">
+    <!-- Main -->
+    <section id="main">
+        <header>
+            <span class="avatar sim-row-edit" data-type="image"><img src="images/avatar.jpg" alt=""/></span>
+            <h1 class="sim-row-edit" data-type="text">Demo</h1>
+            <p class="sim-row-edit" data-type="text">
+                Hello world<br/>
+                This is a great content<br/>
+                Click on me!
+            </p>
+        </header>
+
+        <footer>
+            <ul class="icons">
+                <li><a href="#" class="fa-play">Play</a></li>
+                <li><a href="#" class="fa-stop">Stop</a></li>
+                <li><a href="#" class="fa-pause">Pause</a></li>
+            </ul>
+        </footer>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <ul class="copyright">
+            <li class="sim-row-edit" data-type="text">&copy; Demo</li>
+            <li class="sim-row-edit" data-type="text">Design: Temp1</li>
+        </ul>
+    </footer>
+</div>
+
+<!-- Scripts -->
+<!--[if lte IE 8]>
+<script src="assets/js/respond.min.js"></script><![endif]-->
+<script>
+    if ('addEventListener' in window) {
+        window.addEventListener('load', function () {
+            document.body.className = document.body.className.replace(/\bis-loading\b/, '');
+        });
+        document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+    }
+</script>
+
+</body>
+</html>

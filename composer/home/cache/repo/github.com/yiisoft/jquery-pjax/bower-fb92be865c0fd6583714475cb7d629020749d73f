@@ -1,0 +1,1 @@
+{"name":"yii2-pjax","version":"2.0.2","main":".\/jquery.pjax.js","dependencies":{"jquery":">=1.8"},"ignore":[".travis.yml","Gemfile","Gemfile.lock","vendor\/","script\/","test\/"],"time":"2014-12-04T17:15:44Z","support":{"source":"https:\/\/github.com\/yiisoft\/jquery-pjax\/tree\/v2.0.2","issues":"https:\/\/github.com\/yiisoft\/jquery-pjax\/issues"}}

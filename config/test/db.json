@@ -1,0 +1,6 @@
+{
+  "host": "pgsql",
+  "database": "test",
+  "user": "local",
+  "password": "local"
+}
