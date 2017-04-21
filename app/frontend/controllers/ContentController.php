@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use const AWS_S3;
 use function count;
+use frontend\models\ContentSearchForm;
 use function json_decode;
 use function array_key_exists;
 
@@ -85,18 +86,13 @@ class ContentController extends Controller
             ->indexBy('id')
             ->all();
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => Content::find()->where(
-                [
-                    'id_user' => Yii::$app->user->id,
-                    'status' => 1,
-                ]
-            ),
-        ]);
+        $searchModel = new ContentSearchForm();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render(
             'index',
             [
+                'model' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'data' => $data,
             ]
@@ -208,6 +204,33 @@ class ContentController extends Controller
         $model->save();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionDownload($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->id_user !== Yii::$app->user->id) {
+            return new NotFoundHttpException();
+        }
+
+        $result = $this->s3->getObject(
+            [
+                'Bucket' => 'xmp-content',
+                'Key' => $model->id,
+            ]
+        );
+
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");
+        header("Content-Disposition: attachment;filename=content.zip");
+        header("Content-Transfer-Encoding: binary ");
+        echo $result['Body'];
+
+        return '';
     }
 
     /**

@@ -29,9 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'dataProvider' => $dataProvider,
                     'columns' => [
-                        'icon',
-                        'title',
-
+                        [
+                            'attribute' => 'name',
+                            'filter' => false,
+                            'content' => function ($row) {
+                                return '<i class="fa ' . $row['icon'] . '" aria-hidden="true"></i>&nbsp;' . $row['title'];
+                            },
+                        ],
                         ['class' => 'yii\grid\ActionColumn'],
                     ],
                 ]

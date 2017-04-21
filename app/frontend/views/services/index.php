@@ -40,10 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return $providers[$data['id_provider']]['name'];
                             },
                         ],
-//                        'id_user',
-                        // 'status',
-                        'created_at',
-                        'updated_at',
+                        'time_create',
                         ['class' => 'yii\grid\ActionColumn'],
                     ],
                 ]

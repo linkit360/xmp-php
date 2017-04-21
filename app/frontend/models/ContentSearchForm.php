@@ -2,16 +2,15 @@
 
 namespace frontend\models;
 
-use const false;
-use const SORT_DESC;
-use function explode;
-use function array_key_exists;
-
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Logs;
+use common\models\Content\Content;
 
-class LogsForm extends Logs
+/**
+ * Content2 represents the model behind the search form about `common\models\Content\Content`.
+ */
+class ContentSearchForm extends Content
 {
     public $date_range;
 
@@ -23,9 +22,9 @@ class LogsForm extends Logs
         return [
             [
                 [
-                    'id_user',
-                    'controller',
-                    'action',
+                    'id_category',
+                    'id_publisher',
+                    'title',
                     'date_range',
                 ],
                 'safe',
@@ -51,10 +50,7 @@ class LogsForm extends Logs
      */
     public function search($params)
     {
-        $query = Logs::find()
-            ->orderBy([
-                'time' => SORT_DESC,
-            ]);
+        $query = Content::find();
 
         // add conditions that should always apply here
 
@@ -63,12 +59,6 @@ class LogsForm extends Logs
         ]);
 
         $this->load($params);
-        $userreset = true;
-        $user = '';
-        if (array_key_exists('LogsForm', $params) && array_key_exists('id_user', $params['LogsForm'])) {
-            $userreset = false;
-            $user = $params['LogsForm']['id_user'];
-        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -77,34 +67,31 @@ class LogsForm extends Logs
         }
 
         // grid filtering conditions
-        if ($userreset) {
-            unset($this->id_user);
-        } else {
-            $this->id_user = $user;
-            if ($this->id_user) {
-                $query->andFilterWhere(['id_user' => $this->id_user]);
-            }
-        }
-
         if ($this->date_range) {
             $time = explode(' - ', $this->date_range);
 
             $query
                 ->andFilterWhere([
                     '>',
-                    'time',
+                    'time_create',
                     $time[0],
                 ])
                 ->andFilterWhere([
                     '<',
-                    'time',
+                    'time_create',
                     $time[1],
                 ]);
         }
 
         $query
-            ->andFilterWhere(['controller' => $this->controller])
-            ->andFilterWhere(['action' => $this->action]);
+            ->andFilterWhere(['time_create' => $this->time_create]);
+
+        $query
+            ->andFilterWhere(['id_user' => Yii::$app->user->id])
+            ->andFilterWhere(['status' => 1])
+            ->andFilterWhere(['id_category' => $this->id_category])
+            ->andFilterWhere(['id_publisher' => $this->id_publisher])
+            ->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

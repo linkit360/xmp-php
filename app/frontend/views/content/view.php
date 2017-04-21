@@ -16,14 +16,33 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="ibox">
         <div class="ibox-content">
             <p>
-                <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                    'class' => 'btn btn-danger',
-                    'data' => [
-                        'confirm' => 'Are you sure you want to delete this item?',
-                        'method' => 'post',
-                    ],
-                ]) ?>
+                <?php
+                echo Html::a(
+                    'Update',
+                    ['update', 'id' => $model->id],
+                    ['class' => 'btn btn-primary']
+                );
+
+                echo '&nbsp;';
+                echo Html::a(
+                    'Delete',
+                    ['delete', 'id' => $model->id],
+                    [
+                        'class' => 'btn btn-danger',
+                        'data' => [
+                            'confirm' => 'Are you sure you want to delete this item?',
+                            'method' => 'post',
+                        ],
+                    ]
+                );
+
+                echo '&nbsp;';
+                echo Html::a(
+                    'Download',
+                    ['download', 'id' => $model->id],
+                    ['class' => 'btn btn-primary']
+                );
+                ?>
             </p>
 
             <?php

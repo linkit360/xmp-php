@@ -1,12 +1,10 @@
 <?php
-use kartik\daterange\DateRangePicker;
-use kartik\widgets\DatePicker;
-use kartik\widgets\DateTimePicker;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 use kartik\widgets\Select2;
+use kartik\daterange\DateRangePicker;
 
 use common\models\Logs;
 use common\models\Users;
@@ -90,26 +88,22 @@ $formData['users'] = Users::find()
                 ]
             );
 
-
-            echo $form->field($model, 'date_range'
-
-            )->widget(DateRangePicker::classname(), [
-//                'name' => 'date_range',
-//                'value' => '2015-10-19 12:00 AM - 2015-11-03 01:00 PM',
-
-
-                'convertFormat' => true,
-                'options' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Date/Time',
-                ],
-                'pluginOptions' => [
-                    'timePicker' => true,
-                    'timePickerIncrement' => 15,
-                    'locale' => ['format' => 'Y-m-d h:i A'],
-                ],
-            ]);
-
+            echo $form->field($model, 'date_range')
+                ->widget(
+                    DateRangePicker::classname(),
+                    [
+                        'convertFormat' => true,
+                        'options' => [
+                            'class' => 'form-control',
+                            'placeholder' => 'Date/Time',
+                        ],
+                        'pluginOptions' => [
+                            'timePicker' => true,
+                            'timePickerIncrement' => 15,
+                            'locale' => ['format' => 'Y-m-d h:i A'],
+                        ],
+                    ]
+                );
 
             echo '<br/>';
             echo Html::submitButton('Search', ['class' => 'btn btn-primary']);

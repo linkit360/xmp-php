@@ -69,6 +69,12 @@ use kartik\widgets\Select2;
                         ]
                     )
                     ->hint('You cannot change file later.');
+            } else {
+                echo Html::a(
+                        'Download File',
+                        ['download', 'id' => $model->id],
+                        ['class' => 'btn btn-primary']
+                    ) . '<br/><br/>';
             }
 
             echo $form->field($model, 'status')->radioList(

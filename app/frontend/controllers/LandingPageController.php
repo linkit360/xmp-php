@@ -216,7 +216,6 @@ class LandingPageController extends Controller
         header("Content-Type: application/force-download");
         header("Content-Type: application/octet-stream");
         header("Content-Type: application/download");
-//        header('Content-Length: ' . filesize($file));
         header("Content-Disposition: attachment;filename=template.zip");
         header("Content-Transfer-Encoding: binary ");
         echo $result['Body'];
