@@ -5,7 +5,7 @@ use yii\grid\GridView;
 /**
  * @var yii\web\View                $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var \frontend\models\UsersForm  $searchModel
+ * @var \frontend\models\SearchForm $searchModel
  */
 
 $this->title = 'Users';

@@ -1,12 +1,12 @@
 <?php
 
-namespace frontend\models;
+namespace frontend\models\Users;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Users;
 
-class UsersForm extends Users
+class SearchForm extends Users
 {
     /**
      * @inheritdoc

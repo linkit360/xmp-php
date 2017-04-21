@@ -2,18 +2,15 @@
 
 namespace frontend\controllers;
 
-use frontend\models\UsersForm;
-use const SORT_ASC;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 use common\models\Users;
-use frontend\models\Users\CreateForm;
-use frontend\models\Users\UpdateForm;
+use frontend\models\Users\UsersForm;
+use frontend\models\Users\SearchForm;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -70,7 +67,7 @@ class UsersController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new UsersForm();
+        $searchModel = new SearchForm();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render(
@@ -105,19 +102,20 @@ class UsersController extends Controller
      */
     public function actionCreate()
     {
-        $model = new CreateForm();
+        $model = new UsersForm();
         $model->status = 1;
         $model->new_pass = 1;
 
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->create()) {
-                return $this->redirect(['view', 'id' => $user->id]);
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->commit()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'create',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -130,16 +128,19 @@ class UsersController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = new UpdateForm();
-        $model->set($id);
+        $model = UsersForm::findOne($id);
+        $model->set();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->user->id]);
+        if ($model->load(Yii::$app->request->post()) && $model->commit()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'update',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**

@@ -39,9 +39,8 @@ class UpdateForm extends Model
         $this->auth = Yii::$app->authManager;
     }
 
-    public function set($id)
+    public function set()
     {
-        $this->user = Users::findOne($id);
         $this->status = $this->user->status;
         $this->new_pass = $this->user->new_pass;
         $this->roles = array_keys($this->auth->getRolesByUser($this->user->id));
