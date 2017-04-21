@@ -73,12 +73,10 @@ class SearchForm extends Users
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'status' => 1,
         ]);
 
-        $query->andFilterWhere(['like', 'id', $this->id])
+        $query
             ->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'email', $this->email]);
 
