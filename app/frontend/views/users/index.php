@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             2
             3
             4
+
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
