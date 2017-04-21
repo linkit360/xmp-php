@@ -1,6 +1,6 @@
 <?php
-use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\Html;
 
 $permissions = Yii::$app->getAuthManager()->getPermissionsByUser(Yii::$app->user->id);
 $permissions = array_keys($permissions);
@@ -184,18 +184,19 @@ function drawSub($menu, $path)
     <?php
 }
 
+$ex = explode('/', Yii::$app->request->pathInfo, 2);
 ?>
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
+        <a class="close-canvas-menu"><i class="fa fa-times"></i></a>
         <ul class="nav metismenu" id="side-menu">
             <li class="nav-header">
                 <a href="/">
-                    <img src="/img/linkitlogo.png" border="0"/>
+                    <img src="<?= Url::toRoute('/img/linkitlogo.png') ?>" border="0"/>
                 </a>
             </li>
 
             <?php
-            $ex = explode('/', Yii::$app->request->pathInfo, 2);
             foreach ($menu as $item) {
                 if (!array_key_exists('url', $item)) {
                     if (count($item['items'])) {

@@ -532,7 +532,7 @@ body.canvas-menu .logo-element {
 
 body.mini-navbar .nav-header {
     padding: 0;
-    background-color: #0d80ca;
+    /*background-color: #0d80ca;*/
 }
 
 body.canvas-menu .nav-header {
@@ -5093,7 +5093,7 @@ a.close-canvas-menu:hover {
     display: none;
 }
 
-.canvas-menu .close-canvas-menu {
+.body-small .close-canvas-menu {
     display: block;
 }
 
@@ -9869,7 +9869,7 @@ body.md-skin {
 }
 
 .md-skin a.close-canvas-menu {
-    color: #ffffff;
+    /*color: #ffffff;*/
 }
 
 .md-skin .welcome-message {
