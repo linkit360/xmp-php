@@ -12,12 +12,9 @@ use yii\widgets\Breadcrumbs;
 
 /** @var \common\models\Users $user */
 $user = Yii::$app->user->identity;
-
-//if ($user->new_pass == 1) {
-//    dump($user);
-//}
-
-
+if ($user->new_pass == 1 && Yii::$app->request->pathInfo !== 'main/reset-password') {
+    return Yii::$app->getResponse()->redirect('/main/reset-password');
+}
 $this->beginPage();
 ?>
 <!DOCTYPE html>

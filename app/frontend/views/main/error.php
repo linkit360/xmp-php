@@ -10,28 +10,22 @@ use yii\helpers\Html;
 
 $this->title = $name;
 ?>
-<div class="content animate-panel">
-    <div class="row">
-        <div class="hpanel">
-            <div class="panel-body">
-                <h1>
-                    <?= Html::encode($this->title) ?>
-                </h1>
-
-                <div class="alert alert-danger">
-                    <?= nl2br(Html::encode($message)) ?>
-                </div>
-
-                <p>
-                    <br/>
-                    The above error occurred while the Web server was processing your request.
-                </p>
-
-                <p>
-                    Please contact <a href="mailto:kirill.goryunov@linkit360.com">kirill.goryunov@linkit360.com</a>
-                    if you think this is a server error. Thank you.
-                </p>
+<div class="col-lg-12">
+    <div class="ibox">
+        <div class="ibox-content">
+            <br/>
+            <div class="alert alert-danger">
+                <?= nl2br(Html::encode($message)) ?>
             </div>
+
+            <p>
+                The above error occurred while the Web server was processing your request.
+            </p>
+
+            <p>
+                Please contact <a href="mailto:kirill.goryunov@linkit360.com">kirill.goryunov@linkit360.com</a>
+                if you think this is a server error. Thank you.
+            </p>
         </div>
     </div>
 </div>
