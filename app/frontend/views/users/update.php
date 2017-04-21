@@ -12,13 +12,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->user->username, 'url' => ['view', 'id' => $model->user->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="content animate-panel row">
-    <div class="hpanel col-lg-6">
-        <div class="panel-body">
-            <h1>
-                <?= Html::encode($this->title) ?>
-            </h1>
-
+<div class="col-lg-4">
+    <div class="ibox">
+        <div class="ibox-content">
             <?php
             $form = ActiveForm::begin();
             echo $form->field($model, 'roles')->checkboxList(
@@ -27,6 +23,21 @@ $this->params['breadcrumbs'][] = 'Update';
                     'separator' => '<br/>',
                 ]
             );
+
+            echo $form->field($model, 'status')->radioList(
+                [
+                    1 => 'Active',
+                    0 => 'Inactive',
+                ],
+                [
+                    'separator' => '<br/>',
+                ]
+            );
+
+            echo $form->field($model, 'new_pass')->checkbox([
+                'label' => 'Ask new password on login',
+            ]);
+
             echo Html::submitButton('Update', ['class' => 'btn btn-success']);
             ActiveForm::end();
             ?>

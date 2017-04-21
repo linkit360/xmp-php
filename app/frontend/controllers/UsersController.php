@@ -106,6 +106,9 @@ class UsersController extends Controller
     public function actionCreate()
     {
         $model = new CreateForm();
+        $model->status = 1;
+        $model->new_pass = 1;
+
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->create()) {
                 return $this->redirect(['view', 'id' => $user->id]);

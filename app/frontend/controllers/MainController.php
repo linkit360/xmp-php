@@ -2,8 +2,9 @@
 
 namespace frontend\controllers;
 
-use const false;
+use frontend\models\Users\ResetPasswordForm;
 use const true;
+use const false;
 use const JSON_PRETTY_PRINT;
 use function array_key_exists;
 use function array_keys;
@@ -12,8 +13,10 @@ use function date;
 use function json_encode;
 
 use Yii;
+use yii\base\InvalidParamException;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 
@@ -22,8 +25,8 @@ use common\models\LoginForm;
 use common\models\Countries;
 use common\models\Operators;
 use common\models\Providers;
-use frontend\models\TransactionsForm;
 use frontend\models\LogsForm;
+use frontend\models\TransactionsForm;
 
 /**
  * Site Controller
@@ -50,6 +53,7 @@ class MainController extends Controller
                             'monitoring',
                             'logout',
                             'country',
+                            'reset-password',
                         ],
                         'allow' => true,
                         'roles' => ['@'],
@@ -138,9 +142,12 @@ class MainController extends Controller
             return $this->goBack();
         }
 
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'login',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -166,6 +173,33 @@ class MainController extends Controller
         }
 
         return $this->goHome();
+    }
+
+    /**
+     * Resets password.
+     *
+     * @return mixed
+     * @throws BadRequestHttpException
+     */
+    public function actionResetPassword()
+    {
+        try {
+            $model = new ResetPasswordForm();
+        } catch (InvalidParamException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            Yii::$app->session->setFlash('success', 'New password saved.');
+            return $this->goHome();
+        }
+
+        return $this->render(
+            'resetPassword',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**

@@ -27,6 +27,8 @@ class UpdateForm extends Model
     # Fields
     public $roles;
     public $user;
+    public $new_pass;
+    public $status;
 
     # Data
     private $rolesAll = [];
@@ -40,18 +42,16 @@ class UpdateForm extends Model
     public function set($id)
     {
         $this->user = Users::findOne($id);
+        $this->status = $this->user->status;
+        $this->new_pass = $this->user->new_pass;
         $this->roles = array_keys($this->auth->getRolesByUser($this->user->id));
     }
 
     public function rules()
     {
         return [
-            [
-                [
-                    'roles',
-                ],
-                'trim',
-            ],
+            ['roles', 'safe'],
+            ['new_pass', 'safe'],
         ];
     }
 
@@ -85,6 +85,10 @@ class UpdateForm extends Model
 
         $log->event = $ev;
         $log->save();
+
+        $this->user->status = (integer)$this->status;
+        $this->user->new_pass = (integer)$this->new_pass;
+        $this->user->save();
         return true;
     }
 

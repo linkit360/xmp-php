@@ -12,6 +12,12 @@ use yii\widgets\Breadcrumbs;
 
 /** @var \common\models\Users $user */
 $user = Yii::$app->user->identity;
+
+//if ($user->new_pass == 1) {
+//    dump($user);
+//}
+
+
 $this->beginPage();
 ?>
 <!DOCTYPE html>
@@ -19,7 +25,7 @@ $this->beginPage();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" type="image/ico" href="/img/favicon.png"/>
+    <link rel="shortcut icon" type="image/ico" href="<?= Url::toRoute('/img/favicon.png') ?>"/>
     <?= Html::csrfMetaTags() ?>
     <title><?= strlen($this->title) ? Html::encode($this->title) . ' - ' : '' ?>LinkIT360</title>
     <?php $this->head() ?>
@@ -30,7 +36,7 @@ $this->beginPage();
 
 <div class="splash">
     <div class="splash-title">
-        <img src="/img/LinkIT360_logo.png"/>
+        <img src="<?= Url::toRoute('/img/LinkIT360_logo.png') ?>"/>
         <h1>XMP</h1>
 
         <div class="sk-spinner sk-spinner-wave">

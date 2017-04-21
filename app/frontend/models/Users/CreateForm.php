@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\models\Users;
 
 use yii\base\Model;
@@ -13,6 +14,8 @@ class CreateForm extends Model
     public $username;
     public $email;
     public $password;
+    public $new_pass;
+    public $status;
 
     /**
      * @inheritdoc
@@ -26,7 +29,7 @@ class CreateForm extends Model
                 'username',
                 'unique',
                 'targetClass' => '\common\models\Users',
-                'message' => 'This username has already been taken.'
+                'message' => 'This username has already been taken.',
             ],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
@@ -38,11 +41,13 @@ class CreateForm extends Model
                 'email',
                 'unique',
                 'targetClass' => '\common\models\Users',
-                'message' => 'This email address has already been taken.'
+                'message' => 'This email address has already been taken.',
             ],
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
+            ['new_pass', 'safe'],
+            ['status', 'safe'],
         ];
     }
 
@@ -60,6 +65,8 @@ class CreateForm extends Model
         $user = new Users();
         $user->username = $this->username;
         $user->email = $this->email;
+        $user->new_pass = (integer)$this->new_pass;
+        $user->status = (integer)$this->status;
         $user->setPassword($this->password);
         $user->generateAuthKey();
 
