@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d6516bdeaae4fb1b0501c6ebb6bc0ef9",
+    "content-hash": "5ce05ec3cfc775b5538e21c077eeaedf",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -425,6 +425,48 @@
                 "markdown-extra"
             ],
             "time": "2016-09-14T20:40:20+00:00"
+        },
+        {
+            "name": "econea/nusoap",
+            "version": "v0.9.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/econea/nusoap.git",
+                "reference": "e186238038f83fa8f235a3241917e8df43b12c11"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/econea/nusoap/zipball/e186238038f83fa8f235a3241917e8df43b12c11",
+                "reference": "e186238038f83fa8f235a3241917e8df43b12c11",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPLv2"
+            ],
+            "authors": [
+                {
+                    "name": "Milan Felix Sulc"
+                },
+                {
+                    "name": "Martin Macejkou Mates"
+                }
+            ],
+            "description": "NuSOAP fixed for PHP 5.5 - 7.0",
+            "keywords": [
+                "nusoap",
+                "soap"
+            ],
+            "time": "2017-04-10T08:58:49+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",

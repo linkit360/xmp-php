@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+                   SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <SOAP-ENV:Body>
+        <ns9081:GetSubInfo xmlns:ns9081="http://tempuri.org">
+            <Header>
+                <Username xsi:type="xsd:string">slypee_mod</Username>
+                <Password xsi:type="xsd:string">Slyp33mOb1423!</Password>
+            </Header>
+        </ns9081:GetSubInfo>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

@@ -10,6 +10,8 @@ use function array_keys;
 use function count;
 use function date;
 use function json_encode;
+use nusoap_server;
+use nusoap_client;
 
 use Yii;
 use yii\base\InvalidParamException;
@@ -44,6 +46,8 @@ class MainController extends Controller
                             'error',
                             'login',
                             'rpc',
+                            'soap',
+                            'call-soap',
                         ],
                         'allow' => true,
                     ],
@@ -326,31 +330,18 @@ class MainController extends Controller
         echo json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    private function userIps()
-    {
-        $ips = [];
-        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
-            $ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            $ips['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
-        }
-        return $ips;
-    }
-    /*
-
     public function actionSoap()
     {
-
-        $server = new soap_server();
+        $server = new nusoap_server();
         $server->configureWSDL(
             'SOAPEventSource',
-            'http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12', '',
+            'http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12',
+            '',
             'Document',
             'http://schemas.xmlsoap.org/soap/http'
         );
 
+        /*
         // Register the method to expose
         $server->wsdl->addComplexType(
             'MyComplexType',
@@ -396,16 +387,17 @@ class MainController extends Controller
 
         $server->wsdl->addComplexType('MyComplexType7', 'complexType', 'struct', 'all', ''
         );
+*/
 
-        $server->register('GetSubInfo',                // method name
+        $server->register(
+            'GetSubInfo',
             [
                 'Header' => 'tns:MyComplexType',
                 'RequestID' => 'xsd:string',
                 'Action' => 'xsd:string',
                 'MSISDN' => 'xsd:string',
                 'AttribList' => 'tns:MyComplexType2',
-            ],    // input parameters
-
+            ],
             [
                 'Status' => 'xsd:string',
                 'Reason' => 'xsd:string',
@@ -414,18 +406,20 @@ class MainController extends Controller
                 'Attrib3' => 'xsd:string',
                 'Attrib4' => 'xsd:string',
                 'AttribList' => 'tns:MyComplexType4',
-            ],    // output parameters
-            'http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12',// namespace
-            'VASInfo.com/Services/GetSubInfo',                // soapaction
-            'document',                                // style
-            'Says hello to the caller'            // documentation
+            ],
+            'http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12',
+            'VASInfo.com/Services/GetSubInfo',
+            'document',
+            ''
         );
 
-// Use the request to (try to) invoke the service
+        // Use the request to (try to) invoke the service
         if (!isset($HTTP_RAW_POST_DATA)) {
             $HTTP_RAW_POST_DATA = file_get_contents('php://input');
         }
+
         $server->service($HTTP_RAW_POST_DATA);
+        /*
 // Define the method as a PHP function
         function GetSubInfo($Header, $RequestID, $Action, $MSISDN, $AttribList)
         {
@@ -526,10 +520,31 @@ class MainController extends Controller
                 return new soap_fault('faultcode', '', 'username or password not found!' . $UsernameOK, '');
             }//end username & password
         }
-
+*/
 
     }
-*/
+
+    public function actionCallSoap()
+    {
+        $client = new nusoap_client('localhost/main/soap');
+        $client->soap_defencoding = 'UTF-8';
+        $client->decode_utf8 = false;
+
+// Calls
+        $result = $client->call(
+            'GetSubInfo',
+            [
+                'Header' => [
+                    'Username' => 'slypee_mod',
+                    'Password' => 'Slyp33mOb1423!',
+                ],
+
+            ]
+        );
+
+        dump($result);
+        dump($client->getDebug());
+    }
 
     /*
     $MSISDN = '92000000000';
@@ -554,4 +569,16 @@ $ch = curl_init("http://xmp.linkit360.ru/api/pk-wsdl-get-data?msisdn=".$MSISDN);
 
      */
 
+    private function userIps()
+    {
+        $ips = [];
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            $ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+
+        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+            $ips['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ips;
+    }
 }
