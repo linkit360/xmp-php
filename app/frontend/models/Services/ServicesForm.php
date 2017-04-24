@@ -1,13 +1,14 @@
 <?php
 
-namespace frontend\models;
+namespace frontend\models\Services;
 
 use function array_merge_recursive;
-use common\models\Content\Content;
-use common\models\Services;
 use const null;
+
 use Yii;
 use yii\helpers\ArrayHelper;
+use common\models\Services;
+use common\models\Content\Content;
 
 /**
  * Services Form

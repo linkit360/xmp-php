@@ -2,9 +2,11 @@
 
 namespace frontend\controllers;
 
-use function json_encode;
-use const JSON_PRETTY_PRINT;
+use common\helpers\FlagsHelper;
+use function dump;
 use const null;
+use const JSON_PRETTY_PRINT;
+use function json_encode;
 
 use Yii;
 use yii\base\Model;
@@ -16,7 +18,7 @@ use yii\filters\VerbFilter;
 use common\models\Services;
 use common\models\Countries;
 use common\models\Providers;
-use frontend\models\ServicesForm;
+use frontend\models\Services\ServicesForm;
 use frontend\models\Services\CheeseForm;
 
 /**
@@ -117,6 +119,11 @@ class ServicesController extends Controller
             $stepNow = (integer)$get['step'];
         }
 
+        # Step 1, Country
+        if ($stepNow === 1) {
+            $opts['countries'] = $this->createStep1();
+        }
+
         # Step 2, Provider
         if ($stepNow === 2) {
             if (!array_key_exists('id_country', $get)) {
@@ -186,7 +193,6 @@ class ServicesController extends Controller
     public function getProviderModel($id_provider)
     {
         switch ($id_provider) {
-
             // TH - Cheese Mobile
             case 1:
                 return new CheeseForm();
@@ -272,6 +278,37 @@ class ServicesController extends Controller
         $model->save();
 
         return $this->redirect(['index']);
+    }
+
+    public function createStep1()
+    {
+        $providers = Providers::find()
+            ->select('id_country')
+            ->where([
+                'id' => [
+                    // TH - Cheese Mobile
+                    1,
+                ],
+            ])
+            ->groupBy('id_country')
+            ->asArray()
+            ->column();
+
+        $countries = Countries::find()
+            ->select([
+                'id',
+                'name',
+                'flag',
+            ])
+            ->where([
+                'id' => $providers,
+            ])
+            ->orderBy('name')
+            ->indexBy('id')
+            ->asArray()
+            ->all();
+
+        return $countries;
     }
 
     /**
