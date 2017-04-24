@@ -1,19 +1,19 @@
 <soapenv:Envelope
         xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:ser="http://service.coverage.dhl.com.mx"
-        xmlns:mod="http://model.coveragemanifest.dhl.com.mx"
+        xmlns:sch="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12"
 >
-    <soapenv:Header/>
+    <soapenv:Header/>​
     <soapenv:Body>
         <sch:SubInfoIn>
             <sch:Header>
-                <sch:Username>slypee_mod</sch:Username>
-                <sch:Password>Slyp33mOb1423!</sch:Password>
+                <sch:Username>slypee_mob</sch:Username>
+                <sch:Password>Slyp33M0b1423!</sch:Password>
             </sch:Header>
-            <sch:ReqquestID>2017040505</sch:ReqquestID>
+            <sch:RequestID>test-123</sch:RequestID>
             <sch:Action>SubInfo</sch:Action>
             <sch:MSISDN>923000854058</sch:MSISDN>
             <sch:AttribList>
+                <!--1 or more repetitions:-->
                 <sch:AttribElement>
                     <sch:Name>ServiceName</sch:Name>
                     <sch:Value>Slypee</sch:Value>

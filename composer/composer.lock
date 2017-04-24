@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ce05ec3cfc775b5538e21c077eeaedf",
+    "content-hash": "1f9d299b15b9c84deee15ff13c6966ae",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.25.8",
+            "version": "3.26.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8c12f611bf5d89318141db7bc8dee644423957bd"
+                "reference": "05df1887d7b8cea9fba9ad59e1513c3815e883ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8c12f611bf5d89318141db7bc8dee644423957bd",
-                "reference": "8c12f611bf5d89318141db7bc8dee644423957bd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/05df1887d7b8cea9fba9ad59e1513c3815e883ae",
+                "reference": "05df1887d7b8cea9fba9ad59e1513c3815e883ae",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-04-18T18:47:31+00:00"
+            "time": "2017-04-21T20:25:16+00:00"
         },
         {
             "name": "bower-asset/bootstrap",
@@ -425,48 +425,6 @@
                 "markdown-extra"
             ],
             "time": "2016-09-14T20:40:20+00:00"
-        },
-        {
-            "name": "econea/nusoap",
-            "version": "v0.9.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/econea/nusoap.git",
-                "reference": "e186238038f83fa8f235a3241917e8df43b12c11"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/econea/nusoap/zipball/e186238038f83fa8f235a3241917e8df43b12c11",
-                "reference": "e186238038f83fa8f235a3241917e8df43b12c11",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPLv2"
-            ],
-            "authors": [
-                {
-                    "name": "Milan Felix Sulc"
-                },
-                {
-                    "name": "Martin Macejkou Mates"
-                }
-            ],
-            "description": "NuSOAP fixed for PHP 5.5 - 7.0",
-            "keywords": [
-                "nusoap",
-                "soap"
-            ],
-            "time": "2017-04-10T08:58:49+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -2494,16 +2452,16 @@
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v5.4.6",
+            "version": "v5.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "81fdccfaf8bdc5d5d7a1ef6bb3a61bbb1a6c4a3e"
+                "reference": "56db4ed32a6d5c9824c3ecc1d2e538f663f47eb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/81fdccfaf8bdc5d5d7a1ef6bb3a61bbb1a6c4a3e",
-                "reference": "81fdccfaf8bdc5d5d7a1ef6bb3a61bbb1a6c4a3e",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/56db4ed32a6d5c9824c3ecc1d2e538f663f47eb4",
+                "reference": "56db4ed32a6d5c9824c3ecc1d2e538f663f47eb4",
                 "shasum": ""
             },
             "require": {
@@ -2544,7 +2502,169 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2017-02-13T07:52:53+00:00"
+            "time": "2017-04-20T17:32:18+00:00"
+        },
+        {
+            "name": "symfony/options-resolver",
+            "version": "v3.2.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/options-resolver.git",
+                "reference": "6a19be85237fe8bbd4975f86942b4763bb0da6ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/6a19be85237fe8bbd4975f86942b4763bb0da6ca",
+                "reference": "6a19be85237fe8bbd4975f86942b4763bb0da6ca",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\OptionsResolver\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony OptionsResolver Component",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "config",
+                "configuration",
+                "options"
+            ],
+            "time": "2017-03-21T21:44:32+00:00"
+        },
+        {
+            "name": "symfony/polyfill-iconv",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-iconv.git",
+                "reference": "cba36f3616d9866b3e52662e88da5c090fac1e97"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/cba36f3616d9866b3e52662e88da5c090fac1e97",
+                "reference": "cba36f3616d9866b3e52662e88da5c090fac1e97",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-iconv": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Iconv\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Iconv extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "iconv",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2016-11-14T01:06:16+00:00"
+        },
+        {
+            "name": "wsdl2phpgenerator/wsdl2phpgenerator",
+            "version": "3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wsdl2phpgenerator/wsdl2phpgenerator.git",
+                "reference": "558c8a66677c117de2db5f5a4ae7f327c4b67f67"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wsdl2phpgenerator/wsdl2phpgenerator/zipball/558c8a66677c117de2db5f5a4ae7f327c4b67f67",
+                "reference": "558c8a66677c117de2db5f5a4ae7f327c4b67f67",
+                "shasum": ""
+            },
+            "require": {
+                "ext-soap": "*",
+                "php": ">=5.3.0",
+                "symfony/options-resolver": "~2.6|~3.0",
+                "symfony/polyfill-iconv": "^1.2"
+            },
+            "require-dev": {
+                "kasperg/phing-github": "0.2.*",
+                "phing/phing": "~2.7",
+                "php-vcr/php-vcr": "1.2 - 1.2.7|^1.3.1",
+                "php-vcr/phpunit-testlistener-vcr": "~1.1.2",
+                "phpunit/phpunit": "~4.4",
+                "psr/log": "~1.0",
+                "symfony/yaml": "~2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wsdl2PhpGenerator\\": [
+                        "src/",
+                        "lib/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Simple class library for generating php classes from a wsdl file.",
+            "keywords": [
+                "soap",
+                "wsdl"
+            ],
+            "time": "2016-10-30T21:02:36+00:00"
         },
         {
             "name": "yiisoft/yii2",

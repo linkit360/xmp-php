@@ -2,7 +2,7 @@ var output = [];
 var ws;
 var server;
 var chart;
-// var mapData;
+var oldData;
 
 function print(message) {
     console.log(message);
@@ -48,7 +48,9 @@ function start() {
         output[3].innerText = conv + "%";
 
         // Chart
-        if (chart) {
+        if (chart && oldData !== data['countries']) {
+            oldData = data['countries'];
+            // dump(data['countries']);
             var series = [];
             $.each(data['countries'], function (index, value) {
                 series.push([
@@ -74,6 +76,8 @@ function start() {
                     value = item[1];
                 dataset[iso] = {numberOfThings: value, fillColor: paletteScale(value)};
             });
+
+            // dump(dataset);
 
             chart.updateChoropleth(dataset);
         }

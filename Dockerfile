@@ -18,7 +18,8 @@ RUN addgroup -S -g 1000 docker
 RUN adduser -S -D -s /bin/bash -u 1000 -G docker docker
 
 # PHP Ext
-RUN docker-php-ext-install opcache mbstring pdo pdo_pgsql json intl sockets mcrypt iconv zip
+RUN docker-php-ext-install opcache mbstring pdo pdo_pgsql json intl sockets mcrypt iconv zip soap
+RUN docker-php-ext-install xml
 
 # Composer
 RUN mkdir -p /app/composer/home

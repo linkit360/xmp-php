@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use SoapClient;
 use const true;
 use const false;
 use const JSON_PRETTY_PRINT;
@@ -10,9 +11,9 @@ use function array_keys;
 use function count;
 use function date;
 use function json_encode;
-use nusoap_server;
-use nusoap_client;
 
+use Wsdl2PhpGenerator\Config;
+use Wsdl2PhpGenerator\Generator;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\db\Query;
@@ -332,62 +333,64 @@ class MainController extends Controller
 
     public function actionSoap()
     {
-        $server = new nusoap_server();
-        $server->configureWSDL(
-            'SOAPEventSource',
-            'http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12',
-            '',
-            'Document',
-            'http://schemas.xmlsoap.org/soap/http'
-        );
-
         /*
-        // Register the method to expose
-        $server->wsdl->addComplexType(
-            'MyComplexType',
-            'complexType',
-            'struct',
-            'all',
-            '',
-            [
-                'Username' => ['name' => 'Username', 'type' => 'xsd:int'],
-                'password' => ['name' => 'password', 'type' => 'xsd:string'],
-            ]
-        );
 
-        $server->wsdl->addComplexType(
-            'MyComplexType2',
-            'complexType',
-            'struct',
-            'all',
-            '',
-            [
-                'AttribElement' => [
-                    'name' => 'AtribElement',
-                    'type' => 'tns:MyComplexType3',
-                ],
-            ]
-        );
+$server = new nusoap_server();
+$server->configureWSDL(
+    'SOAPEventSource',
+    'http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12',
+    '',
+    'Document',
+    'http://schemas.xmlsoap.org/soap/http'
+);
 
-        $server->wsdl->addComplexType('MyComplexType3', 'complexType', 'struct', 'all', '',
-            [
-                'Name' => ['name' => 'Name', 'type' => 'xsd:string'],
-                'Value' => ['name' => 'Value', 'type' => 'xsd:string'],
-            ]
-        );
-        $server->wsdl->addComplexType('MyComplexType4', 'complexType', 'struct', 'all', '',
-            ['AttribElement' => ['name' => 'AtribElement', 'type' => 'tns:MyComplexType3']]
-        );
+// Register the method to expose
+$server->wsdl->addComplexType(
+    'MyComplexType',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    [
+        'Username' => ['name' => 'Username', 'type' => 'xsd:int'],
+        'password' => ['name' => 'password', 'type' => 'xsd:string'],
+    ]
+);
 
-        $server->wsdl->addComplexType('MyComplexType5', 'complexType', 'struct', 'all', ''
-        );
+$server->wsdl->addComplexType(
+    'MyComplexType2',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    [
+        'AttribElement' => [
+            'name' => 'AtribElement',
+            'type' => 'tns:MyComplexType3',
+        ],
+    ]
+);
 
-        $server->wsdl->addComplexType('MyComplexType6', 'complexType', 'struct', 'all', ''
-        );
+$server->wsdl->addComplexType('MyComplexType3', 'complexType', 'struct', 'all', '',
+    [
+        'Name' => ['name' => 'Name', 'type' => 'xsd:string'],
+        'Value' => ['name' => 'Value', 'type' => 'xsd:string'],
+    ]
+);
+$server->wsdl->addComplexType('MyComplexType4', 'complexType', 'struct', 'all', '',
+    ['AttribElement' => ['name' => 'AtribElement', 'type' => 'tns:MyComplexType3']]
+);
 
-        $server->wsdl->addComplexType('MyComplexType7', 'complexType', 'struct', 'all', ''
-        );
+$server->wsdl->addComplexType('MyComplexType5', 'complexType', 'struct', 'all', ''
+);
+
+$server->wsdl->addComplexType('MyComplexType6', 'complexType', 'struct', 'all', ''
+);
+
+$server->wsdl->addComplexType('MyComplexType7', 'complexType', 'struct', 'all', ''
+);
 */
+        /*
 
         $server->register(
             'GetSubInfo',
@@ -419,7 +422,6 @@ class MainController extends Controller
         }
 
         $server->service($HTTP_RAW_POST_DATA);
-        /*
 // Define the method as a PHP function
         function GetSubInfo($Header, $RequestID, $Action, $MSISDN, $AttribList)
         {
@@ -526,7 +528,37 @@ class MainController extends Controller
 
     public function actionCallSoap()
     {
+
+        $generator = new Generator();
+        $generator->generate(
+            new Config([
+                'inputFile' => __DIR__ . '/../../GetSubInfo.wsdl',
+                'outputDir' => '/tmp/output',
+            ])
+        );
+
+        die;
+
+        $location = 'http://localhost/main/soap';
+        $uri = 'http://localhost/main/soap/';
+
+        $client = new SoapClient(__DIR__ . '/../../GetSubInfo.wsdl', [
+            'location' => $location,
+            'uri' => $uri,
+            'exceptions' => 1,
+        ]);
+        dump($client);
+        dump($client->GetSubInfo);
+
+        /*
+
+
         $client = new nusoap_client('localhost/main/soap');
+        $client->namespaces = [
+            'soapenv' => 'http://schemas.xmlsoap.org/soap/envelope/',
+            'sch' => 'http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12',
+        ];
+
         $client->soap_defencoding = 'UTF-8';
         $client->decode_utf8 = false;
 
@@ -538,12 +570,115 @@ class MainController extends Controller
                     'Username' => 'slypee_mod',
                     'Password' => 'Slyp33mOb1423!',
                 ],
-
-            ]
+            ],
+            'sch',
+            'SubInfo'
         );
 
+
         dump($result);
+        dump($client->request);
+        dump($client->response);
         dump($client->getDebug());
+
+
+1. We are not getting the response as per requirement. We required SubInfoOut  that's why received output data invalid.. Kindly update your WSDL accordingly. Please confirm once done.​
+
+ Required:​
+
+ SubInfoOut" xmlns="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+         <status xsi:type="xsd:string">OK</status>
+
+<GetSubInfoOut xsi:type="sch:GetSubInfoOut" xmlns="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+         <Status xsi:nil="true" xsi:type="xsd:string"/>​
+
+Current:
+
+ GetSubInfoOut" xmlns="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+         <status xsi:type="xsd:string">OK</status>
+
+2. PFA the WSDL file.
+
+Required Possible values in action:
+
+·         SubInfo (to check if customer has a product)
+·         UnSubscribe (to un-subscribe the product)
+
+
+3. PFB the Sample  Request and response for your reference. In case of any query please discuss.
+
+Action in Request : SubInfo or UNSUB
+
+
+Request:
+
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sch="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+   <soapenv:Header/>​
+   <soapenv:Body>
+      <sch:SubInfoIn>
+         <sch:Header>
+            <sch:Username>slypee_mob</sch:Username>
+            <sch:Password>Slyp33M0b1423!</sch:Password>
+         </sch:Header>
+         <sch:RequestID>test-123</sch:RequestID>
+         <sch:Action>SubInfo</sch:Action>
+         <sch:MSISDN>923000854058</sch:MSISDN>
+         <sch:AttribList>
+            <!--1 or more repetitions:-->
+            <sch:AttribElement>
+               <sch:Name>ServiceName</sch:Name>
+               <sch:Value>Slypee</sch:Value>
+            </sch:AttribElement>
+         </sch:AttribList>
+      </sch:SubInfoIn>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+
+Response: (Success scenario)
+
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Body>
+      <ns0:SubInfoOut xmlns:ns0="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+         <ns0:Status>OK</ns0:Status>
+         <ns0:Reason/>
+         <ns0:Attrib1/>
+         <ns0:Attrib2/>
+         <ns0:Attrib3/>
+         <ns0:Attrib4/>
+         <ns0:AttribList>
+            <ns0:AttribElement>
+               <ns0:Name>Vbox</ns0:Name>
+               <ns0:Value>OK</ns0:Value>
+            </ns0:AttribElement>
+         </ns0:AttribList>
+      </ns0:SubInfoOut>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+Response: (Failed scenario)
+
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Body>
+      <ns0:SubInfoOut xmlns:ns0="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+         <ns0:Status>KO</ns0:Status>
+         <ns0:Reason/>
+         <ns0:Attrib1/>
+         <ns0:Attrib2/>
+         <ns0:Attrib3/>
+         <ns0:Attrib4/>
+         <ns0:AttribList>
+            <ns0:AttribElement>
+               <ns0:Name>Vbox</ns0:Name>
+               <ns0:Value>KO</ns0:Value>
+            </ns0:AttribElement>
+         </ns0:AttribList>
+      </ns0:SubInfoOut>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+         */
     }
 
     /*

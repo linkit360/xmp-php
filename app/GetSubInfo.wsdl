@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:tns="http://xmlns.example.com/1389616071351/GetSubInfoImpl"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:ns0="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12"
+        name="Untitled"
+        targetNamespace="http://xmlns.example.com/1389616071351/GetSubInfoImpl"
+>
+    <wsdl:types>
+        <xs:schema
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12"
+                targetNamespace="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12"
+                elementFormDefault="qualified"
+                attributeFormDefault="unqualified"
+        >
+            <xs:element name="Action">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="20"/>
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Attrib1" type="xs:string"/>
+            <xs:element name="Attrib2" type="xs:string"/>
+            <xs:element name="Attrib3" type="xs:string"/>
+            <xs:element name="Attrib4" type="xs:string"/>
+            <xs:element name="AttribElement">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:Name"/>
+                        <xs:element ref="ns0:Value"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AttribList">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:AttribElement" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Header">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:Username"/>
+                        <xs:element ref="ns0:Password"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="MSISDN" type="xs:string"/>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="Password" type="xs:string"/>
+            <xs:element name="Reason">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="250"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="RequestID">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="25"/>
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Status">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="10"/>
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="SubInfoIn">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:Header"/>
+                        <xs:element ref="ns0:RequestID"/>
+                        <xs:element ref="ns0:Action"/>
+                        <xs:element ref="ns0:MSISDN"/>
+                        <xs:element ref="ns0:AttribList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SubInfoOut">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:Status"/>
+                        <xs:element ref="ns0:Reason" minOccurs="0"/>
+                        <xs:element ref="ns0:Attrib1"/>
+                        <xs:element ref="ns0:Attrib2"/>
+                        <xs:element ref="ns0:Attrib3"/>
+                        <xs:element ref="ns0:Attrib4"/>
+                        <xs:element ref="ns0:AttribList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Username" type="xs:string"/>
+            <xs:element name="Value" type="xs:string"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="ProcessTestStub">
+        <wsdl:port name="SOAPEventSource" binding="tns:SOAPEventSourceBinding">
+            <soap:address location="https://VASInfo.com/Services/GetSubInfo"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="PortType">
+        <wsdl:operation name="GetSubInfo">
+            <wsdl:input message="tns:SubInfoIn"/>
+            <wsdl:output message="tns:SubInfoOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="SOAPEventSourceBinding" type="tns:PortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetSubInfo">
+            <soap:operation style="document" soapAction="VASInfo.com/Services/GetSubInfo"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="SubInfoIn"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="SubInfoOut"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="SubInfoIn">
+        <wsdl:part name="SubInfoIn" element="ns0:SubInfoIn"/>
+    </wsdl:message>
+    <wsdl:message name="SubInfoOut">
+        <wsdl:part name="SubInfoOut" element="ns0:SubInfoOut"/>
+    </wsdl:message>
+</wsdl:definitions>
