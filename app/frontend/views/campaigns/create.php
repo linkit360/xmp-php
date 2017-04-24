@@ -7,6 +7,9 @@
 $this->title = 'Create Campaign';
 $this->params['breadcrumbs'][] = ['label' => 'Campaigns', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-echo $this->render('_form', [
-    'model' => $model,
-]);
+echo $this->render(
+    '_form',
+    [
+        'model' => $model,
+    ]
+);

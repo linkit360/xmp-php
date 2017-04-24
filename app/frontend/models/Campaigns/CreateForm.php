@@ -2,13 +2,15 @@
 
 namespace frontend\models\Campaigns;
 
-use common\models\Campaigns;
-use common\models\Lps;
 use function count;
+
 use Yii;
 use yii\base\Model;
-use common\models\Operators;
 use yii\helpers\ArrayHelper;
+
+use common\models\Lps;
+use common\models\Campaigns;
+use common\models\Operators;
 
 /**
  * Reports Form
@@ -27,12 +29,6 @@ class CreateForm extends Model
     # Data
     private $operators = [];
     private $lps = [];
-
-    public function init()
-    {
-//        $this->dateFrom = date('Y-m-d');
-//        $this->dateTo = date('Y-m-d');
-    }
 
     /**
      * @inheritdoc

@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
             <?php
             $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
-            echo $form->field($model, 'description')->textInput(['maxlength' => true]);
+            echo $form->field($model, 'description')->textarea();
             echo $form->field($model, 'link')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_operator')->dropDownList($model->getOperators());
             echo $form->field($model, 'id_service')->dropDownList(
@@ -24,11 +24,8 @@ use yii\widgets\ActiveForm;
             );
 
             echo $form->field($model, 'id_lp')->dropDownList(
-                [
-                    '' => 'Please Select',
-                ] + $model->getLps()
+                [null => 'Please Select',] + $model->getLps()
             );
-
 
             echo $form->field($model, 'status')->radioList(
                 [
