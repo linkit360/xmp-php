@@ -193,7 +193,7 @@ class LandingPageController extends Controller
         );
 
         unlink($file);
-        return '<script type="text/javascript">window.top.location.href = "/landing-page/' . $model->id . '";</script>';
+        return '<script type="text/javascript">window.top.location.href = "/landing-page/";</script>';
     }
 
     public function actionDownload($id)
@@ -203,12 +203,10 @@ class LandingPageController extends Controller
             return new NotFoundHttpException();
         }
 
-        $result = $this->s3->getObject(
-            [
-                'Bucket' => 'xmp-lp',
-                'Key' => $model->id,
-            ]
-        );
+        $result = $this->s3->getObject([
+            'Bucket' => 'xmp-lp',
+            'Key' => $model->id,
+        ]);
 
         header("Pragma: public");
         header("Expires: 0");
@@ -236,9 +234,12 @@ class LandingPageController extends Controller
             ]),
         ]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render(
+            'index',
+            [
+                'dataProvider' => $dataProvider,
+            ]
+        );
     }
 
     /**
@@ -250,9 +251,12 @@ class LandingPageController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        return $this->render(
+            'view',
+            [
+                'model' => $this->findModel($id),
+            ]
+        );
     }
 
     /**
@@ -263,10 +267,10 @@ class LandingPageController extends Controller
      *
      * @return mixed
      */
+    /*
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -275,6 +279,7 @@ class LandingPageController extends Controller
             ]);
         }
     }
+    */
 
     /**
      * Deletes an existing Lp model.
@@ -307,6 +312,7 @@ class LandingPageController extends Controller
         if (($model = Lps::findOne($id)) !== null) {
             return $model;
         }
+
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 

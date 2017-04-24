@@ -3,11 +3,12 @@
 namespace frontend\controllers;
 
 use Yii;
-use common\models\Content\Publishers;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+
+use common\models\Content\Publishers;
 
 /**
  * ContentPublishersController implements the CRUD actions for Publishers model.
@@ -61,9 +62,12 @@ class ContentPublishersController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        return $this->render(
+            'view',
+            [
+                'model' => $this->findModel($id),
+            ]
+        );
     }
 
     /**
@@ -75,14 +79,16 @@ class ContentPublishersController extends Controller
     {
         $model = new Publishers();
         $model->status = 1;
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return $this->redirect(['index']);
         }
+
+        return $this->render(
+            'create',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -96,14 +102,16 @@ class ContentPublishersController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return $this->redirect(['index']);
         }
+
+        return $this->render(
+            'update',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -123,7 +131,6 @@ class ContentPublishersController extends Controller
         return $this->redirect(['index']);
     }
 
-
     /**
      * Finds the Publishers model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -137,8 +144,8 @@ class ContentPublishersController extends Controller
     {
         if (($model = Publishers::findOne($id)) !== null) {
             return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

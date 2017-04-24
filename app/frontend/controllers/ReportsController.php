@@ -59,9 +59,12 @@ class ReportsController extends Controller
         $model->load(Yii::$app->request->get());
         $model->dataAdChart();
 
-        return $this->render('index', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'index',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**

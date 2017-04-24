@@ -2,21 +2,14 @@
 
 namespace frontend\controllers;
 
-use function count;
-use function implode;
-use function is_numeric;
-use function json_encode;
-use const JSON_PRETTY_PRINT;
 use const null;
 
-use const PHP_EOL;
 use Yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 
-use common\models\Logs;
 use common\models\Countries;
 
 /**
@@ -79,9 +72,12 @@ class CountriesController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        return $this->render(
+            'view',
+            [
+                'model' => $this->findModel($id),
+            ]
+        );
     }
 
     /**
@@ -118,10 +114,8 @@ class CountriesController extends Controller
     {
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-
             $model->save();
-
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render(
@@ -162,8 +156,8 @@ class CountriesController extends Controller
     {
         if (($model = Countries::findOne($id)) !== null) {
             return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

@@ -116,11 +116,6 @@ class ContentController extends Controller
         );
     }
 
-    /**
-     * Creates a new Content model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
     public function actionCreate()
     {
         $model = new ContentForm();
@@ -139,7 +134,7 @@ class ContentController extends Controller
                         $_FILES['ContentForm']['name']['file']
                     );
                 }
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
         }
 
@@ -151,14 +146,6 @@ class ContentController extends Controller
         );
     }
 
-    /**
-     * Updates an existing Content model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
     public function actionUpdate($id)
     {
         $model = ContentForm::findOne($id);
@@ -176,7 +163,7 @@ class ContentController extends Controller
                     );
                 }
 
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
         }
 

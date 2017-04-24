@@ -54,70 +54,96 @@ $formData['id_publisher'] = Publishers::find()
     ])
     ->indexBy('id')
     ->column();
+
+$form = ActiveForm::begin([
+    'action' => ['index'],
+    'method' => 'get',
+]);
 ?>
-<div class="col-lg-8">
+<div class="col-lg-7">
     <div class="ibox">
         <div class="ibox-content">
-            <?php
-            $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-            ]);
+            <div class="row">
+                <div class="col-lg-6">
+                    <?php
+                    echo $form->field($model, 'id_category')->widget(
+                        Select2::classname(),
+                        [
+                            'data' => $formData['id_category'],
+                            'options' => [
+                                'placeholder' => 'Category',
+                            ],
+                            'pluginOptions' => [
+                                'escapeMarkup' => new JsExpression("function(m) { return m; }"),
+                            ],
+                        ]
+                    );
+                    ?>
+                </div>
 
-            echo $form->field($model, 'id_category')->widget(
-                Select2::classname(),
-                [
-                    'data' => $formData['id_category'],
-                    'options' => [
-                        'placeholder' => 'Category',
-                    ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
-                    ],
-                ]
-            );
+                <div class="col-lg-6">
+                    <?php
+                    echo $form->field($model, 'id_publisher')->widget(
+                        Select2::classname(),
+                        [
+                            'data' => $formData['id_publisher'],
+                            'options' => [
+                                'placeholder' => 'Publisher',
+                            ],
+                            'pluginOptions' => [
+                                'escapeMarkup' => new JsExpression("function(m) { return m; }"),
+                            ],
+                        ]
+                    );
 
-            echo $form->field($model, 'id_publisher')->widget(
-                Select2::classname(),
-                [
-                    'data' => $formData['id_publisher'],
-                    'options' => [
-                        'placeholder' => 'Publisher',
-                    ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
-                    ],
-                ]
-            );
+                    ?>
+                </div>
 
-            echo $form->field($model, 'title');
-            echo $form->field($model, 'date_range')
-                ->widget(
-                    DateRangePicker::classname(),
-                    [
-                        'convertFormat' => true,
-                        'options' => [
-                            'class' => 'form-control',
-                            'placeholder' => 'Date/Time',
-                        ],
-                        'pluginOptions' => [
-                            'timePicker' => true,
-                            'timePickerIncrement' => 15,
-                            'locale' => ['format' => 'Y-m-d h:i A'],
-                        ],
-                    ]
-                );
+                <div class="col-lg-6">
+                    <?php
 
-            echo '<br/>';
-            echo Html::submitButton('Search', ['class' => 'btn btn-primary']);
-            ActiveForm::end();
-            ?>
+                    echo $form->field($model, 'title');
+                    ?>
+                </div>
+
+                <div class="col-lg-6">
+                    <?php
+                    echo $form->field($model, 'date_range')
+                        ->widget(
+                            DateRangePicker::classname(),
+                            [
+                                'convertFormat' => true,
+                                'options' => [
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Date/Time',
+                                ],
+                                'pluginOptions' => [
+                                    'timePicker' => true,
+                                    'timePickerIncrement' => 15,
+                                    'locale' => ['format' => 'Y-m-d h:i A'],
+                                ],
+                            ]
+                        );
+
+                    echo '<br/>';
+
+                    ?>
+                </div>
+
+                <div class="col-lg-6">
+                    <?php
+                    echo Html::submitButton('Search', ['class' => 'btn btn-primary']);
+                    ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+<?php
+ActiveForm::end();
+?>
 
-
-<div class="col-lg-8">
+<div class="col-lg-7">
     <div class="ibox">
         <div class="ibox-content">
             <p>

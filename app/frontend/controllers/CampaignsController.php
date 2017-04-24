@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use function md5;
 use function mt_rand;
+
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -93,15 +94,16 @@ class CampaignsController extends Controller
         $model->id_service = 1;
         $model->link = md5(mt_rand(1, 999999));
 
-        if ($model->load(Yii::$app->request->post())) {
-            if ($campaign = $model->create()) {
-                return $this->redirect(['view', 'id' => $campaign->id]);
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->create()) {
+            return $this->redirect(['index']);
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'create',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -158,6 +160,7 @@ class CampaignsController extends Controller
         if (($model = Campaigns::findOne($id)) !== null) {
             return $model;
         }
+
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

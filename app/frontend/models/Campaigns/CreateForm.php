@@ -83,6 +83,7 @@ class CreateForm extends Model
             'description' => 'Description',
             'link' => 'Link',
             'status' => 'Status',
+            'id_lp' => 'Landing Page',
         ];
     }
 

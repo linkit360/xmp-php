@@ -2,14 +2,13 @@
 
 namespace frontend\controllers;
 
-use frontend\models\BlacklistForm;
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 use common\models\MsisdnBlacklist;
+use frontend\models\BlacklistForm;
 
 /**
  * BlacklistController implements the CRUD actions for MsisdnBlacklist model.
@@ -44,11 +43,7 @@ class BlacklistController extends Controller
     public function actionIndex()
     {
         $model = new BlacklistForm();
-
-
         $dataProvider = $model->search(Yii::$app->request->queryParams);
-
-
         return $this->render(
             'index',
             [
@@ -67,9 +62,12 @@ class BlacklistController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        return $this->render(
+            'view',
+            [
+                'model' => $this->findModel($id),
+            ]
+        );
     }
 
     /**
@@ -82,6 +80,7 @@ class BlacklistController extends Controller
         $model = new MsisdnBlacklist();
         $model->load(Yii::$app->request->post());
         $model->save();
+
         return $this->redirect(['index']);
     }
 
@@ -93,6 +92,7 @@ class BlacklistController extends Controller
      *
      * @return mixed
      */
+    /*
     public function actionUpdate($id)
     {
         return $this->redirect(['index']);
@@ -106,6 +106,7 @@ class BlacklistController extends Controller
             ]);
         }
     }
+    */
 
     /**
      * Deletes an existing MsisdnBlacklist model.
@@ -135,8 +136,8 @@ class BlacklistController extends Controller
     {
         if (($model = MsisdnBlacklist::findOne($id)) !== null) {
             return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

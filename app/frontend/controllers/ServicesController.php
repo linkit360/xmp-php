@@ -2,11 +2,10 @@
 
 namespace frontend\controllers;
 
-use common\models\Countries;
-use frontend\models\ServicesForm;
 use function json_encode;
 use const JSON_PRETTY_PRINT;
 use const null;
+
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -15,7 +14,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 use common\models\Services;
+use common\models\Countries;
 use common\models\Providers;
+use frontend\models\ServicesForm;
 use frontend\models\Services\CheeseForm;
 
 /**
@@ -70,10 +71,13 @@ class ServicesController extends Controller
                 ),
         ]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-            'providers' => $providers,
-        ]);
+        return $this->render(
+            'index',
+            [
+                'dataProvider' => $dataProvider,
+                'providers' => $providers,
+            ]
+        );
     }
 
     /**
@@ -88,7 +92,6 @@ class ServicesController extends Controller
         $model = $this->findModel($id);
         $modelProvider = $this->getProviderModel($model->id_provider);
         $modelProvider->load(json_decode($model->service_opts, true), '');
-
         return $this->render(
             'view',
             [
@@ -156,7 +159,7 @@ class ServicesController extends Controller
                     # Service
                     if ($model->validate()) {
                         $model->save();
-                        return $this->redirect(['view', 'id' => $model->id]);
+                        return $this->redirect(['index']);
                     }
                 }
             }
@@ -212,9 +215,8 @@ class ServicesController extends Controller
         if ($modelProvider === null) {
             return $this->redirect('/services/create?step=1');
         }
+
         $modelProvider->load(json_decode($model->service_opts, true), '');
-
-
         $provider = Providers::findOne($model->id_provider);
         $opts['country'] = Countries::find()
             ->where(
@@ -223,7 +225,6 @@ class ServicesController extends Controller
                 ]
             )
             ->one();
-
 
         if (
             $model->load(Yii::$app->request->post()) &&
@@ -239,7 +240,7 @@ class ServicesController extends Controller
                 # Service
                 if ($model->validate()) {
                     $model->save();
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['index']);
                 }
             }
         }
@@ -289,7 +290,6 @@ class ServicesController extends Controller
                 ]
             )
             ->one();
-
 
         if ($model !== null) {
             return $model;

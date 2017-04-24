@@ -107,7 +107,7 @@ class UsersController extends Controller
         $model->new_pass = 1;
 
         if ($model->load(Yii::$app->request->post()) && $model->commit()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render(
@@ -132,7 +132,7 @@ class UsersController extends Controller
         $model->set();
 
         if ($model->load(Yii::$app->request->post()) && $model->commit()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render(
@@ -174,6 +174,7 @@ class UsersController extends Controller
         if (($model = Users::findOne($id)) !== null) {
             return $model;
         }
+
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
