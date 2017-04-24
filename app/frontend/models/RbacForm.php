@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\models\Logs;
 use function str_replace;
 use function trim;
 use Yii;
@@ -20,9 +21,9 @@ class RbacForm extends Model
     public $permissions = [];
 
     # Data
-    private $permissionsAll = [];
     /** @var \yii\rbac\ManagerInterface */
     public $auth;
+    private $permissionsAll = [];
     private $oldName = false;
 
     public function init()
@@ -41,7 +42,7 @@ class RbacForm extends Model
                     'name',
                     'description',
                 ],
-                'string'
+                'string',
             ],
             [
                 [
@@ -49,7 +50,7 @@ class RbacForm extends Model
                     'description',
                     'permissions',
                 ],
-                'required'
+                'required',
             ],
         ];
     }
@@ -90,6 +91,14 @@ class RbacForm extends Model
             $this->auth->update($this->oldName, $role);
         }
 
+        $log = new Logs();
+        $log->controller = Yii::$app->requestedAction->controller->id;
+        $log->action = Yii::$app->requestedAction->id;
+        $ev = [
+            'id' => $role->name,
+            'oldname' => $this->oldName,
+        ];
+
         // Remove all
         foreach ($this->auth->getPermissionsByRole($role->name) as $perm) {
             $this->auth->removeChild($role, $perm);
@@ -101,9 +110,13 @@ class RbacForm extends Model
                 $perm = $this->auth->getPermission($perm);
                 if ($perm) {
                     $this->auth->addChild($role, $perm);
+                    $ev['roles'][] = $perm->name;
                 }
             }
         }
+
+        $log->event = $ev;
+        $log->save();
 
         return true;
     }

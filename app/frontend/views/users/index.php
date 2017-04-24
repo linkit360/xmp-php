@@ -14,6 +14,12 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="col-lg-12">
     <div class="ibox">
+        <div class="ibox-title">
+            <h5>
+                Users
+            </h5>
+        </div>
+
         <div class="ibox-content">
             <p>
                 <?php
@@ -58,11 +64,14 @@ if (!Yii::$app->user->can('rbacManage')) {
         <div class="ibox-title">
             <h5>
                 Roles
-                <?= Html::a('Create Role', '/rbac/create', ['class' => 'btn btn-success btn-xs']) ?>
             </h5>
         </div>
 
         <div class="ibox-content">
+            <p>
+                <?= Html::a('Create Role', '/rbac/create', ['class' => 'btn btn-success']) ?>
+            </p>
+
             <table class="table table-condensed">
                 <tr>
                     <th style="width: 1%;">Name</th>

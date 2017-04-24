@@ -168,6 +168,10 @@ $formData['users'] = Users::find()
                                 $table .= 'ID: ' . $event['id'] . '<br/>';
                             }
 
+                            if (array_key_exists('oldname', $event)) {
+                                $table .= 'Old Name: ' . $event['oldname'] . '<br/>';
+                            }
+
                             if (array_key_exists('ips', $event)) {
                                 $table .= 'IPs: ';
                                 foreach ($event['ips'] as $ip) {
