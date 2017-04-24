@@ -27,10 +27,8 @@ class CountriesController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
+                        'roles' => ['countriesManage'],
                         'allow' => true,
-                        'roles' => [
-                            'countriesManage',
-                        ],
                     ],
                     [
                         'allow' => false,

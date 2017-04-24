@@ -3,10 +3,11 @@
 namespace frontend\controllers;
 
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 use common\models\Content\Categories;
 
@@ -21,6 +22,18 @@ class ContentCategoriesController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'roles' => ['contentCategoriesManage'],
+                        'allow' => true,
+                    ],
+                    [
+                        'allow' => false,
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

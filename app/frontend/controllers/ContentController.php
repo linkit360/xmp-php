@@ -4,7 +4,6 @@ namespace frontend\controllers;
 
 use const AWS_S3;
 use function count;
-use frontend\models\ContentSearchForm;
 use function json_decode;
 use function array_key_exists;
 
@@ -13,15 +12,17 @@ use Aws\S3\S3Client;
 use ZipArchive;
 
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
-use frontend\models\ContentForm;
 use common\models\Content\Content;
 use common\models\Content\Categories;
 use common\models\Content\Publishers;
+
+use frontend\models\ContentForm;
+use frontend\models\ContentSearchForm;
 
 /**
  * ContentController implements the CRUD actions for Content model.
@@ -45,13 +46,24 @@ class ContentController extends Controller
         $this->s3 = $sdk->createS3();
     }
 
-
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'roles' => ['contentManage'],
+                        'allow' => true,
+                    ],
+                    [
+                        'allow' => false,
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

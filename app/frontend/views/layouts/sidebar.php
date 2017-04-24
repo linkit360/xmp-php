@@ -44,7 +44,9 @@ if (in_array('campaignsManage', $permissions)) {
         'name' => 'Campaigns Management',
         'url' => 'campaigns/index',
     ];
+}
 
+if (in_array('ContentManage', $permissions)) {
     $menu[$group]['items'][] = [
         'name' => 'Content',
         'url' => 'content/index',
