@@ -14,7 +14,7 @@ $menu[] = [
 # Reports
 $group = 'Reports';
 $menu[$group] = [
-    'name' => '<i class="fa fa-bar-chart-o"></i> Reports',
+    'name' => '<i class="fa fa-bar-chart-o"></i> ' . $group,
     'items' => [],
 ];
 
@@ -35,7 +35,7 @@ if (in_array('reportsConversionView', $permissions)) {
 # Campaigns
 $group = 'Campaigns';
 $menu[$group] = [
-    'name' => '<i class="fa fa-list"></i> Campaigns',
+    'name' => '<i class="fa fa-list"></i> ' . $group,
     'items' => [],
 ];
 
@@ -48,7 +48,7 @@ if (in_array('campaignsManage', $permissions)) {
 
 if (in_array('ContentManage', $permissions)) {
     $menu[$group]['items'][] = [
-        'name' => 'Content',
+        'name' => 'Content Management',
         'url' => 'content/index',
     ];
 }
@@ -67,10 +67,45 @@ if (in_array('campaignsManage', $permissions)) {
     ];
 }
 
-# Admin
-$group = 'Admin';
+# Tools
+$group = 'Tools';
 $menu[$group] = [
-    'name' => '<i class="fa fa-keyboard-o"></i> Admin',
+    'name' => '<i class="fa fa-wrench"></i> ' . $group,
+    'items' => [],
+];
+
+if (in_array('blacklistManage', $permissions)) {
+    $menu[$group]['items'][] = [
+        'name' => 'Blacklist',
+        'url' => 'blacklist/index',
+    ];
+}
+
+# Logs
+$group = 'Logs';
+$menu[$group] = [
+    'name' => '<i class="fa fa-table"></i> ' . $group,
+    'items' => [],
+];
+
+if (in_array('logsView', $permissions)) {
+    $menu[$group]['items'][] = [
+        'name' => 'Transactions Logs',
+        'url' => 'main/transactions',
+    ];
+}
+
+if (in_array('logsView', $permissions)) {
+    $menu[$group]['items'][] = [
+        'name' => 'Actions Logs',
+        'url' => 'main/logs',
+    ];
+}
+
+# Admin Tools
+$group = 'Admin Tools';
+$menu[$group] = [
+    'name' => '<i class="fa fa-keyboard-o"></i> ' . $group,
     'items' => [],
 ];
 
@@ -102,38 +137,10 @@ if (in_array('operatorsManage', $permissions)) {
     ];
 }
 
-if (in_array('blacklistManage', $permissions)) {
-    $menu[$group]['items'][] = [
-        'name' => 'Blacklist',
-        'url' => 'blacklist/index',
-    ];
-}
-
 if (in_array('usersManage', $permissions)) {
     $menu[$group]['items'][] = [
         'name' => 'Users',
         'url' => 'users/index',
-    ];
-}
-
-if (in_array('rbacManage', $permissions)) {
-    $menu[$group]['items'][] = [
-        'name' => 'RBAC',
-        'url' => 'rbac/index',
-    ];
-}
-
-if (in_array('logsView', $permissions)) {
-    $menu[$group]['items'][] = [
-        'name' => 'Transactions Logs',
-        'url' => 'main/transactions',
-    ];
-}
-
-if (in_array('logsView', $permissions)) {
-    $menu[$group]['items'][] = [
-        'name' => 'Actions Logs',
-        'url' => 'main/logs',
     ];
 }
 

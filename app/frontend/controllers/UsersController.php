@@ -70,11 +70,21 @@ class UsersController extends Controller
         $searchModel = new SearchForm();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $auth = Yii::$app->getAuthManager();
+
+        $data = [];
+        $data['roles'] = $auth->getRoles();
+        $data['permissions'] = $auth->getPermissions();
+
+        ksort($data['roles']);
+        ksort($data['permissions']);
+
         return $this->render(
             'index',
             [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'data' => $data,
             ]);
     }
 

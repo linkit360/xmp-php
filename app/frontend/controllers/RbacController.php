@@ -50,19 +50,7 @@ class RbacController extends Controller
      */
     public function actionIndex()
     {
-        $data = [];
-        $data['roles'] = $this->auth->getRoles();
-        $data['permissions'] = $this->auth->getPermissions();
-
-        ksort($data['roles']);
-        ksort($data['permissions']);
-
-        return $this->render(
-            'index',
-            [
-                'data' => $data,
-            ]
-        );
+        return $this->redirect('/users/index');
     }
 
     /**
