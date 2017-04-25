@@ -3,9 +3,9 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /**
- * @var yii\web\View                          $this
- * @var \frontend\models\Campaigns\CreateForm $model
- * @var yii\widgets\ActiveForm                $form
+ * @var yii\web\View                             $this
+ * @var \frontend\models\Campaigns\CampaignsForm $model
+ * @var yii\widgets\ActiveForm                   $form
  */
 ?>
 <div class="col-lg-6">
@@ -17,16 +17,8 @@ use yii\widgets\ActiveForm;
             echo $form->field($model, 'description')->textarea();
             echo $form->field($model, 'link')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_operator')->dropDownList($model->getOperators());
-            echo $form->field($model, 'id_service')->dropDownList(
-                [
-                    '6188e39d-373e-4015-885d-f55e0fdbf030' => 'Test',
-                ]
-            );
-
-            echo $form->field($model, 'id_lp')->dropDownList(
-                [null => 'Please Select',] + $model->getLps()
-            );
-
+            echo $form->field($model, 'id_service')->dropDownList($model->getServices());
+            echo $form->field($model, 'id_lp')->dropDownList($model->getLps());
             echo $form->field($model, 'status')->radioList(
                 [
                     1 => 'Active',

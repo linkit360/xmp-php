@@ -12,7 +12,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 use common\models\Campaigns;
-use frontend\models\Campaigns\CreateForm;
+use frontend\models\Campaigns\CampaignsForm;
 
 /**
  * CampaignsController implements the CRUD actions for Campaigns model.
@@ -77,9 +77,12 @@ class CampaignsController extends Controller
             return new NotFoundHttpException();
         }
 
-        return $this->render('view', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'view',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -89,12 +92,11 @@ class CampaignsController extends Controller
      */
     public function actionCreate()
     {
-        $model = new CreateForm();
+        $model = new CampaignsForm();
         $model->status = 1;
-        $model->id_service = 1;
         $model->link = md5(mt_rand(1, 999999));
 
-        if ($model->load(Yii::$app->request->post()) && $model->create()) {
+        if ($model->load(Yii::$app->request->post()) && $model->commit()) {
             return $this->redirect(['index']);
         }
 
@@ -114,20 +116,26 @@ class CampaignsController extends Controller
      *
      * @return mixed
      */
-    /*
+
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = CampaignsForm::findOne($id);
+
+        if ($model->id_user !== Yii::$app->user->id) {
+            return new NotFoundHttpException();
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return $this->redirect(['index']);
         }
+
+        return $this->render(
+            'update',
+            [
+                'model' => $model,
+            ]
+        );
     }
-    */
 
     /**
      * Deletes an existing Campaigns model.

@@ -1,7 +1,7 @@
 <?php
 /**
- * @var yii\web\View                         $this
- * @var frontend\models\Campaigns\CreateForm $model
+ * @var yii\web\View                            $this
+ * @var frontend\models\Campaigns\CampaignsForm $model
  */
 
 $this->title = 'Update Campaign: ' . $model->title;

@@ -11,6 +11,7 @@ use common\helpers\LogsHelper;
  * @property string  $id_user
  * @property string  $id_service
  * @property integer $id_operator
+ * @property string  $id_lp
  * @property string  $title
  * @property string  $description
  * @property string  $link
@@ -61,6 +62,7 @@ class Campaigns extends ActiveRecord
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'id_lp' => 'Landing Page',
         ];
     }
 
