@@ -19,6 +19,10 @@ $this->registerJs('server = "ws://' . $_SERVER['HTTP_HOST'] . ':3000/echo";');
             </h1>
 
             LP Hits
+
+            <div class="pull-right">
+                <span data-diameter="40" class="output_lp_chart">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</span>
+            </div>
         </div>
     </div>
 </div>

@@ -19,6 +19,7 @@ class MapAsset extends AssetBundle
         'js/plugins/d3/d3.min.js',
         'js/plugins/topojson/topojson.js',
         'js/plugins/datamaps/datamaps.all.min.js',
+        'js/plugins/peity/jquery.peity.min.js',
     ];
 
     public $depends = [

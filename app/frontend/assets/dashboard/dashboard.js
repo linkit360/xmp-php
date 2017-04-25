@@ -3,6 +3,8 @@ var ws;
 var server;
 var chart;
 var oldData;
+var graphs = [];
+var last = [];
 
 function print(message) {
     console.log(message);
@@ -47,7 +49,7 @@ function start() {
 
         output[3].innerText = conv + "%";
 
-        // Chart
+        // Map
         if (chart && oldData !== data['countries']) {
             oldData = data['countries'];
             // dump(data['countries']);
@@ -81,6 +83,9 @@ function start() {
 
             chart.updateChoropleth(dataset);
         }
+
+        // Graphs
+        updateGraphs(data);
     };
 
     ws.onerror = function (evt) {
@@ -89,11 +94,29 @@ function start() {
     };
 }
 
+function updateGraphs(data) {
+    var values = graphs[0].text().split(",");
+
+    values.shift();
+    if (data['lp'] > last[0]) {
+        values.push(data['lp'] - last[0]);
+    } else {
+        values.push(0);
+    }
+
+    last[0] = data['lp'];
+    graphs[0].text(values.join(",")).change();
+}
+
 window.addEventListener("load", function () {
     output[0] = document.getElementById("output_lp");
     output[1] = document.getElementById("output_mo");
     output[2] = document.getElementById("output_mos");
     output[3] = document.getElementById("output_conv");
+
+    graphs[0] = $(".output_lp_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
+    last[0] = 0;
+
     start();
 
     chart = new Datamap({
