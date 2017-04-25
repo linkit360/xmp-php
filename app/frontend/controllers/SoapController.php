@@ -19,7 +19,7 @@ class SoapController extends Controller
         return parent::beforeAction($action);
     }
 
-    public function actionServer()
+    public function actionIndex()
     {
         $server = new SoapServer(
             __DIR__ . '/../../GetSubInfo.wsdl',
@@ -249,8 +249,8 @@ class SoapController extends Controller
             [
 //                'soap_version' => SOAP_1_2,
                 'soap_version' => SOAP_1_1,
-                'location' => 'http://' . $_SERVER['SERVER_ADDR'] . ':8080/soap/server',
-                'uri' => 'http://' . $_SERVER['SERVER_ADDR'] . ':8080/soap/server',
+                'location' => 'http://' . $_SERVER['SERVER_ADDR'] . ':8080/soap/index',
+                'uri' => 'http://' . $_SERVER['SERVER_ADDR'] . ':8080/soap/index',
                 'cache_wsdl' => WSDL_CACHE_NONE,
                 'trace' => true,
                 'exceptions' => true,
@@ -275,9 +275,11 @@ class SoapController extends Controller
 //        dump($client->__getFunctions());
 
 
-        dump($client->GetSubInfo($obj));
+        print_r($client->GetSubInfo($obj));
 
-
+        print_r(
+            $client->__getLastResponse()
+        );
         die;
 
         $client = new nusoap_client('http://172.18.0.4:8080/soap/server');

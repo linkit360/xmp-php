@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-                   xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                   xmlns:sch="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:ns1="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
     <SOAP-ENV:Body>
-        <ns3008:GetSubInfo xmlns:ns3008="sch">
-            <Header>
-                <Username xsi:type="xsd:string">slypee_mod</Username>
-                <Password xsi:type="xsd:string">Slyp33mOb1423!</Password>
-            </Header>
-        </ns3008:GetSubInfo>
+        <ns1:SubInfoOut>
+            <ns1:Status>OK</ns1:Status>
+            <ns1:Attrib1/>
+            <ns1:Attrib2/>
+            <ns1:Attrib3/>
+            <ns1:Attrib4/>
+            <ns1:AttribList>
+                <ns1:AttribElement>
+                    <ns1:Name>ServiceName</ns1:Name>
+                    <ns1:Value>Slypee</ns1:Value>
+                </ns1:AttribElement>
+            </ns1:AttribList>
+        </ns1:SubInfoOut>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
