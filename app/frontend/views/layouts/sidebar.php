@@ -46,7 +46,7 @@ if (in_array('campaignsManage', $permissions)) {
     ];
 }
 
-if (in_array('ContentManage', $permissions)) {
+if (in_array('contentManage', $permissions)) {
     $menu[$group]['items'][] = [
         'name' => 'Content Management',
         'url' => 'content/index',
@@ -93,9 +93,7 @@ if (in_array('logsView', $permissions)) {
         'name' => 'Transactions Logs',
         'url' => 'main/transactions',
     ];
-}
 
-if (in_array('logsView', $permissions)) {
     $menu[$group]['items'][] = [
         'name' => 'Actions Logs',
         'url' => 'main/logs',
