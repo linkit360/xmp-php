@@ -35,6 +35,10 @@ $this->registerJs('server = "ws://' . $_SERVER['HTTP_HOST'] . ':3000/echo";');
             </h1>
 
             Total MO
+
+            <div class="pull-right">
+                <span data-diameter="40" class="output_mo_chart">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</span>
+            </div>
         </div>
     </div>
 </div>
@@ -47,6 +51,10 @@ $this->registerJs('server = "ws://' . $_SERVER['HTTP_HOST'] . ':3000/echo";');
             </h1>
 
             Success MO
+
+            <div class="pull-right">
+                <span data-diameter="40" class="output_mos_chart">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</span>
+            </div>
         </div>
     </div>
 </div>
@@ -59,6 +67,11 @@ $this->registerJs('server = "ws://' . $_SERVER['HTTP_HOST'] . ':3000/echo";');
             </h1>
 
             Conversion Rate
+
+            <div class="pull-right">
+                <span data-diameter="40"
+                      class="output_conv_chart">0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</span>
+            </div>
         </div>
     </div>
 </div>

@@ -31,11 +31,6 @@ function start() {
 
     ws.onmessage = function (evt) {
         var data = JSON.parse(evt.data);
-        // dump(data);
-
-        // $.each(data['logs'], function (index, value) {
-        //     $("#logs").append("<div>" + value + "</div>");
-        // });
 
         // Widgets
         output[0].innerText = formatNumber(data['lp']);
@@ -52,7 +47,6 @@ function start() {
         // Map
         if (chart && oldData !== data['countries']) {
             oldData = data['countries'];
-            // dump(data['countries']);
             var series = [];
             $.each(data['countries'], function (index, value) {
                 series.push([
@@ -79,13 +73,14 @@ function start() {
                 dataset[iso] = {numberOfThings: value, fillColor: paletteScale(value)};
             });
 
-            // dump(dataset);
-
             chart.updateChoropleth(dataset);
         }
 
         // Graphs
-        updateGraphs(data);
+        updateGraphs(0, data['lp']);
+        updateGraphs(1, data['mo']);
+        updateGraphs(2, data['mos']);
+        updateGraphs(3, parseInt(conv));
     };
 
     ws.onerror = function (evt) {
@@ -94,18 +89,18 @@ function start() {
     };
 }
 
-function updateGraphs(data) {
-    var values = graphs[0].text().split(",");
+function updateGraphs(key, data) {
+    var values = graphs[key].text().split(",");
 
     values.shift();
-    if (data['lp'] > last[0]) {
-        values.push(data['lp'] - last[0]);
+    if (data > last[key]) {
+        values.push(data - last[key]);
     } else {
         values.push(0);
     }
 
-    last[0] = data['lp'];
-    graphs[0].text(values.join(",")).change();
+    last[key] = data;
+    graphs[key].text(values.join(",")).change();
 }
 
 window.addEventListener("load", function () {
@@ -115,7 +110,13 @@ window.addEventListener("load", function () {
     output[3] = document.getElementById("output_conv");
 
     graphs[0] = $(".output_lp_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
+    graphs[1] = $(".output_mo_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
+    graphs[2] = $(".output_mos_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
+    graphs[3] = $(".output_conv_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
     last[0] = 0;
+    last[1] = 0;
+    last[2] = 0;
+    last[3] = 0;
 
     start();
 
