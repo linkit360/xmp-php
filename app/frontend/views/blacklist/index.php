@@ -17,8 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
 $js = "
     var providers_names = [];
     var providers = [];
-    var operators_select = $('#msisdnblacklist-id_operator');
-    var providers_select = $('#msisdnblacklist-id_provider');
+    var operators_select = $('#blacklistform-id_operator');
+    var providers_select = $('#blacklistform-id_provider');
 ";
 
 $providers = [];

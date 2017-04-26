@@ -6,7 +6,7 @@ var oldData;
 var graphs = [];
 var last = [];
 
-function print(message) {
+function dump(message) {
     console.log(message);
 }
 
@@ -17,11 +17,11 @@ function start() {
     }
 
     ws.onopen = function () {
-        print("Connected");
+        dump("Connected");
     };
 
     ws.onclose = function () {
-        print("Disconnected");
+        dump("Disconnected");
         reset();
         ws = null;
         setTimeout(function () {
@@ -85,7 +85,7 @@ function start() {
 
     ws.onerror = function (evt) {
         reset();
-        print("ERROR: " + evt.data);
+        dump("ERROR: " + evt.data);
     };
 }
 
@@ -166,10 +166,6 @@ function formatNumber(number) {
         x1 = x1.replace(rgx, '$1' + ',' + '$2');
     }
     return x1 + x2;
-}
-
-function dump(data) {
-    console.log(data);
 }
 
 function reset() {
