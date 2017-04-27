@@ -5,6 +5,7 @@ var chart;
 var oldData;
 var graphs = [];
 var last = [];
+var first = [];
 
 function dump(message) {
     console.log(message);
@@ -93,12 +94,13 @@ function updateGraphs(key, data) {
     var values = graphs[key].text().split(",");
 
     values.shift();
-    if (data > last[key]) {
+    if (!first[key] && data > last[key]) {
         values.push(data - last[key]);
     } else {
         values.push(0);
     }
 
+    first[key] = false;
     last[key] = data;
     graphs[key].text(values.join(",")).change();
 }
@@ -113,10 +115,16 @@ window.addEventListener("load", function () {
     graphs[1] = $(".output_mo_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
     graphs[2] = $(".output_mos_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
     graphs[3] = $(".output_conv_chart").peity("line", {fill: '#1ab394', stroke: '#169c81', width: 64});
+
     last[0] = 0;
     last[1] = 0;
     last[2] = 0;
     last[3] = 0;
+
+    first[0] = true;
+    first[1] = true;
+    first[2] = true;
+    first[3] = true;
 
     start();
 
