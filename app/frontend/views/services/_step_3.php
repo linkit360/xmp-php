@@ -60,6 +60,7 @@ $content = $model->getContentForm($opts['country']->id);
                 ]
             );
 
+            /*
             echo $form->field($model, 'status')
                 ->radioList(
                     [
@@ -70,6 +71,7 @@ $content = $model->getContentForm($opts['country']->id);
                         'separator' => '<br/>',
                     ]
                 );
+            */
             ?>
             <div class="text-right">
                 <?php

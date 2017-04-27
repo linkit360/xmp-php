@@ -2,22 +2,21 @@
 
 namespace frontend\controllers;
 
-use common\helpers\FlagsHelper;
-use function dump;
 use const null;
-use const JSON_PRETTY_PRINT;
 use function json_encode;
+use const JSON_PRETTY_PRINT;
 
 use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 
 use common\models\Services;
 use common\models\Countries;
 use common\models\Providers;
+
 use frontend\models\Services\ServicesForm;
 use frontend\models\Services\CheeseForm;
 
@@ -48,36 +47,39 @@ class ServicesController extends Controller
     public function actionIndex()
     {
         $providers = Providers::find()
-            ->select(
-                [
-                    'name',
-                    'id',
-                    'id_country',
-                ]
-            )
-            ->orderBy(
-                [
-                    'name' => SORT_ASC,
-                ]
-            )
+            ->select([
+                'name',
+                'id',
+                'id_country',
+            ])
+            ->orderBy([
+                'name' => SORT_ASC,
+            ])
             ->indexBy('id')
             ->all();
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => Services::find()
-                ->where(
-                    [
-                        'id_user' => Yii::$app->user->id,
-                        'status' => 1,
-                    ]
-                ),
-        ]);
+
+        $countries = Countries::find()
+            ->select([
+                'name',
+                'id',
+            ])
+            ->orderBy([
+                'name' => SORT_ASC,
+            ])
+            ->indexBy('id')
+            ->all();
+
+        $searchModel = new \frontend\models\Search\Services();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render(
             'index',
             [
+                'model' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'providers' => $providers,
+                'countries' => $countries,
             ]
         );
     }

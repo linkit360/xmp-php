@@ -1,13 +1,14 @@
 <?php
-use common\models\Content\Categories;
-use common\models\Content\Publishers;
-use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 use yii\web\JsExpression;
-use kartik\widgets\Select2;
+use yii\widgets\ActiveForm;
 use kartik\daterange\DateRangePicker;
+use kartik\widgets\Select2;
+
+use common\models\Content\Categories;
 use common\models\Content\Content;
+use common\models\Content\Publishers;
 
 /**
  * @var yii\web\View                $this
@@ -160,6 +161,9 @@ ActiveForm::end();
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
                 'columns' => [
+                    [
+                        'class' => \yii\grid\SerialColumn::class,
+                    ],
                     'title',
                     [
                         'attribute' => 'id_category',
