@@ -8,6 +8,7 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Campaigns';
+$this->params['subtitle'] = 'URL and LP manager for services';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="col-lg-6">

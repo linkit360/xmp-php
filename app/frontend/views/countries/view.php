@@ -7,6 +7,7 @@ use yii\widgets\DetailView;
  * @var common\models\Countries $model
  */
 $this->title = $model->name;
+$this->params['subtitle'] = 'Countries management';
 $this->params['breadcrumbs'][] = ['label' => 'Countries', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

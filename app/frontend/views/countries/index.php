@@ -9,6 +9,7 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Countries';
+$this->params['subtitle'] = 'Countries management';
 $this->params['breadcrumbs'][] = $this->title;
 
 $bundle = \common\assets\InspiniaAsset::register($this);

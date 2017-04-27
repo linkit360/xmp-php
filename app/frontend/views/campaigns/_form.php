@@ -7,6 +7,8 @@ use yii\widgets\ActiveForm;
  * @var \frontend\models\Campaigns\CampaignsForm $model
  * @var yii\widgets\ActiveForm                   $form
  */
+
+$this->params['subtitle'] = 'URL and LP manager for services';
 ?>
 <div class="col-lg-6">
     <div class="ibox">

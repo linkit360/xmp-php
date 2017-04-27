@@ -10,6 +10,7 @@ use yii\widgets\ActiveForm;
  * @var common\models\Countries $model
  * @var yii\widgets\ActiveForm  $form
  */
+$this->params['subtitle'] = 'Countries management';
 
 $bundle = \common\assets\InspiniaAsset::register($this);
 $flags = new \common\helpers\FlagsHelper();

@@ -9,6 +9,7 @@ use yii\widgets\DetailView;
  */
 
 $this->title = 'Campaign: ' . $model->title;
+$this->params['subtitle'] = 'URL and LP manager for services';
 $this->params['breadcrumbs'][] = ['label' => 'Campaigns', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

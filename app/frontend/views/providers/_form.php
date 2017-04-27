@@ -9,6 +9,8 @@ use yii\widgets\ActiveForm;
  * @var yii\widgets\ActiveForm  $form
  * @var string                  $title
  */
+
+$this->params['subtitle'] = 'Providers management';
 ?>
 <div class="hpanel col-lg-6">
     <div class="panel-body">

@@ -9,6 +9,7 @@ use yii\grid\GridView;
  * @var \common\models\Providers    $search
  */
 $this->title = 'Providers';
+$this->params['subtitle'] = 'Providers management';
 $this->params['breadcrumbs'][] = $this->title;
 
 $countries = \common\models\Countries::find()

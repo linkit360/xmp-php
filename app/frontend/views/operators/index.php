@@ -7,7 +7,9 @@ use yii\grid\GridView;
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var \common\models\Operators    $search
  */
+
 $this->title = 'Operators';
+$this->params['subtitle'] = 'Operators management';
 $this->params['breadcrumbs'][] = $this->title;
 
 $provs = \common\models\Providers::find()

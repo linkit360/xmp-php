@@ -6,7 +6,9 @@ use yii\widgets\DetailView;
  * @var yii\web\View            $this
  * @var common\models\Operators $model
  */
+
 $this->title = $model->name;
+$this->params['subtitle'] = 'Operators management';
 $this->params['breadcrumbs'][] = ['label' => 'Operators', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
