@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
  * @var frontend\models\TransactionsForm $model
  */
 $this->title = 'Logs';
-$this->params['subtitle'] = 'Transactions';
+$this->params['subtitle'] = 'Billing transaction';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="col-lg-6">

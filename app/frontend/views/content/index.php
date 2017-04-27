@@ -16,6 +16,7 @@ use common\models\Content\Content;
  */
 
 $this->title = 'Content';
+$this->params['subtitle'] = 'Service content';
 $this->params['breadcrumbs'][] = $this->title;
 
 $formData = [];

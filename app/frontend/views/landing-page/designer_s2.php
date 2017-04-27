@@ -27,17 +27,21 @@ $this->registerJs($js);
         </div>
 
         <div class="ibox-content">
-            <a href="<?= Url::to('/landing-page/designer') ?>" class="btn btn-default btn-sm">
-                Back To Template Selection
-            </a><br/>
-
             <label>
-                Title: <input type="text" maxlength="64" id="template_title"/>
+                Title: <br/>
+                <input type="text" maxlength="64" id="template_title"/>
             </label>
+            <br/>
+
+            <a href="<?= Url::to('/landing-page/designer') ?>" class="btn btn-default btn-sm">
+                Back
+            </a>
 
             <button id="template_download" class="btn btn-info btn-sm">
                 Save Template
             </button>
+            <br/>
+            <br/>
 
             <iframe style="width: 100%; height: 800px;" src="<?= $template ?>" id="tmpl_frame" frameborder="0"></iframe>
         </div>

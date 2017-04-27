@@ -10,6 +10,7 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Services';
+$this->params['subtitle'] = 'Billing setting and content';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="col-lg-6">

@@ -1,24 +1,22 @@
-<soapenv:Envelope
-        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:sch="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12"
+<SOAP-ENV:Envelope
+        xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
 >
-    <soapenv:Header/>​
-    <soapenv:Body>
-        <sch:SubInfoIn>
-            <sch:Header>
-                <sch:Username>slypee_mob</sch:Username>
-                <sch:Password>Slyp33M0b1423!</sch:Password>
-            </sch:Header>
-            <sch:RequestID>test-123</sch:RequestID>
-            <sch:Action>SubInfo</sch:Action>
-            <sch:MSISDN>923000854058</sch:MSISDN>
-            <sch:AttribList>
-                <!--1 or more repetitions:-->
-                <sch:AttribElement>
-                    <sch:Name>ServiceName</sch:Name>
-                    <sch:Value>Slypee</sch:Value>
-                </sch:AttribElement>
-            </sch:AttribList>
-        </sch:SubInfoIn>
-    </soapenv:Body>
-</soapenv:Envelope>
+    <SOAP-ENV:Body>
+        <ns0:SubInfoOut
+                xmlns:ns0="http://www.tibco.com/schemas/Mobilink/SharedResources/Schemas/ValueAddedServices/Schema.xsd12">
+            <ns0:Status>OK</ns0:Status>
+            <ns0:Reason/>
+            // In case of KO reason
+            <ns0:Attrib1/>
+            <ns0:Attrib2/>
+            <ns0:Attrib3/>
+            <ns0:Attrib4/>
+            <ns0:AttribList>
+                <ns0:AttribElement>
+                    <ns0:Name>Slypee</ns0:Name>
+                    <ns0:Value>OK</ns0:Value>
+                </ns0:AttribElement>
+            </ns0:AttribList>
+        </ns0:SubInfoOut>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

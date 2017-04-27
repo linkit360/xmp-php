@@ -10,6 +10,7 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Users';
+$this->params['subtitle'] = 'Users and roles management';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="col-lg-12">

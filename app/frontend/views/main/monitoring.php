@@ -3,7 +3,7 @@
  * @var $this yii\web\View
  */
 $this->title = 'Monitoring';
-$this->params['subtitle'] = 'Service map';
+$this->params['subtitle'] = 'Platform infrastructure monitoring';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style type="text/css">

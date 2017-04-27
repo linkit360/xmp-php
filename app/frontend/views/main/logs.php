@@ -15,9 +15,8 @@ use common\models\Users;
  */
 
 $this->title = 'Action Logs';
-$this->params['subtitle'] = 'What our users do';
+$this->params['subtitle'] = 'User actions';
 $this->params['breadcrumbs'][] = $this->title;
-
 
 $formData = [];
 $formData['controllers'] = Logs::find()

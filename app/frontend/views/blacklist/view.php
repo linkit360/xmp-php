@@ -9,6 +9,7 @@ use yii\widgets\DetailView;
  */
 
 $this->title = $model->id;
+$this->params['subtitle'] = 'MSISDN charging blaclist';
 $this->params['breadcrumbs'][] = ['label' => 'Msisdn Blacklist', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

@@ -56,6 +56,7 @@ class Lps extends ActiveRecord
 
     public function beforeValidate()
     {
+        $this->title = strlen($this->title) ? $this->title : "Landing Page";
         $this->id_user = Yii::$app->user->id;
         return parent::beforeValidate();
     }

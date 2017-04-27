@@ -19,6 +19,18 @@ $this->params['subtitle'] = 'Select Country';
         </div>
 
         <div class="ibox-content">
+            <p>
+                <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
+                ?>
+            </p>
+
             <?php
             foreach ($opts['countries'] as $country) {
                 echo Html::tag(

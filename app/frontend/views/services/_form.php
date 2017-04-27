@@ -6,6 +6,7 @@
  * @var yii\widgets\ActiveForm $form
  * @var integer                $stepNow
  */
+$this->params['subtitle'] = 'Billing setting and content';
 
 echo $this->render(
     '_steps',

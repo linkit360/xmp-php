@@ -12,6 +12,7 @@ use yii\widgets\ActiveForm;
  */
 
 $this->title = 'MSISDN Blacklist';
+$this->params['subtitle'] = 'MSISDN charging blaclist';
 $this->params['breadcrumbs'][] = $this->title;
 
 $js = "

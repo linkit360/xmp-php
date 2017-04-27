@@ -13,7 +13,7 @@ use kartik\widgets\Select2;
  * @var yii\widgets\ActiveForm      $form
  */
 
-//$this->registerCss('.file-thumbnail-footer {display: none;}');
+$this->params['subtitle'] = 'Service content';
 ?>
 <div class="col-lg-6">
     <div class="ibox">

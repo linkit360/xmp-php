@@ -10,6 +10,7 @@ use yii\widgets\DetailView;
  */
 
 $this->title = 'Service: ' . $model->title;
+$this->params['subtitle'] = 'Billing setting and content';
 $this->params['breadcrumbs'][] = ['label' => 'Services', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

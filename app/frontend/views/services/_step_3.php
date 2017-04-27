@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
 $this->params['subtitle'] = 'Service Info';
 
-/** @var \frontend\models\ServicesForm $model */
+/** @var \frontend\models\Services\ServicesForm $model */
 $model = $models['model_service'];
 $form = ActiveForm::begin();
 
@@ -29,6 +29,18 @@ $content = $model->getContentForm($opts['country']->id);
         </div>
 
         <div class="ibox-content">
+            <p>
+                <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
+                ?>
+            </p>
+
             <?php
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();

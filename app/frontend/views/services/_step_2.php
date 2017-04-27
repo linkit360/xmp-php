@@ -33,6 +33,18 @@ $providers = Providers::find()
         </div>
 
         <div class="ibox-content">
+            <p>
+                <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
+                ?>
+            </p>
+
             <?php
             foreach ($providers as $provider) {
                 echo Html::tag(

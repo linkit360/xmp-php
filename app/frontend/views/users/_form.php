@@ -7,6 +7,9 @@ use yii\widgets\ActiveForm;
  * @var yii\web\View                     $this
  * @var \frontend\models\Users\UsersForm $model
  */
+
+$this->params['subtitle'] = 'Users and roles management';
+
 $form = ActiveForm::begin();
 ?>
 <div class="col-lg-4">

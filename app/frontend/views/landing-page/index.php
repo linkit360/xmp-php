@@ -9,9 +9,10 @@ use yii\grid\GridView;
  */
 
 $this->title = 'Landing Pages';
+$this->params['subtitle'] = 'LP manager and designer';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="col-lg-12">
+<div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <p>
@@ -22,14 +23,61 @@ $this->params['breadcrumbs'][] = $this->title;
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
                 'columns' => [
-//                'id',
+                    [
+                        'class' => yii\grid\SerialColumn::class,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                    ],
+//                    'id',
 //                'id_user',
                     'title',
-                    'status',
-                    'created_at',
-                    'updated_at',
+//                'status',
+                    [
+                        'attribute' => 'created_at',
+                        'filter' => false,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            return date('Y-m-d H:i:s', strtotime($row['created_at']));
+                        },
+                    ],
+//                    'updated_at',
+//                    ['class' => yii\grid\ActionColumn::class],
 
-                    ['class' => 'yii\grid\ActionColumn'],
+                    [
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            $html = Html::a(
+                                'View',
+                                [
+                                    'view',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-success',
+                                ]
+                            );
+
+                            $html .= '&nbsp;';
+                            $html .= Html::a(
+                                'Delete',
+                                [
+                                    'delete',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-danger',
+                                ]
+                            );
+
+                            return $html;
+                        },
+
+                    ],
                 ],
             ]);
             ?>
