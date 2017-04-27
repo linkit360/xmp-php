@@ -67,23 +67,18 @@ $config = [
 ];
 
 if (defined('YII_ENV') && (YII_ENV === 'development' || YII_ENV === 'testing')) {
-
     $config['components']['assetManager']['forceCopy'] = true;
-
-    $ips = [
-        '*',
-    ];
 
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
-        'class' => 'yii\debug\Module',
-        'allowedIPs' => $ips,
+        'class' => \yii\gii\Module::class,
+        'allowedIPs' => ['*'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
-        'class' => 'yii\gii\Module',
-        'allowedIPs' => $ips,
+        'class' => \yii\gii\Module::class,
+        'allowedIPs' => ['*'],
     ];
 }
 

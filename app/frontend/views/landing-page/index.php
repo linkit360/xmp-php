@@ -1,7 +1,9 @@
 <?php
 
+use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\ActiveForm;
 
 /**
  * @var yii\web\View                $this
@@ -12,6 +14,44 @@ $this->title = 'Landing Pages';
 $this->params['subtitle'] = 'LP manager and designer';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="col-lg-6">
+    <div class="ibox">
+        <div class="ibox-content">
+            <?php
+            $form = ActiveForm::begin([
+                'action' => ['index'],
+                'method' => 'get',
+            ]);
+
+            echo $form->field($model, 'title');
+            echo $form->field($model, 'description');
+            echo $form->field($model, 'date_range')
+                ->widget(
+                    DateRangePicker::classname(),
+                    [
+                        'convertFormat' => true,
+                        'options' => [
+                            'class' => 'form-control',
+                            'placeholder' => 'Date/Time',
+                        ],
+                        'pluginOptions' => [
+                            'timePicker' => true,
+                            'timePickerIncrement' => 15,
+                            'locale' => ['format' => 'Y-m-d h:i A'],
+                        ],
+                    ]
+                );
+
+            echo '<br/>';
+            echo Html::submitButton('Search', ['class' => 'btn btn-primary']);
+            ActiveForm::end();
+            ?>
+        </div>
+    </div>
+</div>
+
+<?= '</div><div class="row">' ?>
+
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">

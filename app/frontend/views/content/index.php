@@ -125,15 +125,18 @@ $form = ActiveForm::begin([
                                 ],
                             ]
                         );
-
-                    echo '<br/>';
-
                     ?>
+                    <br/>
                 </div>
 
                 <div class="col-lg-6">
                     <?php
-                    echo Html::submitButton('Search', ['class' => 'btn btn-primary']);
+                    echo Html::submitButton(
+                        'Search',
+                        [
+                            'class' => 'btn btn-primary',
+                        ]
+                    );
                     ?>
                 </div>
             </div>
@@ -149,45 +152,85 @@ ActiveForm::end();
         <div class="ibox-content">
             <p>
                 <?= Html::a('Add Content', ['create'], ['class' => 'btn btn-success']) ?>
-                <?= Html::a('Categories', '/content-categories/index', ['class' => 'btn btn-info']) ?>
-                <?= Html::a('Publishers', '/content-publishers/index', ['class' => 'btn btn-info']) ?>
+                <?= Html::a('Categories', '/content-categories/index', ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('Publishers', '/content-publishers/index', ['class' => 'btn btn-primary']) ?>
             </p>
 
             <?php
-            echo GridView::widget(
-                [
-                    'dataProvider' => $dataProvider,
-                    'columns' => [
-                        [
-                            'attribute' => 'id_category',
-                            'content' => function ($row) use ($data) {
-                                if (array_key_exists($row['id_category'], $data['cats'])) {
-                                    return $data['cats'][$row['id_category']]->title;
-                                }
-                                return '';
-                            },
-                        ],
-                        [
-                            'attribute' => 'id_publisher',
-                            'content' => function ($row) use ($data) {
-                                if (array_key_exists($row['id_publisher'], $data['pubs'])) {
-                                    return $data['pubs'][$row['id_publisher']]->title;
-                                }
-                                return '';
-                            },
-                        ],
-
-                        'title',
-                        [
-                            'attribute' => 'time_create',
-                            'content' => function ($row) {
-                                return date('Y-m-d H:i:s', strtotime($row['time_create']));
-                            },
-                        ],
-                        ['class' => 'yii\grid\ActionColumn'],
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'columns' => [
+                    'title',
+                    [
+                        'attribute' => 'id_category',
+                        'content' => function ($row) use ($data) {
+                            if (array_key_exists($row['id_category'], $data['cats'])) {
+                                return $data['cats'][$row['id_category']]->title;
+                            }
+                            return '';
+                        },
                     ],
-                ]
-            );
+                    [
+                        'attribute' => 'id_publisher',
+                        'content' => function ($row) use ($data) {
+                            if (array_key_exists($row['id_publisher'], $data['pubs'])) {
+                                return $data['pubs'][$row['id_publisher']]->title;
+                            }
+                            return '';
+                        },
+                    ],
+                    [
+                        'attribute' => 'time_create',
+                        'content' => function ($row) {
+                            return date('Y-m-d H:i:s', strtotime($row['time_create']));
+                        },
+                    ],
+                    [
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            $html = Html::a(
+                                'View',
+                                [
+                                    'view',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-success',
+                                ]
+                            );
+
+                            $html .= '&nbsp;';
+                            $html .= Html::a(
+                                'Update',
+                                [
+                                    'update',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-primary',
+                                ]
+                            );
+
+                            $html .= '&nbsp;';
+                            $html .= Html::a(
+                                'Delete',
+                                [
+                                    'delete',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-danger',
+                                ]
+                            );
+
+                            return $html;
+                        },
+
+                    ],
+                ],
+            ]);
             ?>
         </div>
     </div>

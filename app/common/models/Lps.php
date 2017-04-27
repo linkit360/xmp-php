@@ -31,12 +31,11 @@ class Lps extends ActiveRecord
     public function rules()
     {
         return [
-            [['id_user', 'title'], 'required'],
+            [['id_user'], 'required'],
             [['id', 'id_user'], 'string'],
             [['title'], 'string', 'max' => 64],
             [['description'], 'string', 'max' => 255],
             [['status'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -56,7 +55,6 @@ class Lps extends ActiveRecord
 
     public function beforeValidate()
     {
-        $this->title = strlen($this->title) ? $this->title : "Landing Page";
         $this->id_user = Yii::$app->user->id;
         return parent::beforeValidate();
     }

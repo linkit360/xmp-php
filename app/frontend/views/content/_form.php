@@ -77,6 +77,7 @@ $this->params['subtitle'] = 'Service content';
                     ) . '<br/><br/>';
             }
 
+            /*
             echo $form->field($model, 'status')->radioList(
                 [
                     1 => 'Active',
@@ -86,6 +87,7 @@ $this->params['subtitle'] = 'Service content';
                     'separator' => '<br/>',
                 ]
             );
+            */
 
             echo Html::submitButton(
                 $model->isNewRecord ? 'Create' : 'Update',

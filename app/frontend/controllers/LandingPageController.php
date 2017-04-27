@@ -227,16 +227,12 @@ class LandingPageController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Lps::find()->where([
-                'id_user' => Yii::$app->user->id,
-                'status' => 1,
-            ]),
-        ]);
-
+        $searchModel = new \frontend\models\Search\Lps();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render(
             'index',
             [
+                'model' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]
         );
