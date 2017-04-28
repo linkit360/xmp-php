@@ -16,23 +16,28 @@ use yii\widgets\ActiveForm;
             $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textInput(['maxlength' => true]);
-            echo $form->field($model, 'status')->radioList(
-                [
-                    1 => 'Active',
-                    0 => 'Inactive',
-                ],
-                [
-                    'separator' => '<br/>',
-                ]
-            );
+            ?>
 
-            echo Html::submitButton(
-                $model->isNewRecord ? 'Create' : 'Update',
-                [
-                    'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-                ]
-            );
+            <div class="text-right">
+                <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
 
+                echo Html::submitButton(
+                    $model->isNewRecord ? 'Create' : 'Update',
+                    [
+                        'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                    ]
+                );
+                ?>
+            </div>
+
+            <?php
             ActiveForm::end();
             ?>
         </div>

@@ -24,12 +24,28 @@ $this->params['subtitle'] = 'Operators management';
             echo $form->field($model, 'mcc')->textInput(['maxlength' => true]);
             echo $form->field($model, 'mnc')->textInput(['maxlength' => true]);
             echo $form->field($model, 'code')->textInput();
-            echo Html::submitButton(
-                $model->isNewRecord ? 'Create' : 'Update',
-                [
-                    'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-                ]
-            );
+            ?>
+
+            <div class="text-right">
+                <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
+
+                echo Html::submitButton(
+                    $model->isNewRecord ? 'Create' : 'Update',
+                    [
+                        'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                    ]
+                );
+                ?>
+            </div>
+
+            <?php
             ActiveForm::end();
             ?>
         </div>

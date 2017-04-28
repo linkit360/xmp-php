@@ -27,7 +27,6 @@ foreach ($flags->getAll() as $flag) {
             $form = ActiveForm::begin();
             echo $form->field($model, 'name')->textInput(['maxlength' => true]);
             echo $form->field($model, 'code')->textInput();
-            //            echo $form->field($model, 'status')->textInput();
             echo $form->field($model, 'iso')->textInput(['maxlength' => true]);
             echo $form->field($model, 'priority')->textInput();
             echo $form->field($model, 'flag')->widget(
@@ -38,27 +37,38 @@ foreach ($flags->getAll() as $flag) {
                         'placeholder' => 'Select a flag ...',
                     ],
                     'pluginOptions' => [
-//                        'allowClear' => true,
                         'escapeMarkup' => new JsExpression("function(m) { return m; }"),
                     ],
                 ]
             );
-
 
             echo $form->field($model, 'currency')->textInput()
                 ->hint(
                     'Text or <a href="https://www.w3schools.com/charsets/ref_utf_currency.asp" target="_blank">code</a> like ' .
                     Html::encode('&#8364;')
                 );
+            ?>
 
+            <div class="text-right">
+                <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
 
-            echo Html::submitButton(
-                $model->isNewRecord ? 'Create' : 'Update',
-                [
-                    'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-                ]
-            );
+                echo Html::submitButton(
+                    $model->isNewRecord ? 'Create' : 'Update',
+                    [
+                        'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                    ]
+                );
+                ?>
+            </div>
 
+            <?php
             ActiveForm::end();
             ?>
         </div>

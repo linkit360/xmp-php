@@ -18,12 +18,28 @@ $this->params['subtitle'] = 'Providers management';
         $form = ActiveForm::begin();
         echo $form->field($model, 'name')->textInput(['maxlength' => true]);
         echo $form->field($model, 'id_country')->dropDownList($model->getCountries());
-        echo Html::submitButton(
-            $model->isNewRecord ? 'Create' : 'Update',
-            [
-                'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-            ]
-        );
+        ?>
+
+        <div class="text-right">
+            <?php
+            echo Html::a(
+                'Back',
+                ['index'],
+                [
+                    'class' => 'btn btn-default',
+                ]
+            );
+
+            echo Html::submitButton(
+                $model->isNewRecord ? 'Create' : 'Update',
+                [
+                    'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                ]
+            );
+            ?>
+        </div>
+
+        <?php
         ActiveForm::end();
         ?>
     </div>

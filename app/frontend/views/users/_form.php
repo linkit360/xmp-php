@@ -34,13 +34,26 @@ $form = ActiveForm::begin();
                 'label' => 'Ask new password on login',
             ]);
 
-            echo Html::submitButton(
-                $model->isNewRecord ? 'Create' : 'Update',
-                [
-                    'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-                ]
-            );
             ?>
+
+            <div class="text-right">
+                <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
+
+                echo Html::submitButton(
+                    $model->isNewRecord ? 'Create' : 'Update',
+                    [
+                        'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                    ]
+                );
+                ?>
+            </div>
         </div>
     </div>
 </div>

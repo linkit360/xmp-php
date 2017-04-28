@@ -25,6 +25,14 @@ $this->params['subtitle'] = 'URL and LP manager for services';
 
             <div class="text-right">
                 <?php
+                echo Html::a(
+                    'Back',
+                    ['index'],
+                    [
+                        'class' => 'btn btn-default',
+                    ]
+                );
+
                 echo Html::submitButton(
                     'Create',
                     [
