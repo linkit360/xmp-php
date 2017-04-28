@@ -78,7 +78,7 @@ class BlacklistController extends Controller
     public function actionCreate()
     {
         $model = new MsisdnBlacklist();
-        $model->load(Yii::$app->request->post());
+        $model->load(Yii::$app->request->post(), 'BlacklistForm');
         $model->save();
 
         return $this->redirect(['index']);
