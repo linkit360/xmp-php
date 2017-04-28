@@ -45,8 +45,49 @@ $countries = \common\models\Countries::find()
                             return $countries[$row['id_country']]['name'];
                         },
                     ],
+                    [
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            $html = Html::a(
+                                'View',
+                                [
+                                    'view',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-success',
+                                ]
+                            );
 
-                    ['class' => 'yii\grid\ActionColumn'],
+                            $html .= '&nbsp;';
+                            $html .= Html::a(
+                                'Update',
+                                [
+                                    'update',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-primary',
+                                ]
+                            );
+
+                            $html .= '&nbsp;';
+                            $html .= Html::a(
+                                'Delete',
+                                [
+                                    'delete',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-danger',
+                                ]
+                            );
+
+                            return $html;
+                        },
+                    ],
                 ],
             ]);
             ?>

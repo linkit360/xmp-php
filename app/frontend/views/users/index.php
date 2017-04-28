@@ -39,15 +39,67 @@ $this->params['breadcrumbs'][] = $this->title;
                     'email:email',
                     [
                         'attribute' => 'created_at',
-                        'format' => 'datetime',
                         'filter' => false,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($data) {
+                            return date('Y-m-d H:i:s', $data['created_at']);
+                        },
                     ],
                     [
                         'attribute' => 'updated_at',
-                        'format' => 'datetime',
                         'filter' => false,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($data) {
+                            return date('Y-m-d H:i:s', $data['updated_at']);
+                        },
                     ],
-                    ['class' => 'yii\grid\ActionColumn'],
+                    [
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            $html = Html::a(
+                                'View',
+                                [
+                                    'view',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-success',
+                                ]
+                            );
+
+                            $html .= '&nbsp;';
+                            $html .= Html::a(
+                                'Update',
+                                [
+                                    'update',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-primary',
+                                ]
+                            );
+
+                            $html .= '&nbsp;';
+                            $html .= Html::a(
+                                'Delete',
+                                [
+                                    'delete',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-danger',
+                                ]
+                            );
+
+                            return $html;
+                        },
+                    ],
                 ],
             ]);
             ?>
