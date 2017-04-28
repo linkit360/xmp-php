@@ -14,6 +14,7 @@ use kartik\widgets\Select2;
  * @var array                       $countries
  */
 
+
 $this->title = 'Services';
 $this->params['subtitle'] = 'Billing setting and content';
 $this->params['breadcrumbs'][] = $this->title;
@@ -28,6 +29,19 @@ $this->params['breadcrumbs'][] = $this->title;
             ]);
             echo $form->field($model, 'title');
             echo $form->field($model, 'description');
+            echo $form->field($model, 'id_country')->widget(
+                Select2::classname(),
+                [
+                    'data' => \yii\helpers\ArrayHelper::map($countries, 'id', 'name'),
+                    'options' => [
+                        'placeholder' => 'Country',
+                    ],
+                    'pluginOptions' => [
+                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
+                    ],
+                ]
+            );
+
             echo $form->field($model, 'id_provider')->widget(
                 Select2::classname(),
                 [

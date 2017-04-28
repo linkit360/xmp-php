@@ -2,6 +2,9 @@
 
 namespace frontend\models\Search;
 
+use function array_keys;
+use function array_merge_recursive;
+use common\models\Providers;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -13,6 +16,7 @@ use common\models\Services as ServicesModel;
 class Services extends ServicesModel
 {
     public $date_range;
+    public $id_country;
 
     /**
      * @inheritdoc
@@ -26,6 +30,7 @@ class Services extends ServicesModel
                     'description',
                     'id_service',
                     'id_content',
+                    'id_country',
                     'service_opts',
                     'date_range',
                 ],
@@ -39,6 +44,17 @@ class Services extends ServicesModel
                 'integer',
             ],
         ];
+    }
+
+
+    public function attributeLabels()
+    {
+        return array_merge(
+            parent::attributeLabels(),
+            [
+                'id_country' => 'Country',
+            ]
+        );
     }
 
     /**
@@ -75,6 +91,25 @@ class Services extends ServicesModel
             return $dataProvider;
         }
 
+        if ($this->id_country) {
+            $prov = Providers::find()
+                ->select('id')
+                ->where([
+                    'id_country' => $this->id_country,
+                ])
+                ->indexBy('id')
+                ->asArray()
+                ->all();
+
+            $query->andFilterWhere([
+                'id_provider' => array_keys($prov),
+            ]);
+        } else {
+            $query->andFilterWhere([
+                'id_provider' => $this->id_provider,
+            ]);
+        }
+
         // grid filtering conditions
         if ($this->date_range) {
             $time = explode(' - ', $this->date_range);
@@ -93,7 +128,6 @@ class Services extends ServicesModel
         }
 
         $query->andFilterWhere([
-            'id_provider' => $this->id_provider,
             'id_service' => $this->id_service,
             'id_content' => $this->id_content,
             'id_user' => Yii::$app->user->id,

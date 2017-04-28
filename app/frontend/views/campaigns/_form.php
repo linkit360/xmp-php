@@ -21,23 +21,20 @@ $this->params['subtitle'] = 'URL and LP manager for services';
             echo $form->field($model, 'id_operator')->dropDownList($model->getOperators());
             echo $form->field($model, 'id_service')->dropDownList($model->getServices());
             echo $form->field($model, 'id_lp')->dropDownList($model->getLps());
-            echo $form->field($model, 'status')->radioList(
-                [
-                    1 => 'Active',
-                    0 => 'Inactive',
-                ],
-                [
-                    'separator' => '<br/>',
-                ]
-            );
+            ?>
 
-            echo Html::submitButton(
-                'Create',
-                [
-                    'class' => 'btn btn-success',
-                ]
-            );
+            <div class="text-right">
+                <?php
+                echo Html::submitButton(
+                    'Create',
+                    [
+                        'class' => 'btn btn-success',
+                    ]
+                );
+                ?>
+            </div>
 
+            <?php
             ActiveForm::end();
             ?>
         </div>
