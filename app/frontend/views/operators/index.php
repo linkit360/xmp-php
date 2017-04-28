@@ -12,6 +12,9 @@ $this->title = 'Operators';
 $this->params['subtitle'] = 'Operators management';
 $this->params['breadcrumbs'][] = $this->title;
 
+$helper = new \common\helpers\ModalHelper();
+$helper->modalDelete($this);
+
 $provs = \common\models\Providers::find()
     ->indexBy('id')
     ->asArray()
@@ -74,14 +77,13 @@ $provs = \common\models\Providers::find()
                             );
 
                             $html .= '&nbsp;';
-                            $html .= Html::a(
+                            $html .= Html::button(
                                 'Delete',
                                 [
-                                    'delete',
-                                    'id' => $row['id'],
-                                ],
-                                [
                                     'class' => 'btn btn-xs btn-danger',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalDelete',
+                                    'data-rowid' => $row['id'],
                                 ]
                             );
 

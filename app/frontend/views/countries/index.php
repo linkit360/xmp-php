@@ -12,6 +12,9 @@ $this->title = 'Countries';
 $this->params['subtitle'] = 'Countries management';
 $this->params['breadcrumbs'][] = $this->title;
 
+$helper = new \common\helpers\ModalHelper();
+$helper->modalDelete($this);
+
 $bundle = \common\assets\InspiniaAsset::register($this);
 ?>
 <div class="col-lg-4">
@@ -69,14 +72,13 @@ $bundle = \common\assets\InspiniaAsset::register($this);
                             );
 
                             $html .= '&nbsp;';
-                            $html .= Html::a(
+                            $html .= Html::button(
                                 'Delete',
                                 [
-                                    'delete',
-                                    'id' => $row['id'],
-                                ],
-                                [
                                     'class' => 'btn btn-xs btn-danger',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalDelete',
+                                    'data-rowid' => $row['id'],
                                 ]
                             );
 

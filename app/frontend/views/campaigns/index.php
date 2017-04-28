@@ -1,4 +1,5 @@
 <?php
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
@@ -11,6 +12,21 @@ use yii\widgets\ActiveForm;
 $this->title = 'Campaigns';
 $this->params['subtitle'] = 'URL and LP manager for services';
 $this->params['breadcrumbs'][] = $this->title;
+
+$formData = [];
+$formData['id_operator'] = \common\models\Operators::find()
+    ->select([
+        'name',
+        'id',
+    ])
+    ->where([
+        'status' => 1,
+    ])
+    ->indexBy('id')
+    ->column();
+
+$helper = new \common\helpers\ModalHelper();
+$helper->modalDelete($this);
 ?>
 <div class="col-lg-6">
     <div class="ibox">
@@ -21,9 +37,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'get',
             ]);
 
-            echo $form->field($model, 'id_service');
-            echo $form->field($model, 'id_operator');
-            echo $form->field($model, 'id_lp');
+            echo $form->field($model, 'id_operator')->widget(
+                Select2::classname(),
+                [
+                    'data' => $formData['id_operator'],
+                    'options' => [
+                        'placeholder' => 'Operator',
+                    ],
+                ]
+            );
+
             echo $form->field($model, 'title');
             echo $form->field($model, 'description');
             ?>
@@ -71,6 +94,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'title',
                     [
+                        'attribute' => 'id_operator',
+                        'content' => function ($row) use ($formData) {
+                            return $formData['id_operator'][$row['id_operator']];
+                        },
+                    ],
+                    [
                         'attribute' => 'created_at',
                         'contentOptions' => [
                             'style' => 'width: 1%; white-space: nowrap;',
@@ -117,14 +146,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             );
 
                             $html .= '&nbsp;';
-                            $html .= Html::a(
+                            $html .= Html::button(
                                 'Delete',
                                 [
-                                    'delete',
-                                    'id' => $row['id'],
-                                ],
-                                [
                                     'class' => 'btn btn-xs btn-danger',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalDelete',
+                                    'data-rowid' => $row['id'],
                                 ]
                             );
 

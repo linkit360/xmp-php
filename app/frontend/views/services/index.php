@@ -14,10 +14,12 @@ use kartik\widgets\Select2;
  * @var array                       $countries
  */
 
-
 $this->title = 'Services';
 $this->params['subtitle'] = 'Billing setting and content';
 $this->params['breadcrumbs'][] = $this->title;
+
+$helper = new \common\helpers\ModalHelper();
+$helper->modalDelete($this);
 ?>
 <div class="col-lg-6">
     <div class="ibox">
@@ -151,14 +153,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             );
 
                             $html .= '&nbsp;';
-                            $html .= Html::a(
+                            $html .= Html::button(
                                 'Delete',
                                 [
-                                    'delete',
-                                    'id' => $row['id'],
-                                ],
-                                [
                                     'class' => 'btn btn-xs btn-danger',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalDelete',
+                                    'data-rowid' => $row['id'],
                                 ]
                             );
 

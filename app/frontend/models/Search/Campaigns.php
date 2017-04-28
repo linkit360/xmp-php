@@ -80,14 +80,11 @@ class Campaigns extends CampaignsModel
         // grid filtering conditions
         $query->andFilterWhere([
             'id_operator' => $this->id_operator,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'status' => 1,
         ]);
 
         $query
-//            ->andFilterWhere(['like', 'id', $this->id])
-//            ->andFilterWhere(['like', 'id_user', $this->id_user])
+            ->andFilterWhere(['id_user' => Yii::$app->user->id])
             ->andFilterWhere(['like', 'id_service', $this->id_service])
             ->andFilterWhere(['like', 'id_lp', $this->id_lp])
             ->andFilterWhere(['like', 'title', $this->title])

@@ -10,6 +10,9 @@ use yii\grid\GridView;
 
 $this->title = 'Categories';
 $this->params['breadcrumbs'][] = $this->title;
+
+$helper = new \common\helpers\ModalHelper();
+$helper->modalDelete($this);
 ?>
 <div class="col-lg-6">
     <div class="ibox">
@@ -36,7 +39,48 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return '<i class="fa ' . $row['icon'] . '" aria-hidden="true"></i>&nbsp;' . $row['title'];
                             },
                         ],
-                        ['class' => 'yii\grid\ActionColumn'],
+                        [
+                            'contentOptions' => [
+                                'style' => 'width: 1%; white-space: nowrap;',
+                            ],
+                            'content' => function ($row) {
+                                $html = Html::a(
+                                    'View',
+                                    [
+                                        'view',
+                                        'id' => $row['id'],
+                                    ],
+                                    [
+                                        'class' => 'btn btn-xs btn-success',
+                                    ]
+                                );
+
+                                $html .= '&nbsp;';
+                                $html .= Html::a(
+                                    'Update',
+                                    [
+                                        'update',
+                                        'id' => $row['id'],
+                                    ],
+                                    [
+                                        'class' => 'btn btn-xs btn-primary',
+                                    ]
+                                );
+
+                                $html .= '&nbsp;';
+                                $html .= Html::button(
+                                    'Delete',
+                                    [
+                                        'class' => 'btn btn-xs btn-danger',
+                                        'data-toggle' => 'modal',
+                                        'data-target' => '#modalDelete',
+                                        'data-rowid' => $row['id'],
+                                    ]
+                                );
+
+                                return $html;
+                            },
+                        ],
                     ],
                 ]
             );

@@ -20,6 +20,9 @@ $this->title = 'Content';
 $this->params['subtitle'] = 'Service content';
 $this->params['breadcrumbs'][] = $this->title;
 
+$helper = new \common\helpers\ModalHelper();
+$helper->modalDelete($this);
+
 $formData = [];
 $formData['id_category'] = Content::find()
     ->select('id_category')
@@ -218,14 +221,13 @@ ActiveForm::end();
                             );
 
                             $html .= '&nbsp;';
-                            $html .= Html::a(
+                            $html .= Html::button(
                                 'Delete',
                                 [
-                                    'delete',
-                                    'id' => $row['id'],
-                                ],
-                                [
                                     'class' => 'btn btn-xs btn-danger',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalDelete',
+                                    'data-rowid' => $row['id'],
                                 ]
                             );
 

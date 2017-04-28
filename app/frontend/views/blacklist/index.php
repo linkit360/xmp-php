@@ -15,6 +15,9 @@ $this->title = 'MSISDN Blacklist';
 $this->params['subtitle'] = 'MSISDN charging blaclist';
 $this->params['breadcrumbs'][] = $this->title;
 
+$helper = new \common\helpers\ModalHelper();
+$helper->modalDelete($this);
+
 $js = "
     var providers_names = [];
     var providers = [];
@@ -177,14 +180,13 @@ $this->registerJs('load_operators();', View::POS_READY);
                             );
 
                             $html .= '&nbsp;';
-                            $html .= Html::a(
+                            $html .= Html::button(
                                 'Delete',
                                 [
-                                    'delete',
-                                    'id' => $row['id'],
-                                ],
-                                [
                                     'class' => 'btn btn-xs btn-danger',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalDelete',
+                                    'data-rowid' => $row['id'],
                                 ]
                             );
 
