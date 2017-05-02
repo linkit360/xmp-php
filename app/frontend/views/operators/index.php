@@ -44,6 +44,9 @@ $provs = \common\models\Providers::find()
                     [
                         'attribute' => 'created_at',
                         'filter' => false,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
                         'content' => function ($row) {
                             return date('Y-m-d H:i:s', strtotime($row['created_at']));
                         },

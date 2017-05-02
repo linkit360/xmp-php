@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Migrations
-php /app/php/yii migrate/up --interactive=0
+php /app/yii migrate/up --interactive=0
 if [ $? != 0 ]; then
     printf "\n\n FAIL \n\n"
     exit 1
