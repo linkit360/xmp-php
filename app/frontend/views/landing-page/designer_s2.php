@@ -14,9 +14,14 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['breadcrumbs'][] = 'Step 2';
 
 $js = <<<JS
-    $("#template_download").click(function () {
-        document.getElementById('tmpl_frame').contentWindow.save($('#template_title').val());
-    });
+$("#template_download").click(function () {
+    var title = $('#template_title').val();
+    if (title !== '') {
+        document.getElementById('tmpl_frame').contentWindow.save(title);
+    } else {
+        alert('Please add title.');
+    }
+});
 JS;
 $this->registerJs($js);
 ?>
