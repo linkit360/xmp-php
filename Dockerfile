@@ -40,14 +40,9 @@ RUN cp /config/.bashrc /home/docker
 RUN mv /config/.bashrc /root
 
 # App
-RUN mkdir -p /app/assets
 RUN mkdir -p /app/common
 RUN mkdir -p /app/console
 RUN mkdir -p /app/frontend
-
-# assets for nginx
-RUN touch /app/assets/index.php
-RUN chown -R 1000:1000 /app/assets && chmod -R 0700 /app/assets
 
 # common
 COPY app/codeception.yml /app
