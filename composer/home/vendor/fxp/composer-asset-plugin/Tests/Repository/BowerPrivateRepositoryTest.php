@@ -24,6 +24,22 @@ use Fxp\Composer\AssetPlugin\Repository\BowerPrivateRepository;
 class BowerPrivateRepositoryTest extends AbstractAssetsRepositoryTest
 {
     /**
+     * @expectedException \Fxp\Composer\AssetPlugin\Exception\InvalidCreateRepositoryException
+     * @expectedExceptionMessage The "repository.url" parameter of "existing" bower asset package must be present for
+     *                           create a VCS Repository
+     */
+    public function testWhatProvidesWithInvalidPrivateUrl()
+    {
+        $name = $this->getType() . '-asset/existing';
+        $rfs = $this->replaceRegistryRfsByMock();
+        $rfs->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(json_encode([])));
+
+        $this->registry->whatProvides($this->pool, $name);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getType()
@@ -69,20 +85,5 @@ class BowerPrivateRepositoryTest extends AbstractAssetsRepositoryTest
         return array(
             'private-registry-url' => 'http://foo.tld',
         );
-    }
-
-    /**
-     * @expectedException \Fxp\Composer\AssetPlugin\Exception\InvalidCreateRepositoryException
-     * @expectedExceptionMessage The "repository.url" parameter of "existing" bower asset package must be present for create a VCS Repository
-     */
-    public function testWhatProvidesWithInvalidPrivateUrl()
-    {
-        $name = $this->getType().'-asset/existing';
-        $rfs = $this->replaceRegistryRfsByMock();
-        $rfs->expects($this->any())
-            ->method('getContents')
-            ->will($this->returnValue(json_encode(array())));
-
-        $this->registry->whatProvides($this->pool, $name);
     }
 }

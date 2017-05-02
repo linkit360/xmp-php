@@ -9,15 +9,6 @@ class PrefetcherTest extends \PHPUnit_Framework_TestCase
     private $iop;
     private $configp;
 
-    protected function setUp()
-    {
-        $this->iop = $this->prophesize('Composer\IO\IOInterface');
-        $this->configp = $configp = $this->prophesize('Composer\Config');
-        $configp->get('github-domains')->willReturn(array('github.com'));
-        $configp->get('gitlab-domains')->willReturn(array('gitlab.com'));
-        $configp->get('cache-files-dir')->willReturn(sys_get_temp_dir());
-    }
-
     public function testFetchAllOnFailure()
     {
         $reqp = $this->prophesize('Hirak\Prestissimo\CopyRequest');
@@ -57,14 +48,6 @@ class PrefetcherTest extends \PHPUnit_Framework_TestCase
         $fetcher->fetchAllFromOperations($this->iop->reveal(), $this->configp->reveal(), array($opp->reveal()));
     }
 
-    private function createProphecies()
-    {
-        $opp = $this->prophesize('Composer\DependencyResolver\Operation\InstallOperation');
-        $opp->getJobType()->willReturn('install');
-        $pp = $this->prophesize('Composer\Package\PackageInterface');
-        return array($opp, $pp);
-    }
-
     public function testFetchAllWithInstallOperation()
     {
         list($opp, $pp) = $this->createProphecies();
@@ -98,5 +81,22 @@ class PrefetcherTest extends \PHPUnit_Framework_TestCase
         $fetcher->fetchAllFromOperations($this->iop->reveal(), $this->configp->reveal(), array($opp->reveal()));
         fclose($fp);
         unlink($path);
+    }
+
+    protected function setUp()
+    {
+        $this->iop = $this->prophesize('Composer\IO\IOInterface');
+        $this->configp = $configp = $this->prophesize('Composer\Config');
+        $configp->get('github-domains')->willReturn(['github.com']);
+        $configp->get('gitlab-domains')->willReturn(['gitlab.com']);
+        $configp->get('cache-files-dir')->willReturn(sys_get_temp_dir());
+    }
+
+    private function createProphecies()
+    {
+        $opp = $this->prophesize('Composer\DependencyResolver\Operation\InstallOperation');
+        $opp->getJobType()->willReturn('install');
+        $pp = $this->prophesize('Composer\Package\PackageInterface');
+        return [$opp, $pp];
     }
 }

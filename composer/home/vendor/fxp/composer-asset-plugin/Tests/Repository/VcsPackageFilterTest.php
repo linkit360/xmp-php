@@ -59,43 +59,6 @@ class VcsPackageFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected $filter;
 
-    protected function setUp()
-    {
-        $this->composer = $this->getMockBuilder('Composer\Composer')->disableOriginalConstructor()->getMock();
-        $this->package = $this->getMockBuilder('Composer\Package\RootPackageInterface')->getMock();
-        $this->assetType = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Type\AssetTypeInterface')->getMock();
-
-        $versionConverter = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface')->getMock();
-        $versionConverter->expects($this->any())
-            ->method('convertVersion')
-            ->will($this->returnCallback(function ($value) {
-                return $value;
-            }));
-        $this->assetType->expects($this->any())
-            ->method('getVersionConverter')
-            ->will($this->returnValue($versionConverter));
-
-        $this->installationManager = $this->getMockBuilder('Composer\Installer\InstallationManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->installationManager->expects($this->any())
-            ->method('isPackageInstalled')
-            ->will($this->returnValue(true));
-
-        $this->composer->expects($this->any())
-            ->method('getPackage')
-            ->willReturn($this->package);
-    }
-
-    protected function tearDown()
-    {
-        $this->package = null;
-        $this->installedRepository = null;
-        $this->assetType = null;
-        $this->filter = null;
-    }
-
     public function getDataProvider()
     {
         $configSkipPattern = array('pattern-skip-version' => false);
@@ -599,6 +562,43 @@ class VcsPackageFilterTest extends \PHPUnit_Framework_TestCase
         $this->init($require, $minimumStability, $config);
 
         $this->assertSame($validSkip, $this->filter->skip($this->assetType, $packageName, $version));
+    }
+
+    protected function setUp()
+    {
+        $this->composer = $this->getMockBuilder('Composer\Composer')->disableOriginalConstructor()->getMock();
+        $this->package = $this->getMockBuilder('Composer\Package\RootPackageInterface')->getMock();
+        $this->assetType = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Type\AssetTypeInterface')->getMock();
+
+        $versionConverter = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface')->getMock();
+        $versionConverter->expects($this->any())
+            ->method('convertVersion')
+            ->will($this->returnCallback(function ($value) {
+                return $value;
+            }));
+        $this->assetType->expects($this->any())
+            ->method('getVersionConverter')
+            ->will($this->returnValue($versionConverter));
+
+        $this->installationManager = $this->getMockBuilder('Composer\Installer\InstallationManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->installationManager->expects($this->any())
+            ->method('isPackageInstalled')
+            ->will($this->returnValue(true));
+
+        $this->composer->expects($this->any())
+            ->method('getPackage')
+            ->willReturn($this->package);
+    }
+
+    protected function tearDown()
+    {
+        $this->package = null;
+        $this->installedRepository = null;
+        $this->assetType = null;
+        $this->filter = null;
     }
 
     /**

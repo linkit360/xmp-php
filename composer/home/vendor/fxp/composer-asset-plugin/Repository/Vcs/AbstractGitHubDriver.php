@@ -44,6 +44,26 @@ abstract class AbstractGitHubDriver extends BaseGitHubDriver
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getBranches()
+    {
+        if ($this->gitDriver) {
+            return $this->gitDriver->getBranches();
+        }
+
+        if (null === $this->branches) {
+            $this->branches = [];
+            $resource = $this->getApiUrl() . '/repos/' . $this->owner . '/' . $this->repository . '/git/refs/heads?per_page=100';
+            $branchBlacklist = 'gh-pages' === $this->getRootIdentifier() ? [] : ['gh-pages'];
+
+            $this->doAddBranches($resource, $branchBlacklist);
+        }
+
+        return $this->branches;
+    }
+
+    /**
      * Get the no-api repository option.
      *
      * @return bool
@@ -210,26 +230,6 @@ abstract class AbstractGitHubDriver extends BaseGitHubDriver
     protected function getRemoteContents($url)
     {
         return $this->remoteFilesystem->getContents($this->originUrl, $url, false);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBranches()
-    {
-        if ($this->gitDriver) {
-            return $this->gitDriver->getBranches();
-        }
-
-        if (null === $this->branches) {
-            $this->branches = array();
-            $resource = $this->getApiUrl().'/repos/'.$this->owner.'/'.$this->repository.'/git/refs/heads?per_page=100';
-            $branchBlacklist = 'gh-pages' === $this->getRootIdentifier() ? array() : array('gh-pages');
-
-            $this->doAddBranches($resource, $branchBlacklist);
-        }
-
-        return $this->branches;
     }
 
     /**

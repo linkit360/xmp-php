@@ -7,12 +7,6 @@ class CurlRemoteFilesystemTest extends \PHPUnit_Framework_TestCase
     private $iop;
     private $configp;
 
-    protected function setUp()
-    {
-        $this->iop = $this->prophesize('Composer\IO\IOInterface');
-        $this->configp = $this->prophesize('Composer\Config');
-    }
-
     public function testConstruct()
     {
         $rfs = new CurlRemoteFilesystem(
@@ -27,5 +21,11 @@ class CurlRemoteFilesystemTest extends \PHPUnit_Framework_TestCase
 
         $headers = $rfs->getLastHeaders();
         self::assertInternalType('array', $headers);
+    }
+
+    protected function setUp()
+    {
+        $this->iop = $this->prophesize('Composer\IO\IOInterface');
+        $this->configp = $this->prophesize('Composer\Config');
     }
 }

@@ -22,16 +22,6 @@ use Fxp\Composer\AssetPlugin\Type\AssetTypeInterface;
  */
 class NpmPackageConverterTest extends AbstractPackageConverterTest
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        /* @var AssetTypeInterface $type */
-        $type = $this->type;
-        $this->converter = new NpmPackageConverter($type);
-        $this->asset = $this->loadPackage();
-    }
-
     public function testConvert()
     {
         $composer = $this->converter->convert($this->asset);
@@ -204,6 +194,16 @@ class NpmPackageConverterTest extends AbstractPackageConverterTest
     public function testConvertDist($value, $result)
     {
         $this->assertSame($result, NpmPackageUtil::convertDist($value));
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        /* @var AssetTypeInterface $type */
+        $type = $this->type;
+        $this->converter = new NpmPackageConverter($type);
+        $this->asset = $this->loadPackage();
     }
 
     /**

@@ -16,19 +16,6 @@ class Plugin implements
     CPlugin\PluginInterface,
     EventDispatcher\EventSubscriberInterface
 {
-    /** @var IO\IOInterface */
-    private $io;
-
-    /** @var Composer\Config */
-    private $config;
-
-    /** @var array */
-    private $package;
-    private $cached = false;
-
-    /** @var boolean */
-    private $disabled = false;
-
     private static $pluginClasses = array(
         'BaseRequest',
         'ConfigFacade',
@@ -43,6 +30,25 @@ class Plugin implements
         'Prefetcher',
         'Share',
     );
+    /** @var IO\IOInterface */
+    private $io;
+    /** @var Composer\Config */
+    private $config;
+    /** @var array */
+    private $package;
+    private $cached = false;
+    /** @var boolean */
+    private $disabled = false;
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            CPlugin\PluginEvents::PRE_FILE_DOWNLOAD => 'onPreFileDownload',
+            Installer\InstallerEvents::POST_DEPENDENCIES_SOLVING => [
+                ['onPostDependenciesSolving', PHP_INT_MAX],
+            ],
+        ];
+    }
 
     public function activate(Composer $composer, IO\IOInterface $io)
     {
@@ -79,16 +85,6 @@ class Plugin implements
                 }
             }
         }
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return array(
-            CPlugin\PluginEvents::PRE_FILE_DOWNLOAD => 'onPreFileDownload',
-            Installer\InstallerEvents::POST_DEPENDENCIES_SOLVING => array(
-                array('onPostDependenciesSolving', PHP_INT_MAX),
-            ),
-        );
     }
 
     /**

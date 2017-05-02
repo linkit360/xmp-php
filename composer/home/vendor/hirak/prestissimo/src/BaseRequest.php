@@ -11,22 +11,7 @@ use Composer\IO;
 
 class BaseRequest
 {
-    private $scheme;
-    private $user;
-    private $pass;
-    private $host;
-    private $port;
-    private $path;
-    private $query = array();
-
-    /** @var [string => string] */
-    private $headers = array();
-
-    private $capath;
-    private $cafile;
-
     protected static $defaultCurlOptions = array();
-
     private static $NSS_CIPHERS = array(
         'rsa_3des_sha',
         'rsa_des_sha',
@@ -67,6 +52,17 @@ class BaseRequest
         'ecdhe_ecdsa_aes_128_gcm_sha_256',
         'ecdhe_rsa_aes_128_gcm_sha_256',
     );
+    private $scheme;
+    private $user;
+    private $pass;
+    private $host;
+    private $port;
+    private $path;
+    private $query = [];
+    /** @var [string => string] */
+    private $headers = [];
+    private $capath;
+    private $cafile;
 
     /**
      * enable ECC cipher suites in cURL/NSS
@@ -85,77 +81,12 @@ class BaseRequest
         return $cache = false;
     }
 
-    protected function getProxy($url)
+    private static function ifOr($str, $pre = '', $post = '')
     {
-        if (isset($_SERVER['no_proxy'])) {
-            $pattern = new Util\NoProxyPattern($_SERVER['no_proxy']);
-            if ($pattern->test($url)) {
-                return null;
-            }
+        if ($str) {
+            return $pre . $str . $post;
         }
-
-        // @see https://httpoxy.org/
-        if (!defined('PHP_SAPI') || PHP_SAPI !== 'cli') {
-            return null;
-        }
-
-        foreach (array('https', 'http') as $scheme) {
-            if ($this->scheme === $scheme) {
-                $label = $scheme . '_proxy';
-                foreach (array(strtoupper($label), $label) as $l) {
-                    if (isset($_SERVER[$l])) {
-                        return $_SERVER[$l];
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param $io
-     * @param bool $useRedirector
-     * @param $githubDomains
-     * @param $gitlabDomains
-     */
-    protected function setupAuthentication(IO\IOInterface $io, $useRedirector, array $githubDomains, array $gitlabDomains)
-    {
-        if (preg_match('/\.github\.com$/', $this->host)) {
-            $authKey = 'github.com';
-            if ($useRedirector) {
-                if ($this->host === 'api.github.com' && preg_match('%^/repos(/[^/]+/[^/]+/)zipball(.+)$%', $this->path, $_)) {
-                    $this->host = 'codeload.github.com';
-                    $this->path = $_[1] . 'legacy.zip' . $_[2];
-                }
-            }
-        } else {
-            $authKey = $this->host;
-        }
-        if (!$io->hasAuthentication($authKey)) {
-            if ($this->user || $this->pass) {
-                $io->setAuthentication($authKey, $this->user, $this->pass);
-            } else {
-                return;
-            }
-        }
-
-        $auth = $io->getAuthentication($authKey);
-
-        // is github
-        if (in_array($authKey, $githubDomains) && 'x-oauth-basic' === $auth['password']) {
-            $this->addParam('access_token', $auth['username']);
-            $this->user = $this->pass = null;
-            return;
-        }
-        // is gitlab
-        if (in_array($authKey, $gitlabDomains) && 'oauth2' === $auth['password']) {
-            $this->addHeader('authorization', 'Bearer ' . $auth['username']);
-            $this->user = $this->pass = null;
-            return;
-        }
-        // others, includes bitbucket
-        $this->user = $auth['username'];
-        $this->pass = $auth['password'];
+        return '';
     }
 
     /**
@@ -237,14 +168,6 @@ class BaseRequest
         return $url;
     }
 
-    private static function ifOr($str, $pre = '', $post = '')
-    {
-        if ($str) {
-            return $pre . $str . $post;
-        }
-        return '';
-    }
-
     /**
      * @param string $url
      */
@@ -279,5 +202,84 @@ class BaseRequest
     public function isHTTP()
     {
         return $this->scheme === 'http' || $this->scheme === 'https';
+    }
+
+    protected function getProxy($url)
+    {
+        if (isset($_SERVER['no_proxy'])) {
+            $pattern = new Util\NoProxyPattern($_SERVER['no_proxy']);
+            if ($pattern->test($url)) {
+                return null;
+            }
+        }
+
+        // @see https://httpoxy.org/
+        if (!defined('PHP_SAPI') || PHP_SAPI !== 'cli') {
+            return null;
+        }
+
+        foreach (array('https', 'http') as $scheme) {
+            if ($this->scheme === $scheme) {
+                $label = $scheme . '_proxy';
+                foreach (array(strtoupper($label), $label) as $l) {
+                    if (isset($_SERVER[$l])) {
+                        return $_SERVER[$l];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param      $io
+     * @param bool $useRedirector
+     * @param      $githubDomains
+     * @param      $gitlabDomains
+     */
+    protected function setupAuthentication(
+        IO\IOInterface $io,
+        $useRedirector,
+        array $githubDomains,
+        array $gitlabDomains
+    ) {
+        if (preg_match('/\.github\.com$/', $this->host)) {
+            $authKey = 'github.com';
+            if ($useRedirector) {
+                if ($this->host === 'api.github.com' && preg_match('%^/repos(/[^/]+/[^/]+/)zipball(.+)$%', $this->path,
+                        $_)
+                ) {
+                    $this->host = 'codeload.github.com';
+                    $this->path = $_[1] . 'legacy.zip' . $_[2];
+                }
+            }
+        } else {
+            $authKey = $this->host;
+        }
+        if (!$io->hasAuthentication($authKey)) {
+            if ($this->user || $this->pass) {
+                $io->setAuthentication($authKey, $this->user, $this->pass);
+            } else {
+                return;
+            }
+        }
+
+        $auth = $io->getAuthentication($authKey);
+
+        // is github
+        if (in_array($authKey, $githubDomains) && 'x-oauth-basic' === $auth['password']) {
+            $this->addParam('access_token', $auth['username']);
+            $this->user = $this->pass = null;
+            return;
+        }
+        // is gitlab
+        if (in_array($authKey, $gitlabDomains) && 'oauth2' === $auth['password']) {
+            $this->addHeader('authorization', 'Bearer ' . $auth['username']);
+            $this->user = $this->pass = null;
+            return;
+        }
+        // others, includes bitbucket
+        $this->user = $auth['username'];
+        $this->pass = $auth['password'];
     }
 }

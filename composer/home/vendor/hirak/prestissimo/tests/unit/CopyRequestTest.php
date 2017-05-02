@@ -8,16 +8,6 @@ class CopyRequestTest extends \PHPUnit_Framework_TestCase
     private $iop;
     private $configp;
 
-    protected function setUp()
-    {
-        $this->iop = $this->prophesize('Composer\IO\IOInterface');
-        $this->configp = $configp = $this->prophesize('Composer\Config');
-        $configp->get('capath')->willReturn(null);
-        $configp->get('cafile')->willReturn(null);
-        $configp->get('github-domains')->willReturn(array('github.com'));
-        $configp->get('gitlab-domains')->willReturn(array('gitlab.com'));
-    }
-
     public function testConstruct()
     {
         $tmpfile = tempnam(sys_get_temp_dir(), 'composer_unit_test_');
@@ -124,5 +114,15 @@ class CopyRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey(CURLOPT_PROXY, $req->getCurlOptions());
 
         $_SERVER = $serverBackup;
+    }
+
+    protected function setUp()
+    {
+        $this->iop = $this->prophesize('Composer\IO\IOInterface');
+        $this->configp = $configp = $this->prophesize('Composer\Config');
+        $configp->get('capath')->willReturn(null);
+        $configp->get('cafile')->willReturn(null);
+        $configp->get('github-domains')->willReturn(['github.com']);
+        $configp->get('gitlab-domains')->willReturn(['gitlab.com']);
     }
 }

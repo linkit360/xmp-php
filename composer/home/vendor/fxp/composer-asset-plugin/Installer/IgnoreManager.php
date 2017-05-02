@@ -27,22 +27,18 @@ class IgnoreManager
      * @var string
      */
     protected $installDir;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
     /**
      * @var bool
      */
     protected $enabled;
-
     /**
      * @var bool
      */
     protected $hasPattern;
-
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
     /**
      * @var Finder
      */
@@ -64,6 +60,16 @@ class IgnoreManager
     }
 
     /**
+     * Check if this ignore files manager is enabled.
+     *
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
      * Enable or not this ignore files manager.
      *
      * @param bool $enabled
@@ -75,16 +81,6 @@ class IgnoreManager
         $this->enabled = (bool) $enabled;
 
         return $this;
-    }
-
-    /**
-     * Check if this ignore files manager is enabled.
-     *
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
     }
 
     /**

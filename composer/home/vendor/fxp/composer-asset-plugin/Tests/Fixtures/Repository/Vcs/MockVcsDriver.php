@@ -35,6 +35,14 @@ class MockVcsDriver implements VcsDriverInterface
     /**
      * {@inheritdoc}
      */
+    public static function supports(IOInterface $io, Config $config, $url, $deep = false)
+    {
+        return static::$supported;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function initialize()
     {
         // no action
@@ -115,22 +123,6 @@ class MockVcsDriver implements VcsDriverInterface
     /**
      * {@inheritdoc}
      */
-    public static function supports(IOInterface $io, Config $config, $url, $deep = false)
-    {
-        return static::$supported;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getContents()
-    {
-        return $this->contents;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getFileContent($file, $identifier)
     {
     }
@@ -141,5 +133,13 @@ class MockVcsDriver implements VcsDriverInterface
     public function getChangeDate($identifier)
     {
         return new \DateTime();
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getContents()
+    {
+        return $this->contents;
     }
 }

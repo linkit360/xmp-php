@@ -20,13 +20,6 @@ use Fxp\Composer\AssetPlugin\Type\BowerAssetType;
  */
 class BowerAssetTypeTest extends AbstractAssetTypeTest
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new BowerAssetType($this->packageConverter, $this->versionConverter);
-    }
-
     public function testInformations()
     {
         $this->assertSame('bower', $this->type->getName());
@@ -35,5 +28,12 @@ class BowerAssetTypeTest extends AbstractAssetTypeTest
         $this->assertSame('bower.json', $this->type->getFilename());
         $this->assertSame('bower-asset/foobar', $this->type->formatComposerName('foobar'));
         $this->assertSame('bower-asset/foobar', $this->type->formatComposerName('bower-asset/foobar'));
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->type = new BowerAssetType($this->packageConverter, $this->versionConverter);
     }
 }

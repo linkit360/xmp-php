@@ -65,105 +65,6 @@ class LazyAssetPackageLoaderTest extends \PHPUnit_Framework_TestCase
      */
     protected $assetRepositoryManager;
 
-    protected function setUp()
-    {
-        $this->lazyPackage = $this->getMockBuilder(LazyPackageInterface::class)->getMock();
-        $this->assetType = $this->getMockBuilder(AssetTypeInterface::class)->getMock();
-        $this->loader = $this->getMockBuilder(LoaderInterface::class)->getMock();
-        $this->driver = $this->getMockBuilder(VcsDriverInterface::class)->getMock();
-        $this->assetRepositoryManager = $this->getMockBuilder(AssetRepositoryManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->assetRepositoryManager->expects($this->any())
-            ->method('solveResolutions')
-            ->willReturnCallback(function ($value) {
-                return $value;
-            });
-
-        $this->lazyPackage
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('PACKAGE_NAME'));
-        $this->lazyPackage
-            ->expects($this->any())
-            ->method('getUniqueName')
-            ->will($this->returnValue('PACKAGE_NAME-1.0.0.0'));
-        $this->lazyPackage
-            ->expects($this->any())
-            ->method('getPrettyVersion')
-            ->will($this->returnValue('1.0'));
-        $this->lazyPackage
-            ->expects($this->any())
-            ->method('getVersion')
-            ->will($this->returnValue('1.0.0.0'));
-
-        $versionConverter = $this->getMockBuilder(VersionConverterInterface::class)->getMock();
-        $versionConverter->expects($this->any())
-            ->method('convertVersion')
-            ->will($this->returnValue('VERSION_CONVERTED'));
-        $versionConverter->expects($this->any())
-            ->method('convertRange')
-            ->will($this->returnCallback(function ($value) {
-                return $value;
-            }));
-        $packageConverter = $this->getMockBuilder(PackageConverterInterface::class)->getMock();
-        /* @var LazyPackageInterface $lasyPackage */
-        $lasyPackage = $this->lazyPackage;
-        $packageConverter->expects($this->any())
-            ->method('convert')
-            ->will($this->returnCallback(function ($value) use ($lasyPackage) {
-                $value['version'] = $lasyPackage->getPrettyVersion();
-                $value['version_normalized'] = $lasyPackage->getVersion();
-
-                return $value;
-            }));
-        $this->assetType->expects($this->any())
-            ->method('getComposerVendorName')
-            ->will($this->returnValue('ASSET'));
-        $this->assetType->expects($this->any())
-            ->method('getComposerType')
-            ->will($this->returnValue('ASSET_TYPE'));
-        $this->assetType->expects($this->any())
-            ->method('getFilename')
-            ->will($this->returnValue('ASSET.json'));
-        $this->assetType->expects($this->any())
-            ->method('getVersionConverter')
-            ->will($this->returnValue($versionConverter));
-        $this->assetType->expects($this->any())
-            ->method('getPackageConverter')
-            ->will($this->returnValue($packageConverter));
-
-        $this->driver
-            ->expects($this->any())
-            ->method('getDist')
-            ->will($this->returnCallback(function ($value) {
-                return array(
-                    'type' => 'vcs',
-                    'url' => 'http://foobar.tld/dist/'.$value,
-                );
-            }));
-        $this->driver
-            ->expects($this->any())
-            ->method('getSource')
-            ->will($this->returnCallback(function ($value) {
-                return array(
-                    'type' => 'vcs',
-                    'url' => 'http://foobar.tld/source/'.$value,
-                );
-            }));
-    }
-
-    protected function tearDown()
-    {
-        $this->lazyPackage = null;
-        $this->assetType = null;
-        $this->loader = null;
-        $this->driver = null;
-        $this->io = null;
-        $this->assetRepositoryManager = null;
-        $this->lazyLoader = null;
-    }
-
     /**
      * @expectedException \Fxp\Composer\AssetPlugin\Exception\InvalidArgumentException
      * @expectedExceptionMessage The "assetType" property must be defined
@@ -394,6 +295,105 @@ class LazyAssetPackageLoaderTest extends \PHPUnit_Framework_TestCase
         $packageCache = $this->lazyLoader->load($this->lazyPackage);
         $this->assertFalse($packageCache);
         $this->assertSame($validOutput, $this->io->getTraces());
+    }
+
+    protected function setUp()
+    {
+        $this->lazyPackage = $this->getMockBuilder(LazyPackageInterface::class)->getMock();
+        $this->assetType = $this->getMockBuilder(AssetTypeInterface::class)->getMock();
+        $this->loader = $this->getMockBuilder(LoaderInterface::class)->getMock();
+        $this->driver = $this->getMockBuilder(VcsDriverInterface::class)->getMock();
+        $this->assetRepositoryManager = $this->getMockBuilder(AssetRepositoryManager::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $this->assetRepositoryManager->expects($this->any())
+            ->method('solveResolutions')
+            ->willReturnCallback(function ($value) {
+                return $value;
+            });
+
+        $this->lazyPackage
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('PACKAGE_NAME'));
+        $this->lazyPackage
+            ->expects($this->any())
+            ->method('getUniqueName')
+            ->will($this->returnValue('PACKAGE_NAME-1.0.0.0'));
+        $this->lazyPackage
+            ->expects($this->any())
+            ->method('getPrettyVersion')
+            ->will($this->returnValue('1.0'));
+        $this->lazyPackage
+            ->expects($this->any())
+            ->method('getVersion')
+            ->will($this->returnValue('1.0.0.0'));
+
+        $versionConverter = $this->getMockBuilder(VersionConverterInterface::class)->getMock();
+        $versionConverter->expects($this->any())
+            ->method('convertVersion')
+            ->will($this->returnValue('VERSION_CONVERTED'));
+        $versionConverter->expects($this->any())
+            ->method('convertRange')
+            ->will($this->returnCallback(function ($value) {
+                return $value;
+            }));
+        $packageConverter = $this->getMockBuilder(PackageConverterInterface::class)->getMock();
+        /* @var LazyPackageInterface $lasyPackage */
+        $lasyPackage = $this->lazyPackage;
+        $packageConverter->expects($this->any())
+            ->method('convert')
+            ->will($this->returnCallback(function ($value) use ($lasyPackage) {
+                $value['version'] = $lasyPackage->getPrettyVersion();
+                $value['version_normalized'] = $lasyPackage->getVersion();
+
+                return $value;
+            }));
+        $this->assetType->expects($this->any())
+            ->method('getComposerVendorName')
+            ->will($this->returnValue('ASSET'));
+        $this->assetType->expects($this->any())
+            ->method('getComposerType')
+            ->will($this->returnValue('ASSET_TYPE'));
+        $this->assetType->expects($this->any())
+            ->method('getFilename')
+            ->will($this->returnValue('ASSET.json'));
+        $this->assetType->expects($this->any())
+            ->method('getVersionConverter')
+            ->will($this->returnValue($versionConverter));
+        $this->assetType->expects($this->any())
+            ->method('getPackageConverter')
+            ->will($this->returnValue($packageConverter));
+
+        $this->driver
+            ->expects($this->any())
+            ->method('getDist')
+            ->will($this->returnCallback(function ($value) {
+                return [
+                    'type' => 'vcs',
+                    'url' => 'http://foobar.tld/dist/' . $value,
+                ];
+            }));
+        $this->driver
+            ->expects($this->any())
+            ->method('getSource')
+            ->will($this->returnCallback(function ($value) {
+                return [
+                    'type' => 'vcs',
+                    'url' => 'http://foobar.tld/source/' . $value,
+                ];
+            }));
+    }
+
+    protected function tearDown()
+    {
+        $this->lazyPackage = null;
+        $this->assetType = null;
+        $this->loader = null;
+        $this->driver = null;
+        $this->io = null;
+        $this->assetRepositoryManager = null;
+        $this->lazyLoader = null;
     }
 
     /**

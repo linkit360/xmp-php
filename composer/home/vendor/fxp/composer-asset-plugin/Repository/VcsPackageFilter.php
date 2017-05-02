@@ -93,6 +93,16 @@ class VcsPackageFilter
     }
 
     /**
+     * Check if the filter is enabled.
+     *
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
      * @param bool $enabled
      *
      * @return self
@@ -102,16 +112,6 @@ class VcsPackageFilter
         $this->enabled = (bool) $enabled;
 
         return $this;
-    }
-
-    /**
-     * Check if the filter is enabled.
-     *
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
     }
 
     /**

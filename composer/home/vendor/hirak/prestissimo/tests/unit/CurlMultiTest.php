@@ -6,14 +6,6 @@ class CurlMultiTest extends \PHPUnit_Framework_TestCase
     private $iop;
     private $configp;
 
-    protected function setUp()
-    {
-        $this->iop = $this->prophesize('Composer\IO\IOInterface');
-        $this->configp = $configp = $this->prophesize('Composer\Config');
-        $configp->get('github-domains')->willReturn(array('github.com'));
-        $configp->get('gitlab-domains')->willReturn(array('gitlab.com'));
-    }
-
     public function testRequestSuccess()
     {
         $tmpfile = tmpfile();
@@ -70,5 +62,13 @@ class CurlMultiTest extends \PHPUnit_Framework_TestCase
         rewind($tmpfile);
         $content = stream_get_contents($tmpfile);
         $this->assertEmpty($content);
+    }
+
+    protected function setUp()
+    {
+        $this->iop = $this->prophesize('Composer\IO\IOInterface');
+        $this->configp = $configp = $this->prophesize('Composer\Config');
+        $configp->get('github-domains')->willReturn(['github.com']);
+        $configp->get('gitlab-domains')->willReturn(['gitlab.com']);
     }
 }

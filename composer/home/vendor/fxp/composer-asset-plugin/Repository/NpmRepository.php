@@ -28,6 +28,14 @@ class NpmRepository extends AbstractAssetsRepository
     /**
      * {@inheritdoc}
      */
+    public function search($query, $mode = 0, $type = null)
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getType()
     {
         return 'npm';
@@ -55,14 +63,6 @@ class NpmRepository extends AbstractAssetsRepository
     protected function getSearchUrl()
     {
         return $this->canonicalizeUrl($this->baseUrl.'/-/all');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function search($query, $mode = 0, $type = null)
-    {
-        return array();
     }
 
     /**

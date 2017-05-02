@@ -37,6 +37,14 @@ abstract class AbstractAssetTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected $type;
 
+    public function testConverter()
+    {
+        $this->assertInstanceOf('Fxp\Composer\AssetPlugin\Converter\PackageConverterInterface',
+            $this->type->getPackageConverter());
+        $this->assertInstanceOf('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface',
+            $this->type->getVersionConverter());
+    }
+
     protected function setUp()
     {
         $this->packageConverter = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\PackageConverterInterface')->getMock();
@@ -48,11 +56,5 @@ abstract class AbstractAssetTypeTest extends \PHPUnit_Framework_TestCase
         $this->packageConverter = null;
         $this->versionConverter = null;
         $this->type = null;
-    }
-
-    public function testConverter()
-    {
-        $this->assertInstanceOf('Fxp\Composer\AssetPlugin\Converter\PackageConverterInterface', $this->type->getPackageConverter());
-        $this->assertInstanceOf('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface', $this->type->getVersionConverter());
     }
 }

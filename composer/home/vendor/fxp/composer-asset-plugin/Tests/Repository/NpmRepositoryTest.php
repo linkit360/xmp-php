@@ -24,43 +24,6 @@ use Fxp\Composer\AssetPlugin\Repository\NpmRepository;
  */
 class NpmRepositoryTest extends AbstractAssetsRepositoryTest
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function getType()
-    {
-        return 'npm';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getRegistry(array $repoConfig, IOInterface $io, Config $config, EventDispatcher $eventDispatcher = null)
-    {
-        return new NpmRepository($repoConfig, $io, $config, $eventDispatcher);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getMockPackageForVcsConfig()
-    {
-        return array(
-            'repository' => array(
-                'type' => 'vcs',
-                'url' => 'http://foo.tld',
-            ),
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getMockSearchResult($name = 'mock-package')
-    {
-        return array();
-    }
-
     public function testWhatProvidesWithCamelcasePackageName()
     {
         $name = $this->getType().'-asset/CamelCasePackage';
@@ -138,5 +101,46 @@ class NpmRepositoryTest extends AbstractAssetsRepositoryTest
         $this->assertCount(0, $this->registry->whatProvides($this->pool, $name));
         $this->assertCount(0, $this->registry->whatProvides($this->pool, $name));
         $this->assertCount(1, $this->rm->getRepositories());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getType()
+    {
+        return 'npm';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRegistry(
+        array $repoConfig,
+        IOInterface $io,
+        Config $config,
+        EventDispatcher $eventDispatcher = null
+    ) {
+        return new NpmRepository($repoConfig, $io, $config, $eventDispatcher);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMockPackageForVcsConfig()
+    {
+        return [
+            'repository' => [
+                'type' => 'vcs',
+                'url' => 'http://foo.tld',
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMockSearchResult($name = 'mock-package')
+    {
+        return [];
     }
 }

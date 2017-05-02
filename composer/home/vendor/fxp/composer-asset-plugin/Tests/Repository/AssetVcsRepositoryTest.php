@@ -55,33 +55,6 @@ class AssetVcsRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     protected $repository;
 
-    protected function setUp()
-    {
-        $this->config = new Config();
-        /* @var EventDispatcher $dispatcher */
-        $dispatcher = $this->getMockBuilder('Composer\EventDispatcher\EventDispatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dispatcher = $dispatcher;
-        $this->assetRepositoryManager = $this->getMockBuilder(AssetRepositoryManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->assetRepositoryManager->expects($this->any())
-            ->method('solveResolutions')
-            ->willReturnCallback(function ($value) {
-                return $value;
-            });
-    }
-
-    protected function tearDown()
-    {
-        $this->config = null;
-        $this->dispatcher = null;
-        $this->io = null;
-        $this->repository = null;
-    }
-
     /**
      * Data provider.
      *
@@ -426,6 +399,33 @@ class AssetVcsRepositoryTest extends \PHPUnit_Framework_TestCase
         $packages = $this->repository->getPackages();
         $this->assertCount(10, $packages);
         $this->assertSame($registryPackages, $packages);
+    }
+
+    protected function setUp()
+    {
+        $this->config = new Config();
+        /* @var EventDispatcher $dispatcher */
+        $dispatcher = $this->getMockBuilder('Composer\EventDispatcher\EventDispatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->dispatcher = $dispatcher;
+        $this->assetRepositoryManager = $this->getMockBuilder(AssetRepositoryManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assetRepositoryManager->expects($this->any())
+            ->method('solveResolutions')
+            ->willReturnCallback(function ($value) {
+                return $value;
+            });
+    }
+
+    protected function tearDown()
+    {
+        $this->config = null;
+        $this->dispatcher = null;
+        $this->io = null;
+        $this->repository = null;
     }
 
     /**

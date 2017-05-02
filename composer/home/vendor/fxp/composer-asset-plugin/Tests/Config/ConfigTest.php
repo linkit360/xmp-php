@@ -44,22 +44,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     protected $package;
 
-    protected function setUp()
-    {
-        $this->composer = $this->getMockBuilder(Composer::class)->disableOriginalConstructor()->getMock();
-        $this->composerConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $this->io = $this->getMockBuilder(IOInterface::class)->getMock();
-        $this->package = $this->getMockBuilder(RootPackageInterface::class)->getMock();
-
-        $this->composer->expects($this->any())
-            ->method('getPackage')
-            ->willReturn($this->package);
-
-        $this->composer->expects($this->any())
-            ->method('getConfig')
-            ->willReturn($this->composerConfig);
-    }
-
     public function getDataForGetConfig()
     {
         return array(
@@ -201,5 +185,21 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         }
 
         ConfigBuilder::validate($this->io, $this->package);
+    }
+
+    protected function setUp()
+    {
+        $this->composer = $this->getMockBuilder(Composer::class)->disableOriginalConstructor()->getMock();
+        $this->composerConfig = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
+        $this->io = $this->getMockBuilder(IOInterface::class)->getMock();
+        $this->package = $this->getMockBuilder(RootPackageInterface::class)->getMock();
+
+        $this->composer->expects($this->any())
+            ->method('getPackage')
+            ->willReturn($this->package);
+
+        $this->composer->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($this->composerConfig);
     }
 }

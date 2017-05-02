@@ -11,20 +11,17 @@ use Composer\Config;
 
 class CopyRequest extends BaseRequest
 {
-    /** @var string */
-    private $destination;
-
-    /** @var resource<stream<plainfile>> */
-    private $fp;
-
-    private $success = false;
-
     protected static $defaultCurlOptions = array(
         CURLOPT_HTTPGET => true,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_MAXREDIRS => 20,
         CURLOPT_ENCODING => '',
     );
+    /** @var string */
+    private $destination;
+    /** @var resource<stream<plainfile>> */
+    private $fp;
+    private $success = false;
 
     /**
      * @param string $url

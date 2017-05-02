@@ -60,109 +60,6 @@ abstract class AbstractAssetsRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     protected $pool;
 
-    protected function setUp()
-    {
-        $io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
-        $io->expects($this->any())
-            ->method('isVerbose')
-            ->will($this->returnValue(true));
-        /* @var IOInterface $io */
-        $config = new Config();
-        $config->merge(array(
-            'config' => array(
-                'home' => sys_get_temp_dir().'/composer-test',
-                'cache-repo-dir' => sys_get_temp_dir().'/composer-test-cache-repo',
-            ),
-        ));
-        /* @var VcsPackageFilter $filter */
-        $filter = $this->getMockBuilder(VcsPackageFilter::class)->disableOriginalConstructor()->getMock();
-        $rm = new RepositoryManager($io, $config);
-        $rm->setRepositoryClass($this->getType().'-vcs', 'Fxp\Composer\AssetPlugin\Tests\Fixtures\Repository\MockAssetRepository');
-        $this->assetRepositoryManager = new AssetRepositoryManager($io, $rm, new AssetConfig(array()), $filter);
-        $repoConfig = array_merge(array(
-            'asset-repository-manager' => $this->assetRepositoryManager,
-            'asset-options' => array(
-                'searchable' => true,
-            ),
-        ), $this->getCustomRepoConfig());
-
-        $this->io = $io;
-        $this->config = $config;
-        $this->rm = $rm;
-        $this->registry = $this->getRegistry($repoConfig, $io, $config);
-        $this->pool = $this->getMockBuilder('Composer\DependencyResolver\Pool')->getMock();
-    }
-
-    protected function tearDown()
-    {
-        $this->io = null;
-        $this->config = null;
-        $this->rm = null;
-        $this->registry = null;
-        $this->pool = null;
-    }
-
-    protected function getCustomRepoConfig()
-    {
-        return array();
-    }
-
-    /**
-     * Gets the asset type.
-     *
-     * @return string
-     */
-    abstract protected function getType();
-
-    /**
-     * Gets the asset registry.
-     *
-     * @param array           $repoConfig
-     * @param IOInterface     $io
-     * @param Config          $config
-     * @param EventDispatcher $eventDispatcher
-     *
-     * @return AbstractAssetsRepository
-     */
-    abstract protected function getRegistry(array $repoConfig, IOInterface $io, Config $config, EventDispatcher $eventDispatcher = null);
-
-    /**
-     * Gets the mock package of asset for the config of VCS repository.
-     *
-     * @return array
-     */
-    abstract protected function getMockPackageForVcsConfig();
-
-    /**
-     * Gets the mock search result.
-     *
-     * @param string $name
-     *
-     * @return array
-     */
-    abstract protected function getMockSearchResult($name = 'mock-package');
-
-    /**
-     * Replaces the Remote file system of Registry by a mock.
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function replaceRegistryRfsByMock()
-    {
-        $ref = new \ReflectionClass($this->registry);
-        $pRef = $ref->getParentClass()->getParentClass();
-        $pRfs = $pRef->getProperty('rfs');
-        $pRfs->setAccessible(true);
-
-        $rfs = $this->getMockBuilder('Composer\Util\RemoteFilesystem')
-            ->setConstructorArgs(array($this->io, $this->config))
-            ->getMock();
-
-        $pRfs->setValue($this->registry, $rfs);
-
-        return $rfs;
-    }
-
     public function testFindPackageMustBeAlwaysNull()
     {
         $this->assertNull($this->registry->findPackage('foobar', '0'));
@@ -320,5 +217,114 @@ abstract class AbstractAssetsRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->rm->addRepository($repo);
 
         $this->assertCount(0, $this->registry->whatProvides($this->pool, $name));
+    }
+
+    protected function setUp()
+    {
+        $io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
+        $io->expects($this->any())
+            ->method('isVerbose')
+            ->will($this->returnValue(true));
+        /* @var IOInterface $io */
+        $config = new Config();
+        $config->merge([
+            'config' => [
+                'home' => sys_get_temp_dir() . '/composer-test',
+                'cache-repo-dir' => sys_get_temp_dir() . '/composer-test-cache-repo',
+            ],
+        ]);
+        /* @var VcsPackageFilter $filter */
+        $filter = $this->getMockBuilder(VcsPackageFilter::class)->disableOriginalConstructor()->getMock();
+        $rm = new RepositoryManager($io, $config);
+        $rm->setRepositoryClass($this->getType() . '-vcs',
+            'Fxp\Composer\AssetPlugin\Tests\Fixtures\Repository\MockAssetRepository');
+        $this->assetRepositoryManager = new AssetRepositoryManager($io, $rm, new AssetConfig([]), $filter);
+        $repoConfig = array_merge([
+            'asset-repository-manager' => $this->assetRepositoryManager,
+            'asset-options' => [
+                'searchable' => true,
+            ],
+        ], $this->getCustomRepoConfig());
+
+        $this->io = $io;
+        $this->config = $config;
+        $this->rm = $rm;
+        $this->registry = $this->getRegistry($repoConfig, $io, $config);
+        $this->pool = $this->getMockBuilder('Composer\DependencyResolver\Pool')->getMock();
+    }
+
+    protected function tearDown()
+    {
+        $this->io = null;
+        $this->config = null;
+        $this->rm = null;
+        $this->registry = null;
+        $this->pool = null;
+    }
+
+    protected function getCustomRepoConfig()
+    {
+        return [];
+    }
+
+    /**
+     * Gets the asset type.
+     *
+     * @return string
+     */
+    abstract protected function getType();
+
+    /**
+     * Gets the asset registry.
+     *
+     * @param array           $repoConfig
+     * @param IOInterface     $io
+     * @param Config          $config
+     * @param EventDispatcher $eventDispatcher
+     *
+     * @return AbstractAssetsRepository
+     */
+    abstract protected function getRegistry(
+        array $repoConfig,
+        IOInterface $io,
+        Config $config,
+        EventDispatcher $eventDispatcher = null
+    );
+
+    /**
+     * Gets the mock package of asset for the config of VCS repository.
+     *
+     * @return array
+     */
+    abstract protected function getMockPackageForVcsConfig();
+
+    /**
+     * Gets the mock search result.
+     *
+     * @param string $name
+     *
+     * @return array
+     */
+    abstract protected function getMockSearchResult($name = 'mock-package');
+
+    /**
+     * Replaces the Remote file system of Registry by a mock.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function replaceRegistryRfsByMock()
+    {
+        $ref = new \ReflectionClass($this->registry);
+        $pRef = $ref->getParentClass()->getParentClass();
+        $pRfs = $pRef->getProperty('rfs');
+        $pRfs->setAccessible(true);
+
+        $rfs = $this->getMockBuilder('Composer\Util\RemoteFilesystem')
+            ->setConstructorArgs([$this->io, $this->config])
+            ->getMock();
+
+        $pRfs->setValue($this->registry, $rfs);
+
+        return $rfs;
     }
 }

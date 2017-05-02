@@ -26,49 +26,6 @@ class IgnoreManagerTest extends \PHPUnit_Framework_TestCase
      */
     private $target;
 
-    protected function setUp()
-    {
-        $fs = new Filesystem();
-        $this->target = sys_get_temp_dir().'/composer-foo';
-
-        foreach ($this->getFixtureFiles() as $filename) {
-            $path = $this->target.'/'.$filename;
-            $fs->ensureDirectoryExists(dirname($path));
-            @file_put_contents($path, '');
-        }
-    }
-
-    protected function tearDown()
-    {
-        $fs = new Filesystem();
-        $fs->remove($this->target);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getFixtureFiles()
-    {
-        return array(
-            '.hidden',
-            'CHANGELOG',
-            'README',
-            'lib/autoload.php',
-            'src/.hidden',
-            'src/doc',
-            'src/foo/.hidden',
-            'src/foo/empty.html',
-            'src/foo/empty.md',
-            'src/foo/empty.txt',
-            'src/foo/small.txt',
-            'src/lib/empty.txt',
-            'src/lib/foo/empty.txt',
-            'src/lib/foo/small.txt',
-            'src/tests/empty.html',
-            'tests/bootstrap.php',
-        );
-    }
-
     public function testDeleteIgnoredFiles()
     {
         $ignorer = new IgnoreManager($this->target);
@@ -246,5 +203,48 @@ class IgnoreManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFileNotExists($this->target.'/tests/bootstrap.php');
         $this->assertFileNotExists($this->target.'/tests');
+    }
+
+    protected function setUp()
+    {
+        $fs = new Filesystem();
+        $this->target = sys_get_temp_dir() . '/composer-foo';
+
+        foreach ($this->getFixtureFiles() as $filename) {
+            $path = $this->target . '/' . $filename;
+            $fs->ensureDirectoryExists(dirname($path));
+            @file_put_contents($path, '');
+        }
+    }
+
+    protected function tearDown()
+    {
+        $fs = new Filesystem();
+        $fs->remove($this->target);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFixtureFiles()
+    {
+        return [
+            '.hidden',
+            'CHANGELOG',
+            'README',
+            'lib/autoload.php',
+            'src/.hidden',
+            'src/doc',
+            'src/foo/.hidden',
+            'src/foo/empty.html',
+            'src/foo/empty.md',
+            'src/foo/empty.txt',
+            'src/foo/small.txt',
+            'src/lib/empty.txt',
+            'src/lib/foo/empty.txt',
+            'src/lib/foo/small.txt',
+            'src/tests/empty.html',
+            'tests/bootstrap.php',
+        ];
     }
 }

@@ -57,17 +57,6 @@ class AssetRepositoryManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $assetRepositoryManager;
 
-    protected function setUp()
-    {
-        $this->io = $this->getMockBuilder(IOInterface::class)->getMock();
-        $this->rm = $this->getMockBuilder(RepositoryManager::class)->disableOriginalConstructor()->getMock();
-        $this->config = new Config(array());
-        $this->filter = $this->getMockBuilder(VcsPackageFilter::class)->disableOriginalConstructor()->getMock();
-
-        $this->resolutionManager = $this->getMockBuilder(ResolutionManager::class)->getMock();
-        $this->assetRepositoryManager = new AssetRepositoryManager($this->io, $this->rm, $this->config, $this->filter);
-    }
-
     public function getDataForSolveResolutions()
     {
         return array(
@@ -139,5 +128,16 @@ class AssetRepositoryManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetConfig()
     {
         $this->assertSame($this->config, $this->assetRepositoryManager->getConfig());
+    }
+
+    protected function setUp()
+    {
+        $this->io = $this->getMockBuilder(IOInterface::class)->getMock();
+        $this->rm = $this->getMockBuilder(RepositoryManager::class)->disableOriginalConstructor()->getMock();
+        $this->config = new Config([]);
+        $this->filter = $this->getMockBuilder(VcsPackageFilter::class)->disableOriginalConstructor()->getMock();
+
+        $this->resolutionManager = $this->getMockBuilder(ResolutionManager::class)->getMock();
+        $this->assetRepositoryManager = new AssetRepositoryManager($this->io, $this->rm, $this->config, $this->filter);
     }
 }

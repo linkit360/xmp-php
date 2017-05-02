@@ -32,24 +32,6 @@ class PerforceDriverTest extends BasePerforceDriverTest
      */
     protected $perforce;
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->driver = new PerforceDriver($this->repoConfig, $this->io, $this->config, $this->process, $this->remoteFileSystem);
-        $this->overrideDriverInternalPerforce($this->perforce);
-    }
-
-    protected function getMockIOInterface()
-    {
-        return $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
-    }
-
-    protected function getMockProcessExecutor()
-    {
-        return $this->getMockBuilder('Composer\Util\ProcessExecutor')->getMock();
-    }
-
     public function testInitializeCapturesVariablesFromRepoConfig()
     {
         $driver = new PerforceDriver($this->repoConfig, $this->io, $this->config, $this->process, $this->remoteFileSystem);
@@ -135,6 +117,25 @@ class PerforceDriverTest extends BasePerforceDriverTest
         $this->assertNotNull($composer1);
         $this->assertNotNull($composer2);
         $this->assertSame($composer1, $composer2);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->driver = new PerforceDriver($this->repoConfig, $this->io, $this->config, $this->process,
+            $this->remoteFileSystem);
+        $this->overrideDriverInternalPerforce($this->perforce);
+    }
+
+    protected function getMockIOInterface()
+    {
+        return $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
+    }
+
+    protected function getMockProcessExecutor()
+    {
+        return $this->getMockBuilder('Composer\Util\ProcessExecutor')->getMock();
     }
 
     protected function getTestRepoConfig()

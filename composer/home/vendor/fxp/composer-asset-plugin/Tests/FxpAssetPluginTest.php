@@ -49,65 +49,6 @@ class FxpAssetPluginTest extends \PHPUnit_Framework_TestCase
      */
     protected $package;
 
-    protected function setUp()
-    {
-        $io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
-        $config = $this->getMockBuilder('Composer\Config')->getMock();
-        $config->expects($this->any())
-            ->method('get')
-            ->will($this->returnCallback(function ($key) {
-                $value = null;
-
-                switch ($key) {
-                    case 'cache-repo-dir':
-                        $value = sys_get_temp_dir().'/composer-test-repo-cache';
-                        break;
-                }
-
-                return $value;
-            }));
-        $this->package = $this->getMockBuilder('Composer\Package\RootPackageInterface')->getMock();
-        $this->package->expects($this->any())
-            ->method('getRequires')
-            ->will($this->returnValue(array()));
-        $this->package->expects($this->any())
-            ->method('getDevRequires')
-            ->will($this->returnValue(array()));
-
-        /* @var IOInterface $io */
-        /* @var Config $config */
-        $rm = new RepositoryManager($io, $config);
-        $im = new InstallationManager();
-
-        $composer = $this->getMockBuilder('Composer\Composer')->getMock();
-        $composer->expects($this->any())
-            ->method('getRepositoryManager')
-            ->will($this->returnValue($rm));
-        $composer->expects($this->any())
-            ->method('getPackage')
-            ->will($this->returnValue($this->package));
-        $composer->expects($this->any())
-            ->method('getConfig')
-            ->will($this->returnValue($config));
-        $composer->expects($this->any())
-            ->method('getInstallationManager')
-            ->will($this->returnValue($im));
-
-        $this->plugin = new FxpAssetPlugin();
-        $this->composer = $composer;
-        $this->io = $io;
-    }
-
-    protected function tearDown()
-    {
-        $this->plugin = null;
-        $this->composer = null;
-        $this->io = null;
-
-        $fs = new Filesystem();
-        $fs->remove(sys_get_temp_dir().'/composer-test-repo-cache');
-    }
-
     public function testAssetRepositories()
     {
         $this->package->expects($this->any())
@@ -374,5 +315,64 @@ class FxpAssetPluginTest extends \PHPUnit_Framework_TestCase
 
         $config = $this->plugin->getConfig();
         $this->assertInstanceOf(\Fxp\Composer\AssetPlugin\Config\Config::class, $config);
+    }
+
+    protected function setUp()
+    {
+        $io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
+        $config = $this->getMockBuilder('Composer\Config')->getMock();
+        $config->expects($this->any())
+            ->method('get')
+            ->will($this->returnCallback(function ($key) {
+                $value = null;
+
+                switch ($key) {
+                    case 'cache-repo-dir':
+                        $value = sys_get_temp_dir() . '/composer-test-repo-cache';
+                        break;
+                }
+
+                return $value;
+            }));
+        $this->package = $this->getMockBuilder('Composer\Package\RootPackageInterface')->getMock();
+        $this->package->expects($this->any())
+            ->method('getRequires')
+            ->will($this->returnValue([]));
+        $this->package->expects($this->any())
+            ->method('getDevRequires')
+            ->will($this->returnValue([]));
+
+        /* @var IOInterface $io */
+        /* @var Config $config */
+        $rm = new RepositoryManager($io, $config);
+        $im = new InstallationManager();
+
+        $composer = $this->getMockBuilder('Composer\Composer')->getMock();
+        $composer->expects($this->any())
+            ->method('getRepositoryManager')
+            ->will($this->returnValue($rm));
+        $composer->expects($this->any())
+            ->method('getPackage')
+            ->will($this->returnValue($this->package));
+        $composer->expects($this->any())
+            ->method('getConfig')
+            ->will($this->returnValue($config));
+        $composer->expects($this->any())
+            ->method('getInstallationManager')
+            ->will($this->returnValue($im));
+
+        $this->plugin = new FxpAssetPlugin();
+        $this->composer = $composer;
+        $this->io = $io;
+    }
+
+    protected function tearDown()
+    {
+        $this->plugin = null;
+        $this->composer = null;
+        $this->io = null;
+
+        $fs = new Filesystem();
+        $fs->remove(sys_get_temp_dir() . '/composer-test-repo-cache');
     }
 }

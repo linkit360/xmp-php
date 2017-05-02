@@ -13,6 +13,21 @@ use Composer\DependencyResolver\Operation;
 
 class Prefetcher
 {
+    private static function getUrlFromPackage(Package\PackageInterface $package)
+    {
+        $url = $package->getDistUrl();
+        if (!$url) {
+            return false;
+        }
+        if ($package->getDistMirrors()) {
+            $url = current($package->getDistUrls());
+        }
+        if (!parse_url($url, PHP_URL_HOST)) {
+            return false;
+        }
+        return $url;
+    }
+
     /**
      * @param IO\IOInterface $io
      * @param CopyRequest[] $requests
@@ -86,20 +101,5 @@ class Prefetcher
         if (count($requests) > 0) {
             $this->fetchAll($io, $requests);
         }
-    }
-
-    private static function getUrlFromPackage(Package\PackageInterface $package)
-    {
-        $url = $package->getDistUrl();
-        if (!$url) {
-            return false;
-        }
-        if ($package->getDistMirrors()) {
-            $url = current($package->getDistUrls());
-        }
-        if (!parse_url($url, PHP_URL_HOST)) {
-            return false;
-        }
-        return $url;
     }
 }

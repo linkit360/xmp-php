@@ -37,6 +37,18 @@ abstract class AbstractPackageConverterTest extends \PHPUnit_Framework_TestCase
      */
     protected $asset;
 
+    /**
+     * @expectedException \Fxp\Composer\AssetPlugin\Exception\InvalidArgumentException
+     */
+    public function testConversionWithInvalidKey()
+    {
+        $this->converter = new InvalidPackageConverter($this->type);
+
+        $this->converter->convert([
+            'name' => 'foo',
+        ]);
+    }
+
     protected function setUp()
     {
         $versionConverter = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface')->getMock();
@@ -74,17 +86,5 @@ abstract class AbstractPackageConverterTest extends \PHPUnit_Framework_TestCase
         $this->type = null;
         $this->converter = null;
         $this->asset = array();
-    }
-
-    /**
-     * @expectedException \Fxp\Composer\AssetPlugin\Exception\InvalidArgumentException
-     */
-    public function testConversionWithInvalidKey()
-    {
-        $this->converter = new InvalidPackageConverter($this->type);
-
-        $this->converter->convert(array(
-            'name' => 'foo',
-        ));
     }
 }

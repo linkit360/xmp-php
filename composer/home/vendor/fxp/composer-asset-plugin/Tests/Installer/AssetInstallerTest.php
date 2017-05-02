@@ -49,69 +49,6 @@ class AssetInstallerTest extends \PHPUnit_Framework_TestCase
      */
     protected $type;
 
-    protected function setUp()
-    {
-        $this->io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
-        $config = $this->getMockBuilder('Composer\Config')->getMock();
-        $config->expects($this->any())
-            ->method('get')
-            ->will($this->returnCallback(function ($key) {
-                $value = null;
-
-                switch ($key) {
-                    case 'cache-repo-dir':
-                        $value = sys_get_temp_dir().'/composer-test-repo-cache';
-                        break;
-                    case 'vendor-dir':
-                        $value = sys_get_temp_dir().'/composer-test/vendor';
-                        break;
-                }
-
-                return $value;
-            }));
-
-        $this->package = $this->getMockBuilder('Composer\Package\RootPackageInterface')->getMock();
-
-        $this->composer = $this->getMockBuilder('Composer\Composer')->getMock();
-        $this->composer->expects($this->any())
-            ->method('getPackage')
-            ->will($this->returnValue($this->package));
-        $this->composer->expects($this->any())
-            ->method('getConfig')
-            ->will($this->returnValue($config));
-
-        $this->type = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Type\AssetTypeInterface')->getMock();
-        $this->type->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('foo'));
-        $this->type->expects($this->any())
-            ->method('getComposerVendorName')
-            ->will($this->returnValue('foo-asset'));
-        $this->type->expects($this->any())
-            ->method('getComposerType')
-            ->will($this->returnValue('foo-asset-library'));
-        $this->type->expects($this->any())
-            ->method('getFilename')
-            ->will($this->returnValue('foo.json'));
-        $this->type->expects($this->any())
-            ->method('getVersionConverter')
-            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface')->getMock()));
-        $this->type->expects($this->any())
-            ->method('getPackageConverter')
-            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\PackageConverterInterface')->getMock()));
-    }
-
-    protected function tearDown()
-    {
-        $this->package = null;
-        $this->composer = null;
-        $this->io = null;
-
-        $fs = new Filesystem();
-        $fs->remove(sys_get_temp_dir().'/composer-test-repo-cache');
-        $fs->remove(sys_get_temp_dir().'/composer-test/vendor');
-    }
-
     public function testDefaultVendorDir()
     {
         $installer = $this->createInstaller();
@@ -197,6 +134,69 @@ class AssetInstallerTest extends \PHPUnit_Framework_TestCase
         $this->ensureDirectoryExistsAndClear($packageDir);
     }
 
+    protected function setUp()
+    {
+        $this->io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
+        $config = $this->getMockBuilder('Composer\Config')->getMock();
+        $config->expects($this->any())
+            ->method('get')
+            ->will($this->returnCallback(function ($key) {
+                $value = null;
+
+                switch ($key) {
+                    case 'cache-repo-dir':
+                        $value = sys_get_temp_dir() . '/composer-test-repo-cache';
+                        break;
+                    case 'vendor-dir':
+                        $value = sys_get_temp_dir() . '/composer-test/vendor';
+                        break;
+                }
+
+                return $value;
+            }));
+
+        $this->package = $this->getMockBuilder('Composer\Package\RootPackageInterface')->getMock();
+
+        $this->composer = $this->getMockBuilder('Composer\Composer')->getMock();
+        $this->composer->expects($this->any())
+            ->method('getPackage')
+            ->will($this->returnValue($this->package));
+        $this->composer->expects($this->any())
+            ->method('getConfig')
+            ->will($this->returnValue($config));
+
+        $this->type = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Type\AssetTypeInterface')->getMock();
+        $this->type->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('foo'));
+        $this->type->expects($this->any())
+            ->method('getComposerVendorName')
+            ->will($this->returnValue('foo-asset'));
+        $this->type->expects($this->any())
+            ->method('getComposerType')
+            ->will($this->returnValue('foo-asset-library'));
+        $this->type->expects($this->any())
+            ->method('getFilename')
+            ->will($this->returnValue('foo.json'));
+        $this->type->expects($this->any())
+            ->method('getVersionConverter')
+            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface')->getMock()));
+        $this->type->expects($this->any())
+            ->method('getPackageConverter')
+            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\PackageConverterInterface')->getMock()));
+    }
+
+    protected function tearDown()
+    {
+        $this->package = null;
+        $this->composer = null;
+        $this->io = null;
+
+        $fs = new Filesystem();
+        $fs->remove(sys_get_temp_dir() . '/composer-test-repo-cache');
+        $fs->remove(sys_get_temp_dir() . '/composer-test/vendor');
+    }
+
     /**
      * Creates the asset installer.
      *
@@ -213,21 +213,6 @@ class AssetInstallerTest extends \PHPUnit_Framework_TestCase
         $config = ConfigBuilder::build($composer);
 
         return new AssetInstaller($config, $io, $composer, $type);
-    }
-
-    /**
-     * Creates the mock package.
-     *
-     * @param string $name
-     *
-     * @return PackageInterface
-     */
-    private function createPackageMock($name)
-    {
-        return $this->getMockBuilder('Composer\Package\Package')
-            ->setConstructorArgs(array($name, '1.0.0.0', '1.0.0'))
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
     }
 
     /**
@@ -253,5 +238,20 @@ class AssetInstallerTest extends \PHPUnit_Framework_TestCase
             $fs->removeDirectory($directory);
         }
         mkdir($directory, 0777, true);
+    }
+
+    /**
+     * Creates the mock package.
+     *
+     * @param string $name
+     *
+     * @return PackageInterface
+     */
+    private function createPackageMock($name)
+    {
+        return $this->getMockBuilder('Composer\Package\Package')
+            ->setConstructorArgs([$name, '1.0.0.0', '1.0.0'])
+            ->enableProxyingToOriginalMethods()
+            ->getMock();
     }
 }

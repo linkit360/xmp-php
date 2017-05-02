@@ -26,16 +26,6 @@ class SemverConverterTest extends \PHPUnit_Framework_TestCase
      */
     protected $converter;
 
-    protected function setUp()
-    {
-        $this->converter = new SemverConverter();
-    }
-
-    protected function tearDown()
-    {
-        $this->converter = null;
-    }
-
     /**
      * @dataProvider getTestVersions
      *
@@ -178,5 +168,15 @@ class SemverConverterTest extends \PHPUnit_Framework_TestCase
             array('~v1.2.3', '~1.2.3'),
             array('~v1.2.3-beta', '~1.2.3-beta1'),
         );
+    }
+
+    protected function setUp()
+    {
+        $this->converter = new SemverConverter();
+    }
+
+    protected function tearDown()
+    {
+        $this->converter = null;
     }
 }

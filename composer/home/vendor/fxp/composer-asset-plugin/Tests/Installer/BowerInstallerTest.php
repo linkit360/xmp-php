@@ -78,64 +78,6 @@ class BowerInstallerTest extends TestCase
      */
     protected $type;
 
-    protected function setUp()
-    {
-        $this->fs = new Filesystem();
-
-        $this->composer = new Composer();
-        $this->config = new Config();
-        $this->composer->setConfig($this->config);
-
-        $this->vendorDir = realpath(sys_get_temp_dir()).DIRECTORY_SEPARATOR.'composer-test-vendor';
-        $this->ensureDirectoryExistsAndClear($this->vendorDir);
-
-        $this->binDir = realpath(sys_get_temp_dir()).DIRECTORY_SEPARATOR.'composer-test-bin';
-        $this->ensureDirectoryExistsAndClear($this->binDir);
-
-        $this->config->merge(array(
-                'config' => array(
-                    'vendor-dir' => $this->vendorDir,
-                    'bin-dir' => $this->binDir,
-                ),
-            ));
-
-        $this->dm = $this->getMockBuilder('Composer\Downloader\DownloadManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var DownloadManager $dm */
-        $dm = $this->dm;
-        $this->composer->setDownloadManager($dm);
-
-        $this->repository = $this->getMockBuilder('Composer\Repository\InstalledRepositoryInterface')->getMock();
-        $this->io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
-
-        $this->type = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Type\AssetTypeInterface')->getMock();
-        $this->type->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('foo'));
-        $this->type->expects($this->any())
-            ->method('getComposerVendorName')
-            ->will($this->returnValue('foo-asset'));
-        $this->type->expects($this->any())
-            ->method('getComposerType')
-            ->will($this->returnValue('foo-asset-library'));
-        $this->type->expects($this->any())
-            ->method('getFilename')
-            ->will($this->returnValue('foo.json'));
-        $this->type->expects($this->any())
-            ->method('getVersionConverter')
-            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface')->getMock()));
-        $this->type->expects($this->any())
-            ->method('getPackageConverter')
-            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\PackageConverterInterface')->getMock()));
-    }
-
-    protected function tearDown()
-    {
-        $this->fs->removeDirectory($this->vendorDir);
-        $this->fs->removeDirectory($this->binDir);
-    }
-
     public function testInstallerCreationShouldNotCreateVendorDirectory()
     {
         /* @var RootPackageInterface $rootPackage */
@@ -467,6 +409,64 @@ class BowerInstallerTest extends TestCase
         } else {
             $this->assertEquals($extra, array());
         }
+    }
+
+    protected function setUp()
+    {
+        $this->fs = new Filesystem();
+
+        $this->composer = new Composer();
+        $this->config = new Config();
+        $this->composer->setConfig($this->config);
+
+        $this->vendorDir = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . 'composer-test-vendor';
+        $this->ensureDirectoryExistsAndClear($this->vendorDir);
+
+        $this->binDir = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . 'composer-test-bin';
+        $this->ensureDirectoryExistsAndClear($this->binDir);
+
+        $this->config->merge([
+            'config' => [
+                'vendor-dir' => $this->vendorDir,
+                'bin-dir' => $this->binDir,
+            ],
+        ]);
+
+        $this->dm = $this->getMockBuilder('Composer\Downloader\DownloadManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var DownloadManager $dm */
+        $dm = $this->dm;
+        $this->composer->setDownloadManager($dm);
+
+        $this->repository = $this->getMockBuilder('Composer\Repository\InstalledRepositoryInterface')->getMock();
+        $this->io = $this->getMockBuilder('Composer\IO\IOInterface')->getMock();
+
+        $this->type = $this->getMockBuilder('Fxp\Composer\AssetPlugin\Type\AssetTypeInterface')->getMock();
+        $this->type->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('foo'));
+        $this->type->expects($this->any())
+            ->method('getComposerVendorName')
+            ->will($this->returnValue('foo-asset'));
+        $this->type->expects($this->any())
+            ->method('getComposerType')
+            ->will($this->returnValue('foo-asset-library'));
+        $this->type->expects($this->any())
+            ->method('getFilename')
+            ->will($this->returnValue('foo.json'));
+        $this->type->expects($this->any())
+            ->method('getVersionConverter')
+            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\VersionConverterInterface')->getMock()));
+        $this->type->expects($this->any())
+            ->method('getPackageConverter')
+            ->will($this->returnValue($this->getMockBuilder('Fxp\Composer\AssetPlugin\Converter\PackageConverterInterface')->getMock()));
+    }
+
+    protected function tearDown()
+    {
+        $this->fs->removeDirectory($this->vendorDir);
+        $this->fs->removeDirectory($this->binDir);
     }
 
     /**

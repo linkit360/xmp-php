@@ -39,22 +39,6 @@ class PerforceTest extends BasePerforceTest
      */
     protected $repoConfig;
 
-    protected function setUp()
-    {
-        $this->processExecutor = $this->getMockBuilder('Composer\Util\ProcessExecutor')->getMock();
-        $this->repoConfig = $this->getTestRepoConfig();
-        $this->io = $this->getMockIOInterface();
-        $this->createNewPerforceWithWindowsFlag(true);
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        $fs = new Filesystem();
-        $fs->remove($this::TEST_PATH);
-    }
-
     /**
      * @return IOInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -314,6 +298,22 @@ class PerforceTest extends BasePerforceTest
         $fs->expects($this->once())->method('remove')->with($this->perforce->getP4ClientSpec());
 
         $this->perforce->cleanupClientSpec();
+    }
+
+    protected function setUp()
+    {
+        $this->processExecutor = $this->getMockBuilder('Composer\Util\ProcessExecutor')->getMock();
+        $this->repoConfig = $this->getTestRepoConfig();
+        $this->io = $this->getMockIOInterface();
+        $this->createNewPerforceWithWindowsFlag(true);
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $fs = new Filesystem();
+        $fs->remove($this::TEST_PATH);
     }
 
     protected function createNewPerforceWithWindowsFlag($flag)

@@ -27,6 +27,18 @@ class SvnDriver extends BaseSvnDriver
     /**
      * {@inheritdoc}
      */
+    public static function supports(IOInterface $io, Config $config, $url, $deep = false)
+    {
+        if (0 === strpos($url, 'http') && preg_match('/\/svn|svn\//i', $url)) {
+            $url = 'svn' . substr($url, strpos($url, '://'));
+        }
+
+        return parent::supports($io, $config, $url, $deep);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function initialize()
     {
         $this->url = 0 === strpos($this->url, 'svn+http')
@@ -147,18 +159,6 @@ class SvnDriver extends BaseSvnDriver
         }
 
         return $composer;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function supports(IOInterface $io, Config $config, $url, $deep = false)
-    {
-        if (0 === strpos($url, 'http') && preg_match('/\/svn|svn\//i', $url)) {
-            $url = 'svn'.substr($url, strpos($url, '://'));
-        }
-
-        return parent::supports($io, $config, $url, $deep);
     }
 
     /**

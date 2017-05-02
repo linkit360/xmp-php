@@ -24,6 +24,16 @@ class InvalidCreateRepositoryException extends \Exception implements ExceptionIn
     protected $data = array();
 
     /**
+     * Get the data of asset package config defined by the registry.
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * Set the data of asset package config defined by the registry.
      *
      * @param array $data The data
@@ -35,15 +45,5 @@ class InvalidCreateRepositoryException extends \Exception implements ExceptionIn
         $this->data = $data;
 
         return $this;
-    }
-
-    /**
-     * Get the data of asset package config defined by the registry.
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 }

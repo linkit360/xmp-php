@@ -28,30 +28,6 @@ class Perforce extends BasePerforce
     protected $filename;
 
     /**
-     * @param array $repoConfig
-     */
-    public function initialize($repoConfig)
-    {
-        parent::initialize($repoConfig);
-
-        $this->filename = (string) $repoConfig['filename'];
-    }
-
-    /**
-     * @param string $identifier
-     *
-     * @return array|string
-     */
-    public function getComposerInformation($identifier)
-    {
-        $composerFileContent = $this->getFileContent($this->filename, $identifier);
-
-        return !$composerFileContent
-            ? null
-            : json_decode($composerFileContent, true);
-    }
-
-    /**
      * Create perforce helper.
      *
      * @param array           $repoConfig
@@ -68,5 +44,29 @@ class Perforce extends BasePerforce
         $perforce = new self($repoConfig, $port, $path, $process, $isWindows, $io);
 
         return $perforce;
+    }
+
+    /**
+     * @param array $repoConfig
+     */
+    public function initialize($repoConfig)
+    {
+        parent::initialize($repoConfig);
+
+        $this->filename = (string)$repoConfig['filename'];
+    }
+
+    /**
+     * @param string $identifier
+     *
+     * @return array|string
+     */
+    public function getComposerInformation($identifier)
+    {
+        $composerFileContent = $this->getFileContent($this->filename, $identifier);
+
+        return !$composerFileContent
+            ? null
+            : json_decode($composerFileContent, true);
     }
 }

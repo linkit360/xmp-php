@@ -10,29 +10,6 @@ use Composer\Repository\ComposerRepository;
 
 class ParallelizedComposerRepository extends ComposerRepository
 {
-    protected function preloadProviderListings($data)
-    {
-        if ($this->providersUrl && isset($data['provider-includes'])) {
-            $includes = $data['provider-includes'];
-
-            $requests = array();
-            $cachedir = $this->config->get('cache-repo-dir');
-            $cacheBase = $cachedir . DIRECTORY_SEPARATOR . strtr($this->baseUrl, ':/', '--');
-            foreach ($includes as $include => $metadata) {
-                $url = $this->baseUrl . '/' . str_replace('%hash%', $metadata['sha256'], $include);
-                $cacheKey = str_replace(array('%hash%','$'), '', $include);
-                if ($this->cache->sha256($cacheKey) !== $metadata['sha256']) {
-                    $dest = $cacheBase . DIRECTORY_SEPARATOR . str_replace('/', '-', $cacheKey);
-                    $requests[] = new CopyRequest($url, $dest, false, $this->io, $this->config);
-                }
-            }
-            if ($requests) {
-                $prefetcher = new Prefetcher;
-                $prefetcher->fetchAll($this->io, $requests);
-            }
-        }
-    }
-
     public function prefetch()
     {
         if (null === $this->providerListing) {
@@ -60,5 +37,28 @@ class ParallelizedComposerRepository extends ComposerRepository
             'sourceMirrors' => $this->sourceMirrors,
             'distMirrors' => $this->distMirrors,
         );
+    }
+
+    protected function preloadProviderListings($data)
+    {
+        if ($this->providersUrl && isset($data['provider-includes'])) {
+            $includes = $data['provider-includes'];
+
+            $requests = [];
+            $cachedir = $this->config->get('cache-repo-dir');
+            $cacheBase = $cachedir . DIRECTORY_SEPARATOR . strtr($this->baseUrl, ':/', '--');
+            foreach ($includes as $include => $metadata) {
+                $url = $this->baseUrl . '/' . str_replace('%hash%', $metadata['sha256'], $include);
+                $cacheKey = str_replace(['%hash%', '$'], '', $include);
+                if ($this->cache->sha256($cacheKey) !== $metadata['sha256']) {
+                    $dest = $cacheBase . DIRECTORY_SEPARATOR . str_replace('/', '-', $cacheKey);
+                    $requests[] = new CopyRequest($url, $dest, false, $this->io, $this->config);
+                }
+            }
+            if ($requests) {
+                $prefetcher = new Prefetcher;
+                $prefetcher->fetchAll($this->io, $requests);
+            }
+        }
     }
 }

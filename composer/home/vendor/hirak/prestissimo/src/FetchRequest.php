@@ -40,14 +40,6 @@ class FetchRequest extends BaseRequest
         );
     }
 
-    public function getCurlOptions()
-    {
-        $curlOpts = parent::getCurlOptions();
-        $curlOpts[CURLOPT_RETURNTRANSFER] = true;
-        $curlOpts[CURLOPT_HEADERFUNCTION] = array($this, 'headerCallback');
-        return $curlOpts;
-    }
-
     private static function getCurl($key)
     {
         static $curlCache = array();
@@ -60,6 +52,14 @@ class FetchRequest extends BaseRequest
         Share::setup($ch);
 
         return $curlCache[$key] = $ch;
+    }
+
+    public function getCurlOptions()
+    {
+        $curlOpts = parent::getCurlOptions();
+        $curlOpts[CURLOPT_RETURNTRANSFER] = true;
+        $curlOpts[CURLOPT_HEADERFUNCTION] = [$this, 'headerCallback'];
+        return $curlOpts;
     }
 
     /**

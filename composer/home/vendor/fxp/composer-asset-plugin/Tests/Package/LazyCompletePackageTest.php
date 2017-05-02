@@ -28,16 +28,6 @@ class LazyCompletePackageTest extends \PHPUnit_Framework_TestCase
      */
     protected $package;
 
-    protected function setUp()
-    {
-        $this->package = new LazyCompletePackage('foo', '1.0.0.0', '1.0');
-    }
-
-    protected function tearDown()
-    {
-        $this->package = null;
-    }
-
     public function getConfigLazyLoader()
     {
         return array(
@@ -107,5 +97,15 @@ class LazyCompletePackageTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->package->getDescription());
         $this->assertNull($this->package->getHomepage());
         $this->assertSame(array(), $this->package->getSupport());
+    }
+
+    protected function setUp()
+    {
+        $this->package = new LazyCompletePackage('foo', '1.0.0.0', '1.0');
+    }
+
+    protected function tearDown()
+    {
+        $this->package = null;
     }
 }

@@ -21,16 +21,6 @@ use Fxp\Composer\AssetPlugin\Type\AssetTypeInterface;
  */
 class BowerPackageConverterTest extends AbstractPackageConverterTest
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        /* @var AssetTypeInterface $type */
-        $type = $this->type;
-        $this->converter = new BowerPackageConverter($type);
-        $this->asset = (array) json_decode(file_get_contents(__DIR__.'/../Fixtures/package/bower.json'), true);
-    }
-
     public function testConvert()
     {
         $composer = $this->converter->convert($this->asset);
@@ -112,5 +102,15 @@ class BowerPackageConverterTest extends AbstractPackageConverterTest
         $this->assertArrayNotHasKey('include-path', $composer);
         $this->assertArrayNotHasKey('target-dir', $composer);
         $this->assertArrayNotHasKey('archive', $composer);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        /* @var AssetTypeInterface $type */
+        $type = $this->type;
+        $this->converter = new BowerPackageConverter($type);
+        $this->asset = (array)json_decode(file_get_contents(__DIR__ . '/../Fixtures/package/bower.json'), true);
     }
 }

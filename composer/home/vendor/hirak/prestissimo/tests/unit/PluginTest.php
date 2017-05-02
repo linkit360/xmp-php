@@ -12,28 +12,6 @@ class PluginTest extends \PHPUnit_Framework_TestCase
     private $configp;
     private $composerp;
 
-    protected function setUp()
-    {
-        $this->iop = $this->prophesize('Composer\IO\IOInterface');
-
-        $this->configp = $configp = $this->prophesize('Composer\Config');
-        $configp->get('cache-files-dir')
-                ->willReturn('tests/workspace/');
-
-        $this->composerp = $composerp = $this->prophesize('Composer\Composer');
-
-        $packagep = $this->prophesize('Composer\Package\CompletePackageInterface');
-        $packagep->getRepositories()
-            ->willReturn(array());
-
-        $composerp->getPackage()
-            ->willReturn($packagep->reveal());
-        $composerp->getConfig()
-            ->willReturn($this->configp->reveal());
-        $composerp->getPackage()
-            ->willReturn($packagep->reveal());
-    }
-
     public function testConstruct()
     {
         $plugin = new Plugin;
@@ -101,6 +79,28 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $evp->getOperations()
             ->shouldNotBeCalled();
         $plugin->onPostDependenciesSolving($evp->reveal());
+    }
+
+    protected function setUp()
+    {
+        $this->iop = $this->prophesize('Composer\IO\IOInterface');
+
+        $this->configp = $configp = $this->prophesize('Composer\Config');
+        $configp->get('cache-files-dir')
+            ->willReturn('tests/workspace/');
+
+        $this->composerp = $composerp = $this->prophesize('Composer\Composer');
+
+        $packagep = $this->prophesize('Composer\Package\CompletePackageInterface');
+        $packagep->getRepositories()
+            ->willReturn([]);
+
+        $composerp->getPackage()
+            ->willReturn($packagep->reveal());
+        $composerp->getConfig()
+            ->willReturn($this->configp->reveal());
+        $composerp->getPackage()
+            ->willReturn($packagep->reveal());
     }
 
     private function createDummyOperations()
