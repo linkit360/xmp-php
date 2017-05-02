@@ -13,6 +13,8 @@ $config = [
         'assetManager' => [
             'class' => \yii\web\AssetManager::class,
             'appendTimestamp' => true,
+            'baseUrl' => '/assets',
+            'basePath' => '/assets',
         ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
