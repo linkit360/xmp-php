@@ -1,29 +1,19 @@
 <?php
-use kartik\widgets\Select2;
+use yii\grid\SerialColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
+use kartik\widgets\Select2;
 
 /**
  * @var yii\web\View                $this
  * @var yii\data\ActiveDataProvider $dataProvider
+ * @var array                       $data
  */
 
 $this->title = 'Campaigns';
 $this->params['subtitle'] = 'URL and LP manager for services';
 $this->params['breadcrumbs'][] = $this->title;
-
-$formData = [];
-$formData['id_operator'] = \common\models\Operators::find()
-    ->select([
-        'name',
-        'id',
-    ])
-    ->where([
-        'status' => 1,
-    ])
-    ->indexBy('id')
-    ->column();
 
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
@@ -40,7 +30,7 @@ $helper->modalDelete($this);
             echo $form->field($model, 'id_operator')->widget(
                 Select2::classname(),
                 [
-                    'data' => $formData['id_operator'],
+                    'data' => $data['id_operator'],
                     'options' => [
                         'placeholder' => 'Operator',
                     ],
@@ -48,7 +38,7 @@ $helper->modalDelete($this);
             );
 
             echo $form->field($model, 'title');
-            echo $form->field($model, 'description');
+            //echo $form->field($model, 'description');
             ?>
 
             <div class="text-right">
@@ -87,7 +77,7 @@ $helper->modalDelete($this);
                 'dataProvider' => $dataProvider,
                 'columns' => [
                     [
-                        'class' => \yii\grid\SerialColumn::class,
+                        'class' => SerialColumn::class,
                         'contentOptions' => [
                             'style' => 'width: 1%; white-space: nowrap;',
                         ],
@@ -95,8 +85,8 @@ $helper->modalDelete($this);
                     'title',
                     [
                         'attribute' => 'id_operator',
-                        'content' => function ($row) use ($formData) {
-                            return $formData['id_operator'][$row['id_operator']];
+                        'content' => function ($row) use ($data) {
+                            return $data['id_operator'][$row['id_operator']];
                         },
                     ],
                     [

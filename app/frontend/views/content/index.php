@@ -1,14 +1,9 @@
 <?php
 use yii\grid\GridView;
 use yii\helpers\Html;
-use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 use kartik\daterange\DateRangePicker;
 use kartik\widgets\Select2;
-
-use common\models\Content\Categories;
-use common\models\Content\Content;
-use common\models\Content\Publishers;
 
 /**
  * @var yii\web\View                $this
@@ -22,43 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
-
-$formData = [];
-$formData['id_category'] = Content::find()
-    ->select('id_category')
-    ->groupBy('id_category')
-    ->indexBy('id_category')
-    ->column();
-
-$formData['id_category'] = Categories::find()
-    ->select([
-        'title',
-        'id',
-    ])
-    ->where([
-        'id' => array_keys($formData['id_category']),
-    ])
-    ->indexBy('id')
-    ->column();
-
-
-$formData['id_publisher'] = Content::find()
-    ->select('id_publisher')
-    ->where("id_publisher IS NOT NULL")
-    ->groupBy('id_publisher')
-    ->indexBy('id_publisher')
-    ->column();
-
-$formData['id_publisher'] = Publishers::find()
-    ->select([
-        'title',
-        'id',
-    ])
-    ->where([
-        'id' => array_keys($formData['id_publisher']),
-    ])
-    ->indexBy('id')
-    ->column();
 
 $form = ActiveForm::begin([
     'action' => ['index'],
@@ -74,12 +32,9 @@ $form = ActiveForm::begin([
                     echo $form->field($model, 'id_category')->widget(
                         Select2::classname(),
                         [
-                            'data' => $formData['id_category'],
+                            'data' => $data['id_category'],
                             'options' => [
                                 'placeholder' => 'Category',
-                            ],
-                            'pluginOptions' => [
-                                'escapeMarkup' => new JsExpression("function(m) { return m; }"),
                             ],
                         ]
                     );
@@ -91,55 +46,53 @@ $form = ActiveForm::begin([
                     echo $form->field($model, 'id_publisher')->widget(
                         Select2::classname(),
                         [
-                            'data' => $formData['id_publisher'],
+                            'data' => $data['id_publisher'],
                             'options' => [
                                 'placeholder' => 'Publisher',
                             ],
-                            'pluginOptions' => [
-                                'escapeMarkup' => new JsExpression("function(m) { return m; }"),
-                            ],
                         ]
                     );
-
                     ?>
                 </div>
 
                 <div class="col-lg-6">
                     <?php
-
                     echo $form->field($model, 'title');
                     ?>
                 </div>
 
                 <div class="col-lg-6">
                     <?php
-                    echo $form->field($model, 'date_range')
-                        ->widget(
-                            DateRangePicker::classname(),
-                            [
-                                'convertFormat' => true,
-                                'options' => [
-                                    'class' => 'form-control',
-                                    'placeholder' => 'Date/Time',
-                                ],
-                                'pluginOptions' => [
-                                    'timePicker' => true,
-                                    'timePickerIncrement' => 15,
-                                    'locale' => ['format' => 'Y-m-d h:i A'],
-                                ],
-                            ]
-                        );
+                    echo $form->field($model, 'date_range')->widget(
+                        DateRangePicker::classname(),
+                        [
+                            'convertFormat' => true,
+                            'options' => [
+                                'class' => 'form-control',
+                                'placeholder' => 'Date/Time',
+                            ],
+                            'pluginOptions' => [
+                                'timePicker' => true,
+                                'timePickerIncrement' => 15,
+                                'locale' => ['format' => 'Y-m-d h:i A'],
+                            ],
+                        ]
+                    );
                     ?>
                     <br/>
                 </div>
 
-                <div class="col-lg-6">
+                <div class="col-lg-12 text-right">
                     <?php
+                    echo Html::a(
+                        'Reset',
+                        ['index'],
+                        ['class' => 'btn btn-default']
+                    );
+                    echo '&nbsp;';
                     echo Html::submitButton(
                         'Search',
-                        [
-                            'class' => 'btn btn-primary',
-                        ]
+                        ['class' => 'btn btn-primary']
                     );
                     ?>
                 </div>

@@ -14,7 +14,6 @@ use ZipArchive;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 use common\models\Content\Content;
@@ -91,6 +90,43 @@ class ContentController extends Controller
             )
             ->indexBy('id')
             ->all();
+
+        $data['id_category'] = Content::find()
+            ->select('id_category')
+            ->groupBy('id_category')
+            ->indexBy('id_category')
+            ->column();
+
+        $data['id_category'] = Categories::find()
+            ->select([
+                'title',
+                'id',
+            ])
+            ->where([
+                'id' => array_keys($data['id_category']),
+            ])
+            ->indexBy('id')
+            ->column();
+
+
+        $data['id_publisher'] = Content::find()
+            ->select('id_publisher')
+            ->where("id_publisher IS NOT NULL")
+            ->groupBy('id_publisher')
+            ->indexBy('id_publisher')
+            ->column();
+
+        $data['id_publisher'] = Publishers::find()
+            ->select([
+                'title',
+                'id',
+            ])
+            ->where([
+                'id' => array_keys($data['id_publisher']),
+            ])
+            ->indexBy('id')
+            ->column();
+
 
         $searchModel = new ContentSearchForm();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

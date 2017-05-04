@@ -1,8 +1,8 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 use kartik\daterange\DateRangePicker;
 use kartik\widgets\Select2;
@@ -30,16 +30,13 @@ $helper->modalDelete($this);
                 'method' => 'get',
             ]);
             echo $form->field($model, 'title');
-            echo $form->field($model, 'description');
+            //echo $form->field($model, 'description');
             echo $form->field($model, 'id_country')->widget(
                 Select2::classname(),
                 [
-                    'data' => \yii\helpers\ArrayHelper::map($countries, 'id', 'name'),
+                    'data' => ArrayHelper::map($countries, 'id', 'name'),
                     'options' => [
                         'placeholder' => 'Country',
-                    ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
                     ],
                 ]
             );
@@ -47,12 +44,9 @@ $helper->modalDelete($this);
             echo $form->field($model, 'id_provider')->widget(
                 Select2::classname(),
                 [
-                    'data' => \yii\helpers\ArrayHelper::map($providers, 'id', 'name'),
+                    'data' => ArrayHelper::map($providers, 'id', 'name'),
                     'options' => [
                         'placeholder' => 'Provider',
-                    ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
                     ],
                 ]
             );
@@ -74,7 +68,24 @@ $helper->modalDelete($this);
                         ],
                     ]
                 );
-            echo Html::submitButton('Search', ['class' => 'btn btn-primary']);
+            ?>
+
+            <div class="text-right">
+                <?php
+                echo Html::a(
+                    'Reset',
+                    ['index'],
+                    ['class' => 'btn btn-default']
+                );
+                echo '&nbsp;';
+                echo Html::submitButton(
+                    'Search',
+                    ['class' => 'btn btn-primary']
+                );
+                ?>
+            </div>
+
+            <?php
             ActiveForm::end();
             ?>
         </div>

@@ -2,11 +2,11 @@
 
 namespace frontend\controllers;
 
+use common\models\Operators;
 use function md5;
 use function mt_rand;
 
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -46,6 +46,18 @@ class CampaignsController extends Controller
      */
     public function actionIndex()
     {
+        $data = [];
+        $data['id_operator'] = Operators::find()
+            ->select([
+                'name',
+                'id',
+            ])
+            ->where([
+                'status' => 1,
+            ])
+            ->indexBy('id')
+            ->column();
+
         $searchModel = new \frontend\models\Search\Campaigns();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -54,6 +66,7 @@ class CampaignsController extends Controller
             [
                 'model' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'data' => $data,
             ]
         );
     }

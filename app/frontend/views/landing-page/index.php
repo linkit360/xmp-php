@@ -27,7 +27,7 @@ $helper->modalDelete($this);
             ]);
 
             echo $form->field($model, 'title');
-            echo $form->field($model, 'description');
+            //echo $form->field($model, 'description');
             echo $form->field($model, 'date_range')
                 ->widget(
                     DateRangePicker::classname(),
@@ -44,9 +44,24 @@ $helper->modalDelete($this);
                         ],
                     ]
                 );
+            ?>
 
-            echo '<br/>';
-            echo Html::submitButton('Search', ['class' => 'btn btn-primary']);
+            <div class="text-right">
+                <?php
+                echo Html::a(
+                    'Reset',
+                    ['index'],
+                    ['class' => 'btn btn-default']
+                );
+                echo '&nbsp;';
+                echo Html::submitButton(
+                    'Search',
+                    ['class' => 'btn btn-primary']
+                );
+                ?>
+            </div>
+
+            <?php
             ActiveForm::end();
             ?>
         </div>
