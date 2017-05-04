@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use const AWS_S3;
+use common\models\Users;
 use function count;
 use function json_decode;
 use function array_key_exists;
@@ -21,7 +22,6 @@ use common\models\Content\Categories;
 use common\models\Content\Publishers;
 
 use frontend\models\ContentForm;
-use frontend\models\ContentSearchForm;
 
 /**
  * ContentController implements the CRUD actions for Content model.
@@ -127,8 +127,18 @@ class ContentController extends Controller
             ->indexBy('id')
             ->column();
 
+        $users = [];
+        if (Yii::$app->user->can('Admin')) {
+            $users = Users::find()
+                ->select([
+                    'username',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->column();
+        }
 
-        $searchModel = new ContentSearchForm();
+        $searchModel = new \frontend\models\Search\Content();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render(
@@ -137,6 +147,7 @@ class ContentController extends Controller
                 'model' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'data' => $data,
+                'users' => $users,
             ]
         );
     }
@@ -164,6 +175,7 @@ class ContentController extends Controller
         $model->status = 1;
 
         if ($model->load(Yii::$app->request->post())) {
+            $model->id_user = Yii::$app->user->id;
             if ($model->id_publisher === '') {
                 unset($model->id_publisher);
             }
@@ -273,8 +285,11 @@ class ContentController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Content::findOne($id)) !== null) {
-            return $model;
+        $model = Content::findOne($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
@@ -282,7 +297,7 @@ class ContentController extends Controller
 
     /**
      * @param Content $model
-     * @param array   $file
+     * @param string  $file
      * @param string  $name
      */
     private function fileUpload($model, $file, $name)

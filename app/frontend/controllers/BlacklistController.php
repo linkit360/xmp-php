@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 use common\models\MsisdnBlacklist;
+
 use frontend\models\BlacklistForm;
 
 /**
@@ -26,7 +27,9 @@ class BlacklistController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['blacklistManage'],
+                        'roles' => [
+                            'blacklistManage',
+                        ],
                     ],
                     [
                         'allow' => false,

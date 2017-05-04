@@ -64,11 +64,7 @@ class BlacklistForm extends MsisdnBlacklist
 //            'created_at' => $this->created_at,
 //        ]);
 
-        $query->andFilterWhere([
-            'like',
-            'msisdn',
-            $this->msisdn,
-        ]);
+        $query->andFilterWhere(['like', 'msisdn', $this->msisdn]);
 
         return $dataProvider;
     }

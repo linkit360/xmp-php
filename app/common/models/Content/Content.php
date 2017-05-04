@@ -53,14 +53,8 @@ class Content extends ActiveRecord
             'id_publisher' => 'Publisher',
             'title' => 'Title',
             'status' => 'Status',
-            'time_create' => 'Added',
+            'time_create' => 'Created At',
         ];
-    }
-
-    public function beforeValidate()
-    {
-        $this->id_user = Yii::$app->user->id;
-        return parent::beforeValidate();
     }
 
     public function afterSave($insert, $oldAttributes)

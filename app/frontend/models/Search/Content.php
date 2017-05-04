@@ -1,16 +1,14 @@
 <?php
 
-namespace frontend\models;
+namespace frontend\models\Search;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Content\Content;
 
-/**
- * Content2 represents the model behind the search form about `common\models\Content\Content`.
- */
-class ContentSearchForm extends Content
+use common\models\Content\Content as ContentModel;
+
+class Content extends ContentModel
 {
     public $date_range;
 
@@ -26,6 +24,7 @@ class ContentSearchForm extends Content
                     'id_publisher',
                     'title',
                     'date_range',
+                    'id_user',
                 ],
                 'safe',
             ],
@@ -83,11 +82,13 @@ class ContentSearchForm extends Content
                 ]);
         }
 
-        $query
-            ->andFilterWhere(['time_create' => $this->time_create]);
+        if (!Yii::$app->user->can('Admin')) {
+            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+        } else {
+            $query->andFilterWhere(['id_user' => $this->id_user]);
+        }
 
         $query
-            ->andFilterWhere(['id_user' => Yii::$app->user->id])
             ->andFilterWhere(['status' => 1])
             ->andFilterWhere(['id_category' => $this->id_category])
             ->andFilterWhere(['id_publisher' => $this->id_publisher])
