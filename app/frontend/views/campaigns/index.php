@@ -9,6 +9,7 @@ use kartik\widgets\Select2;
  * @var yii\web\View                $this
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var array                       $data
+ * @var array                       $users
  */
 
 $this->title = 'Campaigns';
@@ -17,55 +18,76 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
+
+$form = ActiveForm::begin([
+    'action' => ['index'],
+    'method' => 'get',
+]);
 ?>
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
-            <?php
-            $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-            ]);
+            <div class="row">
+                <div class="col-lg-12">
+                    <?php
+                    echo $form->field($model, 'id_operator')->widget(
+                        Select2::classname(),
+                        [
+                            'data' => $data['id_operator'],
+                            'options' => [
+                                'placeholder' => 'Operator',
+                            ],
+                        ]
+                    );
+                    ?>
+                </div>
 
-            echo $form->field($model, 'id_operator')->widget(
-                Select2::classname(),
-                [
-                    'data' => $data['id_operator'],
-                    'options' => [
-                        'placeholder' => 'Operator',
-                    ],
-                ]
-            );
+                <div class="col-lg-12">
+                    <?= $form->field($model, 'title') ?>
+                </div>
 
-            echo $form->field($model, 'title');
-            //echo $form->field($model, 'description');
-            ?>
+                <div class="col-lg-12">
+                    <?php
+                    if (count($users)) {
+                        echo $form->field($model, 'id_user')->widget(
+                            Select2::classname(),
+                            [
+                                'data' => $users,
+                                'options' => [
+                                    'placeholder' => 'User',
+                                ],
+                            ]
+                        );
+                    }
+                    ?>
+                </div>
 
-            <div class="text-right">
-                <?php
-                echo Html::a(
-                    'Reset',
-                    ['index'],
-                    ['class' => 'btn btn-default']
-                );
-                echo '&nbsp;';
-                echo Html::submitButton(
-                    'Search',
-                    ['class' => 'btn btn-primary']
-                );
-                ?>
+                <div class="col-lg-12 text-right">
+                    <?php
+                    echo Html::a(
+                        'Reset',
+                        ['index'],
+                        ['class' => 'btn btn-default']
+                    );
+
+                    echo '&nbsp;';
+                    echo Html::submitButton(
+                        'Search',
+                        ['class' => 'btn btn-primary']
+                    );
+                    ?>
+                </div>
             </div>
-
-            <?php
-            ActiveForm::end();
-            ?>
         </div>
     </div>
 </div>
 
-<?= '</div><div class="row">' ?>
+<?php
+ActiveForm::end();
+echo '</div><div class="row">';
+?>
 
-<div class="col-lg-6">
+<div class="col-lg-8">
     <div class="ibox">
         <div class="ibox-content">
             <p>
@@ -85,8 +107,28 @@ $helper->modalDelete($this);
                     'title',
                     [
                         'attribute' => 'id_operator',
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
                         'content' => function ($row) use ($data) {
                             return $data['id_operator'][$row['id_operator']];
+                        },
+                    ],
+                    [
+                        'attribute' => 'id_user',
+                        'visible' => count($users),
+                        'filter' => false,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) use ($users) {
+                            return Html::a(
+                                $users[$row['id_user']],
+                                '/users/' . $row['id_user'],
+                                [
+                                    'target' => '_blank',
+                                ]
+                            );
                         },
                     ],
                     [

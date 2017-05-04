@@ -5,6 +5,7 @@ namespace frontend\models\Search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+
 use common\models\Campaigns as CampaignsModel;
 
 /**
@@ -13,7 +14,6 @@ use common\models\Campaigns as CampaignsModel;
 class Campaigns extends CampaignsModel
 {
     public $id_country;
-
 
     /**
      * @inheritdoc
@@ -25,20 +25,15 @@ class Campaigns extends CampaignsModel
                 [
                     'id_service',
                     'id_lp',
+                    'id_user',
                     'title',
                     'description',
                     'link',
                     'created_at',
                     'updated_at',
+                    'id_operator',
                 ],
                 'safe',
-            ],
-            [
-                [
-                    'id_operator',
-                    'status',
-                ],
-                'integer',
             ],
         ];
     }
@@ -83,13 +78,14 @@ class Campaigns extends CampaignsModel
             'status' => 1,
         ]);
 
+        if (!Yii::$app->user->can('Admin')) {
+            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+        } else {
+            $query->andFilterWhere(['id_user' => $this->id_user]);
+        }
+
         $query
-            ->andFilterWhere(['id_user' => Yii::$app->user->id])
-            ->andFilterWhere(['like', 'id_service', $this->id_service])
-            ->andFilterWhere(['like', 'id_lp', $this->id_lp])
-            ->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'link', $this->link]);
+            ->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

@@ -66,12 +66,6 @@ class Campaigns extends ActiveRecord
         ];
     }
 
-    public function beforeValidate()
-    {
-        $this->id_user = Yii::$app->user->id;
-        return parent::beforeValidate();
-    }
-
     public function afterSave($insert, $oldAttributes)
     {
         $logs = new LogsHelper();

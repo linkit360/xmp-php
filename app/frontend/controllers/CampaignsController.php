@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Operators;
+use common\models\Users;
 use function md5;
 use function mt_rand;
 
@@ -58,6 +59,17 @@ class CampaignsController extends Controller
             ->indexBy('id')
             ->column();
 
+        $users = [];
+        if (Yii::$app->user->can('Admin')) {
+            $users = Users::find()
+                ->select([
+                    'username',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->column();
+        }
+
         $searchModel = new \frontend\models\Search\Campaigns();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -67,6 +79,7 @@ class CampaignsController extends Controller
                 'model' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'data' => $data,
+                'users' => $users,
             ]
         );
     }
@@ -104,8 +117,11 @@ class CampaignsController extends Controller
         $model->status = 1;
         $model->link = md5(mt_rand(1, 999999));
 
-        if ($model->load(Yii::$app->request->post()) && $model->commit()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->id_user = Yii::$app->user->id;
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render(
@@ -128,13 +144,11 @@ class CampaignsController extends Controller
     public function actionUpdate($id)
     {
         $model = CampaignsForm::findOne($id);
-
-        if ($model->id_user !== Yii::$app->user->id) {
-            return new NotFoundHttpException();
-        }
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            unset($model->id_user);
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render(
@@ -173,8 +187,11 @@ class CampaignsController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Campaigns::findOne($id)) !== null) {
-            return $model;
+        $model = Campaigns::findOne($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
