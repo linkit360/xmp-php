@@ -2,8 +2,8 @@
 
 namespace common\models;
 
-use Yii;
 use yii\db\ActiveRecord;
+
 use common\helpers\LogsHelper;
 
 /**
@@ -64,17 +64,11 @@ class Services extends ActiveRecord
             'title' => 'Title',
             'description' => 'Description',
             'id_provider' => 'Provider',
-            'id_user' => 'User ID',
+            'id_user' => 'User',
             'status' => 'Status',
             'id_service' => 'Service ID',
+            'time_create' => 'Created At',
         ];
-    }
-
-    public function beforeValidate()
-    {
-        $this->id_user = Yii::$app->user->id;
-
-        return parent::beforeValidate();
     }
 
     public function afterSave($insert, $oldAttributes)

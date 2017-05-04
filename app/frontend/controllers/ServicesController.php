@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Users;
 use const null;
 use function json_encode;
 use const JSON_PRETTY_PRINT;
@@ -10,8 +11,6 @@ use Yii;
 use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
 
 use common\models\Services;
 use common\models\Countries;
@@ -55,6 +54,17 @@ class ServicesController extends Controller
             ->indexBy('id')
             ->all();
 
+        $users = [];
+        if (Yii::$app->user->can('Admin')) {
+            $users = Users::find()
+                ->select([
+                    'username',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->column();
+        }
+
         $searchModel = new \frontend\models\Search\Services();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -65,6 +75,7 @@ class ServicesController extends Controller
                 'dataProvider' => $dataProvider,
                 'providers' => $providers,
                 'countries' => $countries,
+                'users' => $users,
             ]
         );
     }
@@ -145,6 +156,7 @@ class ServicesController extends Controller
             ) {
                 # Provider
                 if ($modelProvider->validate()) {
+                    $model->id_user = Yii::$app->user->id;
                     $model->service_opts = json_encode(
                         $modelProvider->attributes,
                         JSON_PRETTY_PRINT
@@ -225,6 +237,7 @@ class ServicesController extends Controller
         ) {
             # Provider
             if ($modelProvider->validate()) {
+                unset($model->id_user);
                 $model->service_opts = json_encode(
                     $modelProvider->attributes,
                     JSON_PRETTY_PRINT
@@ -306,17 +319,11 @@ class ServicesController extends Controller
      */
     protected function findModel($id)
     {
-        $model = Services::find()
-            ->where(
-                [
-                    'id' => $id,
-                    'id_user' => Yii::$app->user->id,
-                ]
-            )
-            ->one();
-
+        $model = Services::findOne($id);
         if ($model !== null) {
-            return $model;
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');

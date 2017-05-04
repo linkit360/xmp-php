@@ -3,11 +3,12 @@
 namespace frontend\models\Search;
 
 use function array_keys;
-use function array_merge_recursive;
-use common\models\Providers;
+
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+
+use common\models\Providers;
 use common\models\Services as ServicesModel;
 
 /**
@@ -31,6 +32,7 @@ class Services extends ServicesModel
                     'id_service',
                     'id_content',
                     'id_country',
+                    'id_user',
                     'service_opts',
                     'date_range',
                 ],
@@ -127,10 +129,15 @@ class Services extends ServicesModel
                 ]);
         }
 
+        if (!Yii::$app->user->can('Admin')) {
+            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+        } else {
+            $query->andFilterWhere(['id_user' => $this->id_user]);
+        }
+
         $query->andFilterWhere([
             'id_service' => $this->id_service,
             'id_content' => $this->id_content,
-            'id_user' => Yii::$app->user->id,
             'status' => 1,
         ]);
 

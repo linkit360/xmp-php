@@ -4,8 +4,8 @@ use yii\helpers\Html;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 
-use kartik\widgets\FileInput;
 use kartik\widgets\Select2;
+use kartik\widgets\FileInput;
 
 /**
  * @var yii\web\View                $this
@@ -14,20 +14,20 @@ use kartik\widgets\Select2;
  */
 
 $this->params['subtitle'] = 'Service content';
+
+$form = ActiveForm::begin(
+    [
+        'options' =>
+            [
+                'enctype' => 'multipart/form-data',
+            ],
+    ]
+);
 ?>
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <?php
-            $form = ActiveForm::begin(
-                [
-                    'options' =>
-                        [
-                            'enctype' => 'multipart/form-data',
-                        ],
-                ]
-            );
-
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_category')
                 ->dropDownList(
@@ -63,7 +63,6 @@ $this->params['subtitle'] = 'Service content';
                             ],
                             'pluginOptions' => [
                                 'maxFileCount' => 1,
-//                        'uploadUrl' => '/',
                                 'showUpload' => false,
                             ],
                         ]
@@ -76,18 +75,6 @@ $this->params['subtitle'] = 'Service content';
                         ['class' => 'btn btn-primary']
                     ) . '<br/><br/>';
             }
-
-            /*
-            echo $form->field($model, 'status')->radioList(
-                [
-                    1 => 'Active',
-                    0 => 'Inactive',
-                ],
-                [
-                    'separator' => '<br/>',
-                ]
-            );
-            */
             ?>
 
             <div class="text-right">
@@ -100,6 +87,7 @@ $this->params['subtitle'] = 'Service content';
                     ]
                 );
 
+                echo "&nbsp;";
                 echo Html::submitButton(
                     $model->isNewRecord ? 'Create' : 'Update',
                     [
@@ -108,10 +96,7 @@ $this->params['subtitle'] = 'Service content';
                 );
                 ?>
             </div>
-
-            <?php
-            ActiveForm::end();
-            ?>
         </div>
     </div>
 </div>
+<?php ActiveForm::end() ?>
