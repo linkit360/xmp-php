@@ -135,7 +135,7 @@ $form = ActiveForm::begin([
     'method' => 'get',
 ]);
 ?>
-<div class="col-lg-7">
+<div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <div class="row">
@@ -229,9 +229,10 @@ $form = ActiveForm::begin([
 </div>
 <?php
 ActiveForm::end();
+echo '</div><div class="row">';
 ?>
 
-<div class="col-lg-7">
+<div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <p>

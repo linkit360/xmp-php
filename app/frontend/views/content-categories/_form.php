@@ -16,12 +16,13 @@ $icons = [];
 foreach ($ic->getAll() as $icon) {
     $icons[$icon] = '<i class="fa ' . $icon . '" aria-hidden="true"></i> ' . $icon;
 }
+
+$form = ActiveForm::begin();
 ?>
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <?php
-            $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'icon')->widget(
                 Select2::classname(),
@@ -48,6 +49,7 @@ foreach ($ic->getAll() as $icon) {
                     ]
                 );
 
+                echo "&nbsp;";
                 echo Html::submitButton(
                     $model->isNewRecord ? 'Create' : 'Update',
                     [
@@ -56,10 +58,7 @@ foreach ($ic->getAll() as $icon) {
                 );
                 ?>
             </div>
-
-            <?php
-            ActiveForm::end();
-            ?>
         </div>
     </div>
 </div>
+<?php ActiveForm::end() ?>

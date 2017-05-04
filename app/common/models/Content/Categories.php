@@ -43,16 +43,10 @@ class Categories extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_user' => 'Id User',
+            'id_user' => 'User',
             'icon' => 'Icon',
             'title' => 'Title',
         ];
-    }
-
-    public function beforeValidate()
-    {
-        $this->id_user = Yii::$app->user->id;
-        return parent::beforeValidate();
     }
 
     public function afterSave($insert, $oldAttributes)

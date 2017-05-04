@@ -5,15 +5,11 @@ namespace frontend\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
+use common\models\Users;
 use common\models\Content\Categories;
 
-/**
- * ContentCategoriesController implements the CRUD actions for Categories model.
- */
 class ContentCategoriesController extends Controller
 {
     /**
@@ -26,7 +22,9 @@ class ContentCategoriesController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'roles' => ['contentCategoriesManage'],
+                        'roles' => [
+                            'contentCategoriesManage',
+                        ],
                         'allow' => true,
                     ],
                     [
@@ -43,19 +41,26 @@ class ContentCategoriesController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Categories::find()->where(
-                [
-                    'id_user' => Yii::$app->user->id,
-                    'status' => 1,
-                ]
-            ),
-        ]);
+        $users = [];
+        if (Yii::$app->user->can('Admin')) {
+            $users = Users::find()
+                ->select([
+                    'username',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->column();
+        }
+
+        $searchModel = new \frontend\models\Search\Categories();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render(
             'index',
             [
+                'model' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'users' => $users,
             ]
         );
     }
@@ -86,8 +91,11 @@ class ContentCategoriesController extends Controller
     {
         $model = new Categories();
         $model->status = 1;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->id_user = Yii::$app->user->id;
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render(
@@ -149,8 +157,11 @@ class ContentCategoriesController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Categories::findOne($id)) !== null) {
-            return $model;
+        $model = $this->findModel($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
