@@ -157,7 +157,7 @@ class ContentCategoriesController extends Controller
      */
     protected function findModel($id)
     {
-        $model = $this->findModel($id);
+        $model = Categories::findOne($id);
         if ($model !== null) {
             if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
                 return $model;

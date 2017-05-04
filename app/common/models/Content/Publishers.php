@@ -2,9 +2,9 @@
 
 namespace common\models\Content;
 
-use common\helpers\LogsHelper;
-use Yii;
 use yii\db\ActiveRecord;
+
+use common\helpers\LogsHelper;
 
 /**
  * @property string  $id
@@ -44,16 +44,10 @@ class Publishers extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_user' => 'Id User',
+            'id_user' => 'User',
             'title' => 'Title',
             'description' => 'Description',
         ];
-    }
-
-    public function beforeValidate()
-    {
-        $this->id_user = Yii::$app->user->id;
-        return parent::beforeValidate();
     }
 
     public function afterSave($insert, $oldAttributes)

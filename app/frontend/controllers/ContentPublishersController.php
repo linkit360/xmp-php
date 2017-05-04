@@ -3,12 +3,11 @@
 namespace frontend\controllers;
 
 use Yii;
-use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
+use common\models\Users;
 use common\models\Content\Publishers;
 
 /**
@@ -43,19 +42,26 @@ class ContentPublishersController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Publishers::find()->where(
-                [
-                    'id_user' => Yii::$app->user->id,
-                    'status' => 1,
-                ]
-            ),
-        ]);
+        $users = [];
+        if (Yii::$app->user->can('Admin')) {
+            $users = Users::find()
+                ->select([
+                    'username',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->column();
+        }
+
+        $searchModel = new \frontend\models\Search\Publishers();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render(
             'index',
             [
+                'model' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'users' => $users,
             ]
         );
     }
@@ -86,8 +92,11 @@ class ContentPublishersController extends Controller
     {
         $model = new Publishers();
         $model->status = 1;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->id_user = Yii::$app->user->id;
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render(
@@ -109,8 +118,11 @@ class ContentPublishersController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            unset($model->id_user);
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render(
@@ -149,8 +161,11 @@ class ContentPublishersController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Publishers::findOne($id)) !== null) {
-            return $model;
+        $model = Publishers::findOne($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');

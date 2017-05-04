@@ -8,14 +8,15 @@ use yii\widgets\ActiveForm;
  * @var common\models\Content\Publishers $model
  * @var yii\widgets\ActiveForm           $form
  */
+
+$form = ActiveForm::begin();
 ?>
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <?php
-            $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
-            echo $form->field($model, 'description')->textInput(['maxlength' => true]);
+            echo $form->field($model, 'description')->textarea();
             ?>
 
             <div class="text-right">
@@ -28,6 +29,7 @@ use yii\widgets\ActiveForm;
                     ]
                 );
 
+                echo "&nbsp;";
                 echo Html::submitButton(
                     $model->isNewRecord ? 'Create' : 'Update',
                     [
@@ -36,10 +38,7 @@ use yii\widgets\ActiveForm;
                 );
                 ?>
             </div>
-
-            <?php
-            ActiveForm::end();
-            ?>
         </div>
     </div>
 </div>
+<?php ActiveForm::end() ?>
