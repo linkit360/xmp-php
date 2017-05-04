@@ -18,7 +18,6 @@ $form = ActiveForm::begin();
             <?php
             echo $form->field($model, 'username')->textInput(['autofocus' => true]);
             echo $form->field($model, 'email');
-
             echo $form->field($model, 'password')->passwordInput();
             echo $form->field($model, 'status')->radioList(
                 [
@@ -33,7 +32,6 @@ $form = ActiveForm::begin();
             echo $form->field($model, 'new_pass')->checkbox([
                 'label' => 'Ask new password on login',
             ]);
-
             ?>
 
             <div class="text-right">
@@ -46,6 +44,7 @@ $form = ActiveForm::begin();
                     ]
                 );
 
+                echo "&nbsp;";
                 echo Html::submitButton(
                     $model->isNewRecord ? 'Create' : 'Update',
                     [

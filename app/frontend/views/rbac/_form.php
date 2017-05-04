@@ -7,12 +7,13 @@ use yii\widgets\ActiveForm;
  * @var \frontend\models\RbacForm $model
  * @var yii\widgets\ActiveForm    $form
  */
+
+$form = ActiveForm::begin();
 ?>
 <div class="col-lg-4">
     <div class="ibox">
         <div class="ibox-content">
             <?php
-            $form = ActiveForm::begin();
             echo $form->field($model, 'name')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea(['rows' => 6]);
             echo $form->field($model, 'permissions')->checkboxList(
@@ -33,6 +34,7 @@ use yii\widgets\ActiveForm;
                     ]
                 );
 
+                echo "&nbsp;";
                 echo Html::submitButton(
                     $model->isNewRecord ? 'Create' : 'Update',
                     [
@@ -41,10 +43,7 @@ use yii\widgets\ActiveForm;
                 );
                 ?>
             </div>
-
-            <?php
-            ActiveForm::end();
-            ?>
         </div>
     </div>
 </div>
+<?php ActiveForm::end() ?>

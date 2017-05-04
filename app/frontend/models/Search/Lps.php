@@ -2,15 +2,14 @@
 
 namespace frontend\models\Search;
 
+use const SORT_ASC;
+use const SORT_DESC;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 use common\models\Lps as LpsModel;
 
-/**
- * Lps represents the model behind the search form about `common\models\Lps`.
- */
 class Lps extends LpsModel
 {
     public $date_range;
@@ -57,7 +56,10 @@ class Lps extends LpsModel
      */
     public function search($params)
     {
-        $query = LpsModel::find();
+        $query = LpsModel::find()
+            ->orderBy([
+                'created_at' => SORT_DESC,
+            ]);
 
         // add conditions that should always apply here
 

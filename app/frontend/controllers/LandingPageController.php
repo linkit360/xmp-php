@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use const false;
 use const AWS_S3;
+use function is_dir;
 use function file_get_contents;
 
 use Aws\Sdk;
@@ -116,7 +117,7 @@ class LandingPageController extends Controller
                     'template',
                     [
                         'template' => $file,
-                        'template_id' => (integer)$ex[7],
+                        'template_id' => (integer)$ex[6],
                     ]
                 );
             } else {
@@ -158,6 +159,7 @@ class LandingPageController extends Controller
         $template = str_replace('/lp/templates/' . (integer)$post['templ_id'] . '/', '', $template);
 
         $dir = __DIR__ . '/../web/lp/templates/' . (integer)$post['templ_id'];
+
         $files = $this->getFiles($dir);
 
         $file = tempnam('/tmp', 'zip');
@@ -239,6 +241,7 @@ class LandingPageController extends Controller
 
         $searchModel = new \frontend\models\Search\Lps();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render(
             'index',
             [
@@ -307,6 +310,7 @@ class LandingPageController extends Controller
     private function getFiles($dir)
     {
         $files = [];
+//        if (is_dir($dir)) {
         foreach (scandir($dir) as $file_name) {
             if ($file_name === '.' || $file_name === '..') {
                 continue;
@@ -319,6 +323,7 @@ class LandingPageController extends Controller
                 $files[] = $file;
             }
         }
+//        }
 
         return $files;
     }
