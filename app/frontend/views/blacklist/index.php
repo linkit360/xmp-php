@@ -76,17 +76,15 @@ $form = ActiveForm::begin([
 
                 <div class="col-lg-12">
                     <?php
-                    if (count($users)) {
-                        echo $form->field($model, 'id_user')->widget(
-                            Select2::classname(),
-                            [
-                                'data' => $users,
-                                'options' => [
-                                    'placeholder' => 'User',
-                                ],
-                            ]
-                        );
-                    }
+                    echo $form->field($model, 'id_user')->widget(
+                        Select2::classname(),
+                        [
+                            'data' => $users,
+                            'options' => [
+                                'placeholder' => 'User',
+                            ],
+                        ]
+                    );
                     ?>
                 </div>
 
@@ -166,8 +164,6 @@ ActiveForm::end();
                     ],
                     [
                         'attribute' => 'id_user',
-                        'visible' => count($users),
-                        'filter' => false,
                         'headerOptions' => [
                             'style' => 'width: 1%; white-space: nowrap;',
                         ],
@@ -175,13 +171,7 @@ ActiveForm::end();
                             'style' => 'width: 1%; white-space: nowrap;',
                         ],
                         'content' => function ($row) use ($users) {
-                            return Html::a(
-                                $users[$row['id_user']],
-                                '/users/' . $row['id_user'],
-                                [
-                                    'target' => '_blank',
-                                ]
-                            );
+                            return $users[$row['id_user']];
                         },
                     ],
                     [

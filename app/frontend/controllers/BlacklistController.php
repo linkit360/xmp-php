@@ -46,16 +46,13 @@ class BlacklistController extends Controller
      */
     public function actionIndex()
     {
-        $users = [];
-        if (Yii::$app->user->can('Admin')) {
-            $users = Users::find()
-                ->select([
-                    'username',
-                    'id',
-                ])
-                ->indexBy('id')
-                ->column();
-        }
+        $users = Users::find()
+            ->select([
+                'username',
+                'id',
+            ])
+            ->indexBy('id')
+            ->column();
 
         $model = new Blacklist();
         $dataProvider = $model->search(Yii::$app->request->queryParams);

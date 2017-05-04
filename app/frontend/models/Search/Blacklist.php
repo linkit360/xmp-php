@@ -66,12 +66,7 @@ class Blacklist extends MsisdnBlacklist
             return $dataProvider;
         }
 
-        if (!Yii::$app->user->can('Admin')) {
-            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
-        } else {
-            $query->andFilterWhere(['id_user' => $this->id_user]);
-        }
-
+        $query->andFilterWhere(['id_user' => $this->id_user]);
         $query->andFilterWhere(['like', 'msisdn', $this->msisdn]);
 
         return $dataProvider;
