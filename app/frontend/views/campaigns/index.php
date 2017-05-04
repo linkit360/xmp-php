@@ -118,6 +118,9 @@ echo '</div><div class="row">';
                         'attribute' => 'id_user',
                         'visible' => count($users),
                         'filter' => false,
+                        'headerOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
                         'contentOptions' => [
                             'style' => 'width: 1%; white-space: nowrap;',
                         ],

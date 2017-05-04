@@ -1,12 +1,14 @@
 <?php
 
-namespace frontend\models;
+namespace frontend\models\Search;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+
 use common\models\MsisdnBlacklist;
 
-class BlacklistForm extends MsisdnBlacklist
+class Blacklist extends MsisdnBlacklist
 {
 
     public $dateFrom;
@@ -18,7 +20,15 @@ class BlacklistForm extends MsisdnBlacklist
     public function rules()
     {
         return [
-            [['msisdn', 'dateFrom', 'dateTo'], 'safe'],
+            [
+                [
+                    'msisdn',
+                    'dateFrom',
+                    'dateTo',
+                    'id_user',
+                ],
+                'safe',
+            ],
         ];
     }
 
@@ -56,13 +66,11 @@ class BlacklistForm extends MsisdnBlacklist
             return $dataProvider;
         }
 
-        // grid filtering conditions
-//        $query->andFilterWhere([
-//            'id' => $this->id,
-//            'id_provider' => $this->id_provider,
-//            'id_operator' => $this->id_operator,
-//            'created_at' => $this->created_at,
-//        ]);
+        if (!Yii::$app->user->can('Admin')) {
+            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+        } else {
+            $query->andFilterWhere(['id_user' => $this->id_user]);
+        }
 
         $query->andFilterWhere(['like', 'msisdn', $this->msisdn]);
 

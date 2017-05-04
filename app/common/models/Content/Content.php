@@ -48,7 +48,7 @@ class Content extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_user' => 'User',
+            'id_user' => 'Created By',
             'id_category' => 'Category',
             'id_publisher' => 'Publisher',
             'title' => 'Title',

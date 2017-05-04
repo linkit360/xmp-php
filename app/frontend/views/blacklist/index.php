@@ -1,5 +1,6 @@
 <?php
 use kartik\widgets\DatePicker;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\web\View;
@@ -9,6 +10,7 @@ use yii\widgets\ActiveForm;
  * @var View                           $this
  * @var yii\data\ActiveDataProvider    $dataProvider
  * @var \common\models\MsisdnBlacklist $model
+ * @var array                          $users
  */
 
 $this->title = 'MSISDN Blacklist';
@@ -21,8 +23,8 @@ $helper->modalDelete($this);
 $js = "
     var providers_names = [];
     var providers = [];
-    var operators_select = $('#blacklistform-id_operator');
-    var providers_select = $('#blacklistform-id_provider');
+    var operators_select = $('#blacklist-id_operator');
+    var providers_select = $('#blacklist-id_provider');
 ";
 
 $providers = [];
@@ -43,68 +45,76 @@ foreach ($providers as $id_provider => $operators) {
 
 $this->registerJs($js, View::POS_END);
 $this->registerJs('load_operators();', View::POS_READY);
+
+$form = ActiveForm::begin([
+    'action' => ['index'],
+    'method' => 'get',
+]);
 ?>
-<!--suppress JSUnusedLocalSymbols, JSUnresolvedVariable -->
-<script type="text/javascript">
-    function check_msisdn(obj) {
-        var input = $(obj);
-        input.val(input.val().replace(/\D/g, ''));
-    }
-
-    function change_operators(obj) {
-        operators_select.empty();
-        providers[obj.val()].forEach(function (element, index) {
-            operators_select.append($('<option value=' + index + '>' + element + '</option>'));
-        });
-    }
-
-    function load_operators() {
-        providers_select.empty();
-        providers_names.forEach(function (element, index) {
-            providers_select.append($('<option value=' + index + '>' + element + '</option>'));
-        });
-        change_operators(providers_select);
-    }
-</script>
-
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
-            <?php
-            $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-            ]);
-            echo $form->field($model, 'msisdn');
+            <div class="row">
+                <div class="col-lg-12">
+                    <?php
+                    echo $form->field($model, 'msisdn');
+                    echo DatePicker::widget([
+                            'type' => DatePicker::TYPE_RANGE,
+                            'form' => $form,
+                            'model' => $model,
+                            'attribute' => 'dateFrom',
+                            'attribute2' => 'dateTo',
+                            'options' => ['placeholder' => 'Start date'],
+                            'options2' => ['placeholder' => 'End date'],
+                            'pluginOptions' => [
+                                'format' => 'yyyy-mm-dd',
+                                'autoclose' => true,
+                            ],
+                        ]) . '<br/>';
+                    ?>
+                </div>
 
-            echo DatePicker::widget([
-                'type' => DatePicker::TYPE_RANGE,
-                'form' => $form,
-                'model' => $model,
-                'attribute' => 'dateFrom',
-                'attribute2' => 'dateTo',
-                'options' => ['placeholder' => 'Start date'],
-                'options2' => ['placeholder' => 'End date'],
-                'pluginOptions' => [
-                    'format' => 'yyyy-mm-dd',
-                    'autoclose' => true,
-                ],
-            ]);
+                <div class="col-lg-12">
+                    <?php
+                    if (count($users)) {
+                        echo $form->field($model, 'id_user')->widget(
+                            Select2::classname(),
+                            [
+                                'data' => $users,
+                                'options' => [
+                                    'placeholder' => 'User',
+                                ],
+                            ]
+                        );
+                    }
+                    ?>
+                </div>
 
-            echo '<br/>';
-            echo Html::submitButton(
-                'Search',
-                [
-                    'class' => 'btn btn-success',
-                ]
-            );
-            ActiveForm::end();
-            ?>
+                <div class="col-lg-12 text-right">
+                    <?php
+                    echo Html::a(
+                        'Reset',
+                        ['index'],
+                        ['class' => 'btn btn-default']
+                    );
+
+                    echo '&nbsp;';
+                    echo Html::submitButton(
+                        'Search',
+                        ['class' => 'btn btn-primary']
+                    );
+                    ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="col-lg-12">
+<?php
+ActiveForm::end();
+?>
+
+<div class="col-lg-8">
     <div class="ibox">
         <div class="ibox-content">
             <p>
@@ -112,6 +122,7 @@ $this->registerJs('load_operators();', View::POS_READY);
                     Add MSISDN
                 </button>
             </p>
+
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -120,12 +131,11 @@ $this->registerJs('load_operators();', View::POS_READY);
                     [
                         'header' => 'Country',
                         'headerOptions' => [
-                            'width' => '140',
-                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
                         ],
-                        'contentOptions' => function () {
-                            return ['class' => 'text-right'];
-                        },
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
                         'content' => function ($data) use ($model) {
                             return $model->getCountries()[$model->getProviders()[$data['id_provider']]['id_country']];
                         },
@@ -133,12 +143,11 @@ $this->registerJs('load_operators();', View::POS_READY);
                     [
                         'attribute' => 'id_operator',
                         'headerOptions' => [
-                            'width' => '140',
-                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
                         ],
-                        'contentOptions' => function () {
-                            return ['class' => 'text-right'];
-                        },
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
                         'content' => function ($data) use ($model) {
                             return $model->getOperators()[$data['id_operator']]['name'];
                         },
@@ -146,19 +155,43 @@ $this->registerJs('load_operators();', View::POS_READY);
                     [
                         'attribute' => 'id_provider',
                         'headerOptions' => [
-                            'width' => '140',
-                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
                         ],
-                        'contentOptions' => function () {
-                            return ['class' => 'text-right'];
-                        },
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
                         'content' => function ($data) use ($model) {
                             return $model->getProviders()[$data['id_provider']]['name'];
                         },
                     ],
                     [
+                        'attribute' => 'id_user',
+                        'visible' => count($users),
+                        'filter' => false,
+                        'headerOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) use ($users) {
+                            return Html::a(
+                                $users[$row['id_user']],
+                                '/users/' . $row['id_user'],
+                                [
+                                    'target' => '_blank',
+                                ]
+                            );
+                        },
+                    ],
+                    [
                         'attribute' => 'created_at',
-                        'headerOptions' => ['width' => '140'],
+                        'headerOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
                         'content' => function ($data) {
                             return date('Y-m-d H:i:s', strtotime($data->created_at));
                         },
@@ -213,11 +246,7 @@ $this->registerJs('load_operators();', View::POS_READY);
                 </h4>
             </div>
 
-            <?php
-            $form = ActiveForm::begin([
-                'action' => '/blacklist/create',
-            ]);
-            ?>
+            <?php $form = ActiveForm::begin(['action' => '/blacklist/create']) ?>
             <div class="modal-body">
                 <?php
                 echo $form->field($model, 'msisdn')->textInput([
@@ -242,9 +271,30 @@ $this->registerJs('load_operators();', View::POS_READY);
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <?= Html::submitButton('Add', ['class' => 'btn btn-success']) ?>
             </div>
-            <?php
-            ActiveForm::end();
-            ?>
+            <?php ActiveForm::end() ?>
         </div>
     </div>
 </div>
+
+<!--suppress JSUnusedLocalSymbols, JSUnresolvedVariable -->
+<script type="text/javascript">
+    function check_msisdn(obj) {
+        var input = $(obj);
+        input.val(input.val().replace(/\D/g, ''));
+    }
+
+    function change_operators(obj) {
+        operators_select.empty();
+        providers[obj.val()].forEach(function (element, index) {
+            operators_select.append($('<option value=' + index + '>' + element + '</option>'));
+        });
+    }
+
+    function load_operators() {
+        providers_select.empty();
+        providers_names.forEach(function (element, index) {
+            providers_select.append($('<option value=' + index + '>' + element + '</option>'));
+        });
+        change_operators(providers_select);
+    }
+</script>

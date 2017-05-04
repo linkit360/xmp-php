@@ -19,82 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
 
-$columns = [
-    [
-        'class' => yii\grid\SerialColumn::class,
-        'contentOptions' => [
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-    ],
-    'title',
-];
-
-if (count($users)) {
-    $columns[] = [
-        'attribute' => 'id_user',
-        'filter' => false,
-        'contentOptions' => [
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'content' => function ($row) use ($users) {
-            return Html::a(
-                $users[$row['id_user']],
-                '/users/' . $row['id_user'],
-                [
-                    'target' => '_blank',
-                ]
-            );
-        },
-    ];
-}
-
-$columns = array_merge(
-    $columns,
-    [
-        [
-            'attribute' => 'created_at',
-            'filter' => false,
-            'contentOptions' => [
-                'style' => 'width: 1%; white-space: nowrap;',
-            ],
-            'content' => function ($row) {
-                return date('Y-m-d H:i:s', strtotime($row['created_at']));
-            },
-        ],
-        [
-            'contentOptions' => [
-                'style' => 'width: 1%; white-space: nowrap;',
-            ],
-            'content' => function ($row) {
-                $html = Html::a(
-                    'View',
-                    [
-                        'view',
-                        'id' => $row['id'],
-                    ],
-                    [
-                        'class' => 'btn btn-xs btn-success',
-                    ]
-                );
-
-                $html .= '&nbsp;';
-                $html .= Html::button(
-                    'Delete',
-                    [
-                        'class' => 'btn btn-xs btn-danger',
-                        'data-toggle' => 'modal',
-                        'data-target' => '#modalDelete',
-                        'data-rowid' => $row['id'],
-                    ]
-                );
-
-                return $html;
-            },
-
-        ],
-    ]
-);
-
 $form = ActiveForm::begin([
     'action' => ['index'],
     'method' => 'get',
@@ -144,6 +68,7 @@ $form = ActiveForm::begin([
                     ['index'],
                     ['class' => 'btn btn-default']
                 );
+
                 echo '&nbsp;';
                 echo Html::submitButton(
                     'Search',
@@ -170,7 +95,76 @@ echo '</div><div class="row">';
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
-                'columns' => $columns,
+                'columns' => [
+                    [
+                        'class' => yii\grid\SerialColumn::class,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                    ],
+                    'title',
+                    [
+                        'attribute' => 'id_user',
+                        'visible' => count($users),
+                        'filter' => false,
+                        'headerOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) use ($users) {
+                            return Html::a(
+                                $users[$row['id_user']],
+                                '/users/' . $row['id_user'],
+                                [
+                                    'target' => '_blank',
+                                ]
+                            );
+                        },
+                    ],
+                    [
+                        'attribute' => 'created_at',
+                        'filter' => false,
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            return date('Y-m-d H:i:s', strtotime($row['created_at']));
+                        },
+                    ],
+                    [
+                        'contentOptions' => [
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            $html = Html::a(
+                                'View',
+                                [
+                                    'view',
+                                    'id' => $row['id'],
+                                ],
+                                [
+                                    'class' => 'btn btn-xs btn-success',
+                                ]
+                            );
+
+                            $html .= '&nbsp;';
+                            $html .= Html::button(
+                                'Delete',
+                                [
+                                    'class' => 'btn btn-xs btn-danger',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalDelete',
+                                    'data-rowid' => $row['id'],
+                                ]
+                            );
+
+                            return $html;
+                        },
+
+                    ],
+                ],
             ]);
             ?>
         </div>

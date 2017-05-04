@@ -46,7 +46,7 @@ class Lps extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_user' => 'User',
+            'id_user' => 'Created By',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

@@ -8,11 +8,12 @@ use common\helpers\LogsHelper;
 /**
  * This is the model class for table "xmp_msisdn_blacklist".
  *
- * @property integer $id
+ * @property string  $id
  * @property string  $msisdn
  * @property string  $provider_name
  * @property integer $operator_code
  * @property string  $created_at
+ * @property string  $id_user
  */
 class MsisdnBlacklist extends ActiveRecord
 {
@@ -40,6 +41,7 @@ class MsisdnBlacklist extends ActiveRecord
                     'msisdn',
                     'id_provider',
                     'id_operator',
+                    'id_user',
                 ],
                 'required',
             ],
@@ -50,7 +52,13 @@ class MsisdnBlacklist extends ActiveRecord
                 ],
                 'integer',
             ],
-            [['msisdn'], 'string', 'max' => 32],
+            [
+                [
+                    'msisdn',
+                ],
+                'string',
+                'max' => 32,
+            ],
         ];
     }
 
@@ -127,6 +135,7 @@ class MsisdnBlacklist extends ActiveRecord
         return [
             'id' => 'ID',
             'msisdn' => 'MSISDN',
+            'id_user' => 'Created By',
             'id_provider' => 'Provider',
             'id_operator' => 'Operator',
             'created_at' => 'Created At',

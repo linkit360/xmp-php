@@ -64,7 +64,7 @@ class Services extends ActiveRecord
             'title' => 'Title',
             'description' => 'Description',
             'id_provider' => 'Provider',
-            'id_user' => 'User',
+            'id_user' => 'Created By',
             'status' => 'Status',
             'id_service' => 'Service ID',
             'time_create' => 'Created At',

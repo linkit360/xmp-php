@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Users;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -9,7 +10,7 @@ use yii\web\NotFoundHttpException;
 
 use common\models\MsisdnBlacklist;
 
-use frontend\models\BlacklistForm;
+use frontend\models\Search\Blacklist;
 
 /**
  * BlacklistController implements the CRUD actions for MsisdnBlacklist model.
@@ -45,13 +46,26 @@ class BlacklistController extends Controller
      */
     public function actionIndex()
     {
-        $model = new BlacklistForm();
+        $users = [];
+        if (Yii::$app->user->can('Admin')) {
+            $users = Users::find()
+                ->select([
+                    'username',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->column();
+        }
+
+        $model = new Blacklist();
         $dataProvider = $model->search(Yii::$app->request->queryParams);
+
         return $this->render(
             'index',
             [
                 'model' => $model,
                 'dataProvider' => $dataProvider,
+                'users' => $users,
             ]
         );
     }
@@ -81,35 +95,12 @@ class BlacklistController extends Controller
     public function actionCreate()
     {
         $model = new MsisdnBlacklist();
-        $model->load(Yii::$app->request->post(), 'BlacklistForm');
+        $model->load(Yii::$app->request->post(), 'Blacklist');
+        $model->id_user = Yii::$app->user->id;
         $model->save();
 
         return $this->redirect(['index']);
     }
-
-    /**
-     * Updates an existing MsisdnBlacklist model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param integer $id
-     *
-     * @return mixed
-     */
-    /*
-    public function actionUpdate($id)
-    {
-        return $this->redirect(['index']);
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-    */
 
     /**
      * Deletes an existing MsisdnBlacklist model.

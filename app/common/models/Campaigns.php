@@ -53,7 +53,7 @@ class Campaigns extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_user' => 'User',
+            'id_user' => 'Created By',
             'id_service' => 'Service',
             'id_operator' => 'Operator',
             'title' => 'Title',
