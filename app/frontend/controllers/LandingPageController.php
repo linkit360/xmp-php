@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use const AWS_S3;
 use const false;
+use const AWS_S3;
 use function file_get_contents;
 
 use Aws\Sdk;
@@ -11,12 +11,12 @@ use Aws\S3\S3Client;
 use ZipArchive;
 
 use Yii;
-use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 use common\models\Lps;
+use common\models\Users;
 
 class LandingPageController extends Controller
 {
@@ -48,7 +48,9 @@ class LandingPageController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['lpCreate'],
+                        'roles' => [
+                            'lpCreate',
+                        ],
                     ],
                     [
                         'allow' => false,
@@ -179,6 +181,7 @@ class LandingPageController extends Controller
 
         $model = new Lps();
         $model->title = $post['export-title'];
+        $model->id_user = Yii::$app->user->id;
         if (!$model->save()) {
 //            dump($model->getErrors());
             return '';
@@ -199,10 +202,6 @@ class LandingPageController extends Controller
     public function actionDownload($id)
     {
         $model = $this->findModel($id);
-        if ($model->id_user !== Yii::$app->user->id) {
-            return new NotFoundHttpException();
-        }
-
         $result = $this->s3->getObject([
             'Bucket' => 'xmp-lp',
             'Key' => $model->id,
@@ -227,6 +226,17 @@ class LandingPageController extends Controller
      */
     public function actionIndex()
     {
+        $users = [];
+        if (Yii::$app->user->can('Admin')) {
+            $users = Users::find()
+                ->select([
+                    'username',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->column();
+        }
+
         $searchModel = new \frontend\models\Search\Lps();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render(
@@ -234,6 +244,7 @@ class LandingPageController extends Controller
             [
                 'model' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'users' => $users,
             ]
         );
     }
@@ -254,28 +265,6 @@ class LandingPageController extends Controller
             ]
         );
     }
-
-    /**
-     * Updates an existing Lp model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
-    /*
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-    */
 
     /**
      * Deletes an existing Lp model.
@@ -305,8 +294,11 @@ class LandingPageController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Lps::findOne($id)) !== null) {
-            return $model;
+        $model = $this->findModel($id);
+        if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+            if ($model !== null) {
+                return $model;
+            }
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');

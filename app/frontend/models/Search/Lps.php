@@ -5,6 +5,7 @@ namespace frontend\models\Search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+
 use common\models\Lps as LpsModel;
 
 /**
@@ -25,6 +26,7 @@ class Lps extends LpsModel
                     'title',
                     'description',
                     'date_range',
+                    'id_user',
                 ],
                 'safe',
             ],
@@ -88,8 +90,13 @@ class Lps extends LpsModel
                 ]);
         }
 
+        if (!Yii::$app->user->can('Admin')) {
+            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+        } else {
+            $query->andFilterWhere(['id_user' => $this->id_user]);
+        }
+
         $query
-            ->andFilterWhere(['id_user' => Yii::$app->user->id])
             ->andFilterWhere(['status' => 1])
             ->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'description', $this->description]);

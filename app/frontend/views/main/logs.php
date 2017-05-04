@@ -55,9 +55,6 @@ $formData['users'] = Users::find()
                     'options' => [
                         'placeholder' => 'Controller',
                     ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
-                    ],
                 ]
             );
 
@@ -68,9 +65,6 @@ $formData['users'] = Users::find()
                     'options' => [
                         'placeholder' => 'Action',
                     ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
-                    ],
                 ]
             );
 
@@ -80,9 +74,6 @@ $formData['users'] = Users::find()
                     'data' => $formData['users'],
                     'options' => [
                         'placeholder' => 'User',
-                    ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
                     ],
                 ]
             );

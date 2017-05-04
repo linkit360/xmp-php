@@ -46,17 +46,11 @@ class Lps extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_user' => 'Id User',
+            'id_user' => 'User',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
-    }
-
-    public function beforeValidate()
-    {
-        $this->id_user = Yii::$app->user->id;
-        return parent::beforeValidate();
     }
 
     public function afterSave($insert, $oldAttributes)
