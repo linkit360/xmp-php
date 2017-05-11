@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\jui\SliderInput;
 use yii\widgets\ActiveForm;
 
 /**
@@ -9,18 +10,29 @@ use yii\widgets\ActiveForm;
  */
 
 $this->params['subtitle'] = 'URL and LP manager for services';
+$form = ActiveForm::begin();
 ?>
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <?php
-            $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();
             echo $form->field($model, 'link')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_operator')->dropDownList($model->getOperators());
             echo $form->field($model, 'id_service')->dropDownList($model->getServices());
             echo $form->field($model, 'id_lp')->dropDownList($model->getLps());
+            echo $form->field($model, 'autoclick_enabled')->checkbox();
+            echo $form->field($model, 'autoclick_ratio')->widget(
+                SliderInput::classname(),
+                [
+                    'clientOptions' => [
+                        'min' => 1,
+                        'max' => 10,
+                        'step' => 1,
+                    ],
+                ]
+            );
             ?>
 
             <div class="text-right">
@@ -33,6 +45,7 @@ $this->params['subtitle'] = 'URL and LP manager for services';
                     ]
                 );
 
+                echo "&nbsp;";
                 echo Html::submitButton(
                     'Create',
                     [
@@ -41,10 +54,9 @@ $this->params['subtitle'] = 'URL and LP manager for services';
                 );
                 ?>
             </div>
-
-            <?php
-            ActiveForm::end();
-            ?>
         </div>
     </div>
 </div>
+<?php
+ActiveForm::end();
+?>

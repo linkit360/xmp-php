@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use Yii;
 use yii\db\ActiveRecord;
 use common\helpers\LogsHelper;
 
@@ -18,6 +17,8 @@ use common\helpers\LogsHelper;
  * @property integer $status
  * @property string  $created_at
  * @property string  $updated_at
+ * @property string  $autoclick_enabled
+ * @property string  $autoclick_ratio
  */
 class Campaigns extends ActiveRecord
 {
@@ -35,14 +36,69 @@ class Campaigns extends ActiveRecord
     public function rules()
     {
         return [
-            [['id_user', 'id_service', 'id_operator', 'id_lp', 'title', 'link'], 'required'],
-            [['id', 'id_user', 'id_lp', 'id_service'], 'string'],
-            [['id_operator', 'status'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['title'], 'string', 'max' => 128],
-            [['description'], 'string', 'max' => 255],
-            [['link'], 'string', 'max' => 64],
-            [['link'], 'unique'],
+            [
+                [
+                    'id_user',
+                    'id_service',
+                    'id_operator',
+                    'id_lp',
+                    'title',
+                    'link',
+                    'autoclick_enabled',
+                    'autoclick_ratio',
+                ],
+                'required',
+            ],
+            [
+                [
+                    'id',
+                    'id_user',
+                    'id_lp',
+                    'id_service',
+                ],
+                'string',
+            ],
+            [
+                [
+                    'id_operator',
+                    'status',
+                    'autoclick_ratio',
+                ],
+                'integer',
+            ],
+            [
+                [
+                    'title',
+                ],
+                'string',
+                'max' => 128,
+            ],
+            [
+                [
+                    'description',
+                ],
+                'string',
+                'max' => 255,
+            ],
+            [
+                [
+                    'link',
+                ],
+                'string',
+                'max' => 64,
+            ],
+            [
+                [
+                    'link',
+                ],
+                'unique',
+            ],
+            [
+                [
+                    'autoclick_enabled',
+                ],
+                'boolean',
+            ],
         ];
     }
 
