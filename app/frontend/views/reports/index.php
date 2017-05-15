@@ -26,7 +26,6 @@ $excludeColums = [
 $total = [
     'lp_hits' => 0,
     'mo' => 0,
-    'mo_uniq' => 0,
     'mo_success' => 0,
     'pixels' => 0,
     'lp_msisdn_hits' => 0,
@@ -121,21 +120,23 @@ $gridColumns = [
         ],
         'footer' => number_format($total['mo']),
     ],
+    /*
     [
-        'attribute' => 'mo_uniq',
-        'label' => 'MO Unique',
-        'contentOptions' => function () {
-            return ['class' => 'text-right'];
-        },
-        'content' => function ($data) {
-            return number_format($data['mo_uniq']);
-        },
-        'footerOptions' => [
-            'class' => 'text-right',
-            'style' => 'font-weight: bold;',
-        ],
-        'footer' => number_format($total['mo_uniq']),
+    'attribute' => 'mo_uniq',
+    'label' => 'MO Unique',
+    'contentOptions' => function () {
+    return ['class' => 'text-right'];
+    },
+    'content' => function ($data) {
+    return number_format($data['mo_uniq']);
+    },
+    'footerOptions' => [
+    'class' => 'text-right',
+    'style' => 'font-weight: bold;',
     ],
+    'footer' => number_format($total['mo_uniq']),
+    ],
+    */
     [
         'attribute' => 'mo_success',
         'label' => 'MO Success',

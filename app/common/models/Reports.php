@@ -5,8 +5,6 @@ namespace common\models;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "xmp_reports".
- *
  * @property string  $id
  * @property string  $report_date
  * @property integer $id_campaign
@@ -37,15 +35,22 @@ class Reports extends ActiveRecord
         return [
             [
                 [
-                    'id',
+                    // invalid
+
                     'id_campaign',
                     'id_provider',
                     'id_operator',
                     'lp_hits',
                     'lp_msisdn_hits',
-                    'mo',
-                    'mo_uniq',
-                    'mo_success',
+                    'mo_total',
+                    'mo_charge_success',
+                    'mo_charge_sum',
+                    'mo_charge_failed',
+                    'mo_rejected',
+                    'renewal_total',
+                    'renewal_charge_success',
+                    'renewal_charge_sum',
+                    'renewal_failed',
                     'pixels',
                 ],
                 'required',
@@ -57,7 +62,6 @@ class Reports extends ActiveRecord
                 ],
                 'string',
             ],
-            [['report_date'], 'safe'],
             [
                 [
                     'id_campaign',

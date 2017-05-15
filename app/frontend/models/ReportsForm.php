@@ -4,18 +4,19 @@ namespace frontend\models;
 
 use function array_key_exists;
 use function array_keys;
-use function array_push;
 use function count;
 use function in_array;
 use const SORT_ASC;
-use yii\base\Model;
-use yii\data\ActiveDataProvider;
+
 use yii\db\Query;
+use yii\base\Model;
+use yii\helpers\ArrayHelper;
+use yii\data\ActiveDataProvider;
+
 use common\models\Countries;
 use common\models\Operators;
 use common\models\Providers;
 use common\models\Reports;
-use yii\helpers\ArrayHelper;
 
 /**
  * Reports Form
@@ -187,10 +188,9 @@ class ReportsForm extends Model
             ->select([
                 'SUM(lp_hits) as lp_hits',
                 'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-                'SUM(mo) as mo',
-                'SUM(mo_uniq) as mo_uniq',
-                'SUM(mo_success) as mo_success',
-                'SUM(retry_success) as retry_success',
+                'SUM(mo_total) as mo',
+                'SUM(mo_charge_success) as mo_success',
+                'SUM(renewal_charge_success) as retry_success',
                 'SUM(pixels) as pixels',
 
                 "date_trunc('day', report_at) as report_at_day",
@@ -229,8 +229,8 @@ class ReportsForm extends Model
             ->select([
                 'SUM(lp_hits) as lp_hits',
                 'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-                'SUM(mo) as mo',
-                'SUM(mo_success) as mo_success',
+                'SUM(mo_total) as mo',
+                'SUM(mo_charge_success) as mo_success',
 
                 "date_trunc('day', report_at) as report_at_day",
                 'id_campaign',
