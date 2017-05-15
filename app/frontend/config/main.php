@@ -10,10 +10,6 @@ $config = [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-        'assetManager' => [
-            'class' => \yii\web\AssetManager::class,
-            'appendTimestamp' => true,
-        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
             'cookieValidationKey' => 'sWOHQyhRudhCz9j_z5s4BW_5p3dtjVCe',
@@ -34,8 +30,11 @@ $config = [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'class' => yii\log\FileTarget::class,
+                    'levels' => [
+                        'error',
+                        'warning',
+                    ],
                 ],
             ],
         ],

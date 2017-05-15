@@ -12,10 +12,10 @@ return [
     'vendorPath' => '/composer/vendor',
     'components' => [
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => yii\caching\FileCache::class,
         ],
         'db' => [
-            'class' => 'yii\db\Connection',
+            'class' => yii\db\Connection::class,
             'dsn' => 'pgsql:host=' . $db['host'] . ';port=5432;dbname=' . $db['database'],
             'username' => $db['user'],
             'password' => $db['password'],
@@ -23,7 +23,7 @@ return [
             'tablePrefix' => 'xmp_',
         ],
         'authManager' => [
-            'class' => 'yii\rbac\DbManager',
+            'class' => yii\rbac\DbManager::class,
             // the table for storing authorization items. Defaults to "auth_item".
             'itemTable' => '{{%rbac_items}}',
             // the table for storing authorization item hierarchy. Defaults to "auth_item_child".
