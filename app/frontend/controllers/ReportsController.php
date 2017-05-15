@@ -2,15 +2,14 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Reports\RevenueReport;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 
-use frontend\models\ReportsForm;
+use frontend\models\Reports\AdReport;
+use frontend\models\Reports\ConvReport;
 
-/**
- * ReportsController implements the CRUD actions for Reports model.
- */
 class ReportsController extends Controller
 {
     /**
@@ -41,6 +40,15 @@ class ReportsController extends Controller
                         ],
                     ],
                     [
+                        'allow' => true,
+                        'actions' => [
+                            'revenue',
+                        ],
+                        'roles' => [
+                            'reportsConversionView',
+                        ],
+                    ],
+                    [
                         'allow' => false,
                     ],
                 ],
@@ -55,7 +63,7 @@ class ReportsController extends Controller
      */
     public function actionIndex()
     {
-        $model = new ReportsForm();
+        $model = new AdReport();
         $model->load(Yii::$app->request->get());
         $model->dataAdChart();
 
@@ -74,12 +82,31 @@ class ReportsController extends Controller
      */
     public function actionConversion()
     {
-        $model = new ReportsForm();
+        $model = new ConvReport();
         $model->load(Yii::$app->request->get());
         $model->dataConvChart();
 
         return $this->render(
             'conversion',
+            [
+                'model' => $model,
+            ]
+        );
+    }
+
+    /**
+     * Revenue report
+     *
+     * @return mixed
+     */
+    public function actionRevenue()
+    {
+        $model = new RevenueReport();
+        $model->load(Yii::$app->request->get());
+        $model->dataChart();
+
+        return $this->render(
+            'revenue',
             [
                 'model' => $model,
             ]

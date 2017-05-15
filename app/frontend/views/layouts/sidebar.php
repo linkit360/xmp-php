@@ -32,6 +32,13 @@ if (in_array('reportsConversionView', $permissions)) {
     ];
 }
 
+if (in_array('reportsConversionView', $permissions)) {
+    $menu[$group]['items'][] = [
+        'name' => 'Revenue',
+        'url' => 'reports/revenue',
+    ];
+}
+
 # Campaigns
 $group = 'Campaigns';
 $menu[$group] = [

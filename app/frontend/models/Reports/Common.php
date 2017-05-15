@@ -1,27 +1,21 @@
 <?php
 
-namespace frontend\models;
+namespace frontend\models\Reports;
 
-use function array_key_exists;
-use function array_keys;
-use function count;
-use function in_array;
 use const SORT_ASC;
+use function count;
+use function array_keys;
 
 use yii\db\Query;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
-use yii\data\ActiveDataProvider;
 
+use common\models\Reports;
 use common\models\Countries;
 use common\models\Operators;
 use common\models\Providers;
-use common\models\Reports;
 
-/**
- * Reports Form
- */
-class ReportsForm extends Model
+class Common extends Model
 {
     # Fields
     public $country;
@@ -178,202 +172,6 @@ class ReportsForm extends Model
         ];
     }
 
-    /**
-     * @return ActiveDataProvider
-     */
-    public function dataProviderAd()
-    {
-        $query = (new Query())
-            ->from('xmp_reports')
-            ->select([
-                'SUM(lp_hits) as lp_hits',
-                'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-                'SUM(mo_total) as mo',
-                'SUM(mo_charge_success) as mo_success',
-                'SUM(renewal_charge_success) as retry_success',
-                'SUM(pixels) as pixels',
-
-                "date_trunc('day', report_at) as report_at_day",
-                'id_campaign',
-                'provider_name',
-                'operator_code',
-            ])
-            ->groupBy([
-                'report_at_day',
-                'id_campaign',
-                'provider_name',
-                'operator_code',
-            ])
-            ->orderBy([
-                'report_at_day' => SORT_DESC,
-            ]);
-
-        $query = $this->applyFilters($query);
-
-//        dump($query->createCommand()->getRawSql());
-//        dump($query->all());
-//        die;
-
-        return new ActiveDataProvider([
-            'query' => $query,
-        ]);
-    }
-
-    /**
-     * @return ActiveDataProvider
-     */
-    public function dataConv()
-    {
-        $query = (new Query())
-            ->from('xmp_reports')
-            ->select([
-                'SUM(lp_hits) as lp_hits',
-                'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-                'SUM(mo_total) as mo',
-                'SUM(mo_charge_success) as mo_success',
-
-                "date_trunc('day', report_at) as report_at_day",
-                'id_campaign',
-                'provider_name',
-                'operator_code',
-            ])
-            ->groupBy([
-                'report_at_day',
-                'id_campaign',
-                'provider_name',
-                'operator_code',
-            ])
-            ->orderBy([
-                'report_at_day' => SORT_DESC,
-            ]);
-
-        $query = $this->applyFilters($query);
-
-        return new ActiveDataProvider([
-            'query' => $query,
-        ]);
-    }
-
-    public function dataConvChart()
-    {
-        $query = (new Query())
-            ->from('xmp_reports')
-            ->select([
-                'SUM(lp_hits) as lp_hits',
-//                'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-//                'SUM(mo) as mo',
-//                'SUM(mo_success) as mo_success',
-                'id_campaign',
-                "date_trunc('day', report_at) as report_at_day",
-            ])
-            ->groupBy([
-                'id_campaign',
-                'report_at_day',
-            ])
-            ->orderBy([
-                'report_at_day' => SORT_ASC,
-            ]);
-
-        $query = $this->applyFilters($query);
-
-        $chart = [
-            'sum' => 0,
-            'days' => [],
-            'series' => [],
-        ];
-
-        $series = [];
-        foreach ($query->all() as $row) {
-//            dump($row);
-            $date = date(
-                'Y.m.d',
-                strtotime($row['report_at_day'])
-            );
-
-            if (!in_array($date, $chart['days'])) {
-                $chart['days'][] = $date;
-            }
-
-            if (!array_key_exists($row['id_campaign'], $series)) {
-                $series[$row['id_campaign']] = [
-                    'name' => 'Campaign #' . $row['id_campaign'],
-                    'data' => [],
-                ];
-            }
-
-//            $chart['series'][]['data'][] = (int)$row['lp_hits'];
-            $series[$row['id_campaign']]['data'][] = (int)$row['lp_hits'];
-            $chart['sum'] += $row['lp_hits'];
-        }
-
-        foreach ($series as $ser) {
-            $chart['series'][] = $ser;
-        }
-
-        $this->chart = $chart;
-    }
-
-    public function dataAdChart()
-    {
-        $query = (new Query())
-            ->from('xmp_reports')
-            ->select([
-//                'SUM(lp_hits) as lp_hits',
-//                'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-//                'SUM(mo) as mo',
-//                'SUM(mo_success) as mo_success',
-                'SUM(pixels) as pixels',
-                'id_campaign',
-
-                "date_trunc('day', report_at) as report_at_day",
-            ])
-            ->groupBy([
-                'id_campaign',
-                'report_at_day',
-            ])
-            ->orderBy([
-                'report_at_day' => SORT_ASC,
-            ]);
-        $query = $this->applyFilters($query);
-
-        $chart = [
-            'sum' => 0,
-            'days' => [],
-            'series' => [],
-        ];
-
-        $series = [];
-        foreach ($query->all() as $row) {
-            $date = date(
-                'Y.m.d',
-                strtotime($row['report_at_day'])
-            );
-
-            if (!in_array($date, $chart['days'])) {
-                $chart['days'][] = $date;
-            }
-
-//            $chart['series'][0]['data'][] = (int)$row['lp_hits'];
-//            $chart['series'][1]['data'][] = (int)$row['mo'];
-//            $chart['series'][2]['data'][] = (int)$row['mo_success'];
-            $chart['sum'] += $row['pixels'];
-
-            if (!array_key_exists($row['id_campaign'], $series)) {
-                $series[$row['id_campaign']] = [
-                    'name' => 'Campaign #' . $row['id_campaign'],
-                    'data' => [],
-                ];
-            }
-            $series[$row['id_campaign']]['data'][] = (int)$row['pixels'];
-        }
-
-        foreach ($series as $ser) {
-            $chart['series'][] = $ser;
-        }
-
-        $this->chart = $chart;
-    }
-
     public function getStruct()
     {
         if (!count($this->struct)) {
@@ -409,7 +207,7 @@ class ReportsForm extends Model
         return $this->struct;
     }
 
-    private function applyFilters(Query $query)
+    protected function applyFilters(Query $query)
     {
         # Provider
         if ($this->provider !== null && $this->provider !== "0") {
