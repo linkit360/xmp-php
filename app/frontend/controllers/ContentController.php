@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use const AWS_S3;
-use common\models\Users;
 use function count;
 use function json_decode;
 use function array_key_exists;
@@ -17,6 +16,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 
+use common\models\Users;
 use common\models\Content\Content;
 use common\models\Content\Categories;
 use common\models\Content\Publishers;
@@ -30,6 +30,21 @@ class ContentController extends Controller
 {
     /** @var S3Client */
     public $s3;
+
+    public static function normalizeString($str = '')
+    {
+        $str = strip_tags($str);
+        $str = preg_replace('/[\r\n\t ]+/', ' ', $str);
+        $str = preg_replace('/[\"\*\/\:\<\>\?\'\|]+/', ' ', $str);
+        $str = strtolower($str);
+        $str = html_entity_decode($str, ENT_QUOTES, "utf-8");
+        $str = htmlentities($str, ENT_QUOTES, "utf-8");
+        $str = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $str);
+        $str = str_replace(' ', '-', $str);
+        $str = rawurlencode($str);
+        $str = str_replace('%', '-', $str);
+        return $str;
+    }
 
     public function init()
     {
@@ -184,8 +199,7 @@ class ContentController extends Controller
                 if (array_key_exists('ContentForm', $_FILES) && count($_FILES['ContentForm']['tmp_name'])) {
                     $this->fileUpload(
                         $model,
-                        $_FILES['ContentForm']['tmp_name']['file'],
-                        $_FILES['ContentForm']['name']['file']
+                        $_FILES['ContentForm']['tmp_name']['file']
                     );
                 }
                 return $this->redirect(['index']);
@@ -212,8 +226,7 @@ class ContentController extends Controller
                 if (array_key_exists('ContentForm', $_FILES) && count($_FILES['ContentForm']['tmp_name'])) {
                     $this->fileUpload(
                         $model,
-                        $_FILES['ContentForm']['tmp_name']['file'],
-                        $_FILES['ContentForm']['name']['file']
+                        $_FILES['ContentForm']['tmp_name']['file']
                     );
                 }
 
@@ -298,19 +311,18 @@ class ContentController extends Controller
     /**
      * @param Content $model
      * @param string  $file
-     * @param string  $name
      */
-    private function fileUpload($model, $file, $name)
+    private function fileUpload($model, $file)
     {
         $fileZip = tempnam('/tmp', 'zip');
         $zip = new ZipArchive();
         $zip->open($fileZip, ZipArchive::OVERWRITE);
-        $zip->addFile($file, $name);
+        $zip->addFile($file, self::normalizeString($model->title));
         $zip->close();
 
         $this->s3->putObject([
             'Bucket' => 'xmp-content',
-            'Key' => $model->id,
+            'Key' => $model->id . '.zip',
             'SourceFile' => $fileZip,
         ]);
     }

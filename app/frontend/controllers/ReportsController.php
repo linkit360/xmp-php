@@ -45,7 +45,7 @@ class ReportsController extends Controller
                             'revenue',
                         ],
                         'roles' => [
-                            'reportsConversionView',
+                            'reportsRevenueView',
                         ],
                     ],
                     [

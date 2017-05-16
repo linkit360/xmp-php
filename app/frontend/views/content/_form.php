@@ -15,20 +15,21 @@ use kartik\widgets\FileInput;
 
 $this->params['subtitle'] = 'Service content';
 
-$form = ActiveForm::begin(
-    [
-        'options' =>
-            [
-                'enctype' => 'multipart/form-data',
-            ],
-    ]
-);
+$form = ActiveForm::begin([
+    'options' =>
+        [
+            'enctype' => 'multipart/form-data',
+        ],
+]);
 ?>
 <div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <?php
-            echo $form->field($model, 'title')->textInput(['maxlength' => true]);
+            echo $form->field($model, 'title')
+                ->textInput(['maxlength' => true])
+                ->hint('Note: the name of content file will be same as content title name.');
+
             echo $form->field($model, 'id_category')
                 ->dropDownList(
                     [null => 'Please Select'] + $model->getCategories()
@@ -99,4 +100,6 @@ $form = ActiveForm::begin(
         </div>
     </div>
 </div>
-<?php ActiveForm::end() ?>
+<?php
+ActiveForm::end();
+?>

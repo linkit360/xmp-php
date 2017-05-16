@@ -32,7 +32,7 @@ if (in_array('reportsConversionView', $permissions)) {
     ];
 }
 
-if (in_array('reportsConversionView', $permissions)) {
+if (in_array('reportsRevenueView', $permissions)) {
     $menu[$group]['items'][] = [
         'name' => 'Revenue',
         'url' => 'reports/revenue',
