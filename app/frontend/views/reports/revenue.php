@@ -25,7 +25,19 @@ $excludeColums = [
     'renewal_charge_sum',
 ];
 
-$total = [];
+$total = [
+    'lp_hits' => 0,
+    'mo' => 0,
+    'mo_success' => 0,
+    'mo_charge_failed' => 0,
+    'mo_rejected' => 0,
+    'outflow' => 0,
+    'renewal_total' => 0,
+    'renewal_charge_success' => 0,
+    'renewal_failed' => 0,
+    'revenue' => 0,
+];
+
 $dp = $model->data();
 if (!empty($dp->getModels())) {
     foreach ($dp->getModels() as $row) {
@@ -57,21 +69,31 @@ $gridColumns = [
         'content' => function ($data) {
             return date('Y-m-d', strtotime($data['report_at_day']));
         },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
     ],
     [
         'attribute' => 'id_campaign',
-        'contentOptions' => function () {
-            return ['class' => 'text-right'];
-        },
+        'label' => 'Campaign',
         'content' => function ($data) {
             return number_format($data['id_campaign']);
         },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
     ],
     [
         'label' => 'Country',
         'content' => function ($data) use ($model) {
             return $model->countries[$model->providersByNamesCountry[$data['provider_name']]]['name'];
         },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
     ],
     [
         'attribute' => 'id_provider',
@@ -82,6 +104,10 @@ $gridColumns = [
             }
             return '';
         },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
     ],
     [
         'attribute' => 'id_operator',
@@ -92,6 +118,10 @@ $gridColumns = [
             }
             return '';
         },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
     ],
     [
         'attribute' => 'lp_hits',
@@ -102,14 +132,14 @@ $gridColumns = [
         ],
         'contentOptions' => [
             'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
+            'style' => 'width: 1%;',
         ],
         'content' => function ($data) {
             return number_format($data['lp_hits']);
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['lp_hits']),
     ],
@@ -129,7 +159,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['mo']),
     ],
@@ -149,7 +179,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['mo_success']),
     ],
@@ -169,7 +199,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['mo_charge_failed']),
     ],
@@ -189,7 +219,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['mo_rejected']),
     ],
@@ -209,7 +239,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['outflow']),
     ],
@@ -229,7 +259,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['renewal_total']),
     ],
@@ -249,7 +279,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['renewal_charge_success']),
     ],
@@ -269,7 +299,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['renewal_failed']),
     ],
@@ -295,6 +325,10 @@ $gridColumns = [
 
             return '<b>' . $conv . '</b>%';
         },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
     ],
     [
         'label' => 'Revenue',
@@ -304,7 +338,7 @@ $gridColumns = [
         ],
         'contentOptions' => [
             'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap; background-color: #b3e6ff;',
+            'style' => 'width: 1%; white-space: nowrap; background-color: #cefdce;',
 
         ],
         'content' => function ($data) {
@@ -312,7 +346,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold;',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format(floor($total['revenue'] / 100)),
     ],
@@ -379,7 +413,7 @@ $gridColumns = [
                             'gridLineColor' => '#BFC8CE',
                             'gridLineDashStyle' => 'shortdash',
                             'gridLineWidth' => '1',
-                            'title' => ['text' => 'Lp Hits'],
+                            'title' => ['text' => 'Total Revenue'],
                         ],
                         'credits' => ['enabled' => false],
                         'series' => $model->chart['series'],
@@ -395,7 +429,7 @@ $gridColumns = [
 
 <div class="col-lg-12">
     <div class="ibox">
-        <div class="ibox-content">
+        <div class="ibox-content" style="overflow: auto;">
             <?php
             echo Html::tag(
                 'div',
