@@ -21,26 +21,21 @@ $this->params['breadcrumbs'][] = $this->title;
 $excludeColums = [
     'id_campaign',
     'operator_code',
+    'mo_charge_sum',
+    'renewal_charge_sum',
 ];
 
-$total = [
-    'lp_hits' => 0,
-    'mo' => 0,
-    'mo_uniq' => 0,
-    'mo_success' => 0,
-    'pixels' => 0,
-    'lp_msisdn_hits' => 0,
-    'renewal_charge_success' => 0,
-    'renewal_failed' => 0,
-    'outflow' => 0,
-];
-
+$total = [];
 $dp = $model->data();
 if (!empty($dp->getModels())) {
     foreach ($dp->getModels() as $row) {
         foreach ($row as $key => $val) {
             if (in_array($key, $excludeColums) || !is_numeric($val)) {
                 continue;
+            }
+
+            if (!array_key_exists($key, $total)) {
+                $total[$key] = 0;
             }
 
             $total[$key] += $val;
@@ -120,7 +115,7 @@ $gridColumns = [
     ],
     [
         'attribute' => 'mo',
-        'label' => 'MO',
+        'label' => 'MO Total',
         'headerOptions' => [
             'class' => 'text-right',
             'style' => 'width: 1%; white-space: nowrap;',
@@ -159,8 +154,8 @@ $gridColumns = [
         'footer' => number_format($total['mo_success']),
     ],
     [
-        'attribute' => 'renewal_charge_success',
-        'label' => 'Success Charged',
+        'attribute' => 'mo_charge_failed',
+        'label' => 'MO Failed',
         'headerOptions' => [
             'class' => 'text-right',
             'style' => 'width: 1%; white-space: nowrap;',
@@ -170,17 +165,17 @@ $gridColumns = [
             'style' => 'width: 1%; white-space: nowrap;',
         ],
         'content' => function ($data) {
-            return number_format($data['renewal_charge_success']);
+            return number_format($data['mo_charge_failed']);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'font-weight: bold;',
         ],
-        'footer' => number_format($total['renewal_charge_success']),
+        'footer' => number_format($total['mo_charge_failed']),
     ],
     [
-        'attribute' => 'renewal_failed',
-        'label' => 'Failed Charged',
+        'attribute' => 'mo_rejected',
+        'label' => 'MO Rejected',
         'headerOptions' => [
             'class' => 'text-right',
             'style' => 'width: 1%; white-space: nowrap;',
@@ -190,13 +185,13 @@ $gridColumns = [
             'style' => 'width: 1%; white-space: nowrap;',
         ],
         'content' => function ($data) {
-            return number_format($data['renewal_failed']);
+            return number_format($data['mo_rejected']);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'font-weight: bold;',
         ],
-        'footer' => number_format($total['renewal_failed']),
+        'footer' => number_format($total['mo_rejected']),
     ],
     [
         'attribute' => 'outflow',
@@ -219,13 +214,76 @@ $gridColumns = [
         'footer' => number_format($total['outflow']),
     ],
     [
-        'label' => 'Conversion Rate',
-        'contentOptions' => function () {
-            return [
-                'class' => 'text-right',
-                'style' => 'background-color: #b3e6ff',
-            ];
+        'attribute' => 'renewal_total',
+        'label' => 'Renewal Total',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($data) {
+            return number_format($data['renewal_total']);
         },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold;',
+        ],
+        'footer' => number_format($total['renewal_total']),
+    ],
+    [
+        'attribute' => 'renewal_charge_success',
+        'label' => 'Renewal Success',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($data) {
+            return number_format($data['renewal_charge_success']);
+        },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold;',
+        ],
+        'footer' => number_format($total['renewal_charge_success']),
+    ],
+    [
+        'attribute' => 'renewal_failed',
+        'label' => 'Renewal Failed',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($data) {
+            return number_format($data['renewal_failed']);
+        },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold;',
+        ],
+        'footer' => number_format($total['renewal_failed']),
+    ],
+    [
+        'label' => 'Conversion Rate',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap; background-color: #b3e6ff;',
+
+        ],
         'content' => function ($data) {
             $conv = "0.00";
             if ($data['lp_hits'] > 0) {
@@ -237,6 +295,26 @@ $gridColumns = [
 
             return '<b>' . $conv . '</b>%';
         },
+    ],
+    [
+        'label' => 'Revenue',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap; background-color: #b3e6ff;',
+
+        ],
+        'content' => function ($data) {
+            return '<b>' . number_format(floor($data['revenue'] / 100)) . '</b>';
+        },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold;',
+        ],
+        'footer' => number_format(floor($total['revenue'] / 100)),
     ],
 ];
 ?>
@@ -265,7 +343,7 @@ $gridColumns = [
     <div class="ibox">
         <div class="ibox-title">
             <h5>
-                Total Lp Hits For Period: <?= $model->chart['sum'] ?>
+                Total Revenue For Period: <?= $model->chart['sum'] ?>
             </h5>
         </div>
 

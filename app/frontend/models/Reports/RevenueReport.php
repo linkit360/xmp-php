@@ -3,6 +3,7 @@
 namespace frontend\models\Reports;
 
 use const SORT_ASC;
+use function floor;
 use function in_array;
 use function array_key_exists;
 
@@ -26,6 +27,15 @@ class RevenueReport extends Common
                 'SUM(renewal_charge_success) as renewal_charge_success',
                 'SUM(renewal_failed) as renewal_failed',
                 'SUM(outflow) as outflow',
+                'SUM(mo_charge_failed) as mo_charge_failed',
+                'SUM(mo_rejected) as mo_rejected',
+                'SUM(renewal_total) as renewal_total',
+
+                // Revenue
+//                'SUM(mo_charge_sum) as mo_charge_sum_',
+//                'SUM(renewal_charge_sum) as renewal_charge_sum_',
+                'SUM(mo_charge_sum) + SUM(renewal_charge_sum) as revenue',
+
 
                 "date_trunc('day', report_at) as report_at_day",
                 'id_campaign',
@@ -54,10 +64,9 @@ class RevenueReport extends Common
         $query = (new Query())
             ->from('xmp_reports')
             ->select([
-                'SUM(lp_hits) as lp_hits',
-//                'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-//                'SUM(mo) as mo',
-//                'SUM(mo_success) as mo_success',
+                'SUM(mo_charge_sum) as mo_charge_sum',
+                'SUM(renewal_charge_sum) as renewal_charge_sum',
+
                 'id_campaign',
                 "date_trunc('day', report_at) as report_at_day",
             ])
@@ -79,7 +88,6 @@ class RevenueReport extends Common
 
         $series = [];
         foreach ($query->all() as $row) {
-//            dump($row);
             $date = date(
                 'Y.m.d',
                 strtotime($row['report_at_day'])
@@ -96,9 +104,10 @@ class RevenueReport extends Common
                 ];
             }
 
-//            $chart['series'][]['data'][] = (int)$row['lp_hits'];
-            $series[$row['id_campaign']]['data'][] = (int)$row['lp_hits'];
-            $chart['sum'] += $row['lp_hits'];
+            $sum = floor(($row['mo_charge_sum'] + $row['renewal_charge_sum']) / 100);
+
+            $series[$row['id_campaign']]['data'][] = $sum;
+            $chart['sum'] += $sum;
         }
 
         foreach ($series as $ser) {
