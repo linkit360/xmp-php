@@ -30,10 +30,9 @@ class RevenueReport extends Common
                 'SUM(mo_charge_failed) as mo_charge_failed',
                 'SUM(mo_rejected) as mo_rejected',
                 'SUM(renewal_total) as renewal_total',
+                'SUM(injection_charge_success) as injection_charge_success',
+                'SUM(injection_failed) as injection_failed',
 
-                // Revenue
-//                'SUM(mo_charge_sum) as mo_charge_sum_',
-//                'SUM(renewal_charge_sum) as renewal_charge_sum_',
                 'SUM(mo_charge_sum) + SUM(renewal_charge_sum) as revenue',
 
 

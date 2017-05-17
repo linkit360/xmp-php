@@ -36,6 +36,8 @@ $total = [
     'renewal_charge_success' => 0,
     'renewal_failed' => 0,
     'revenue' => 0,
+    'injection_charge_success' => 0,
+    'injection_failed' => 0,
 ];
 
 $dp = $model->data();
@@ -302,6 +304,46 @@ $gridColumns = [
             'style' => 'font-weight: bold; background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['renewal_failed']),
+    ],
+    [
+        'attribute' => 'injection_charge_success',
+        'label' => 'Injections Success',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($data) {
+            return number_format($data['injection_charge_success']);
+        },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
+        'footer' => number_format($total['injection_charge_success']),
+    ],
+    [
+        'attribute' => 'injection_failed',
+        'label' => 'Injections Failed',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($data) {
+            return number_format($data['injection_failed']);
+        },
+        'footerOptions' => [
+            'class' => 'text-right',
+            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+        ],
+        'footer' => number_format($total['injection_failed']),
     ],
     [
         'label' => 'Conversion Rate',
