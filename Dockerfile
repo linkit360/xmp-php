@@ -1,31 +1,33 @@
 FROM php:7.1.5-fpm-alpine
 
 # Deps
-RUN apk add --progress --no-cache \
-    # System soft
-    bash wget curl nano git openssl \
-    # UTF-8
-    icu-libs icu-dev \
-    # PHP Deps
-    libmcrypt-dev libxml2-dev postgresql-dev
-
-# PHP Ext
-RUN docker-php-ext-install opcache mbstring pdo pdo_pgsql json intl sockets mcrypt iconv zip soap xml
+RUN set -ex \
+    && apk add --progress --no-cache --virtual deps \
+        # Soft
+        bash wget curl nano git openssl \
+        # UTF-8
+        icu-libs icu-dev \
+        # Libs
+        libmcrypt-dev libxml2-dev postgresql-dev \
+    # PHP Ext
+    && docker-php-ext-install pdo pdo_pgsql mbstring json intl sockets mcrypt iconv zip soap xml
 
 # Env
 EXPOSE 9000
 ENV TERM xterm
 
 # Add Group and User
-RUN addgroup -S -g 1000 docker
-RUN adduser -S -D -s /bin/bash -u 1000 -G docker docker
+RUN set -ex \
+    && addgroup -S -g 1000 docker \
+    && adduser -S -D -s /bin/bash -u 1000 -G docker docker
 
 # Composer
-RUN mkdir -p /composer/home
 ENV COMPOSER_HOME /composer/home
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 COPY composer/ /composer
-RUN chown -R 1000:1000 /composer && chmod -R 0700 /composer
+RUN set -ex \
+    && chown -R 1000:1000 /composer \
+    && chmod -R 0700 /composer
 
 # REMEMBER: only RUN under non-root USER, not COPY
 USER 1000
@@ -34,15 +36,17 @@ USER root
 
 # Configs
 COPY config/ /config
-RUN mv /config/php.ini /usr/local/etc/php-fpm.conf
-RUN mv /config/php-www.ini /usr/local/etc/php-fpm.d/www.conf
-RUN cp /config/.bashrc /home/docker
-RUN mv /config/.bashrc /root
+RUN set -ex \
+    && mv /config/php.ini /usr/local/etc/php-fpm.conf \
+    && mv /config/php-www.ini /usr/local/etc/php-fpm.d/www.conf \
+    && cp /config/.bashrc /home/docker \
+    && mv /config/.bashrc /root
 
 # App
-RUN mkdir -p /app/common
-RUN mkdir -p /app/console
-RUN mkdir -p /app/frontend
+RUN set -ex \
+    && mkdir -p /app/common \
+    && mkdir -p /app/console \
+    && mkdir -p /app/frontend
 
 # common
 COPY app/codeception.yml /app

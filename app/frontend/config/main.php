@@ -70,7 +70,7 @@ if (defined('YII_ENV') && (YII_ENV === 'development' || YII_ENV === 'testing')) 
 
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
-        'class' => \yii\gii\Module::class,
+        'class' => \yii\debug\Module::class,
         'allowedIPs' => ['*'],
     ];
 
