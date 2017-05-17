@@ -12,8 +12,10 @@ function dump(message) {
 }
 
 function start() {
+    dump("WS: server: " + server);
     ws = new WebSocket(server);
     if (!ws) {
+        dump("Error: WS Creation");
         return false;
     }
 

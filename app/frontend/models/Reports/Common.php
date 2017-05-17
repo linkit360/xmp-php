@@ -2,6 +2,8 @@
 
 namespace frontend\models\Reports;
 
+use common\models\Campaigns;
+use function dump;
 use const SORT_ASC;
 use function count;
 use function array_keys;
@@ -51,14 +53,22 @@ class Common extends Model
     {
         if (!count($this->campaigns)) {
             $this->campaigns = [];
-            $db = Reports::find()
-                ->select('DISTINCT ON (id_campaign) *')
-                ->all();
+//            $db = Reports::find()
+//                ->select('DISTINCT ON (id_campaign) *')
+//                ->all();
 
             /** @var Reports $report */
-            foreach ($db as $report) {
-                $this->campaigns[$report->id_campaign] = "" . $report->id_campaign;
-            }
+//            foreach ($db as $report) {
+//                $this->campaigns[$report->id_campaign] = "" . $report->id_campaign;
+//            }
+
+            $this->campaigns = Reports::find()
+                ->select('id_campaign')
+                ->groupBy('id_campaign')
+                ->orderBy('id_campaign')
+                ->indexBy('id_campaign')
+                ->asArray()
+                ->column();
         }
 
         return $this->campaigns;

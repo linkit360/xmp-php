@@ -4,20 +4,19 @@ namespace frontend\controllers;
 
 use const true;
 use const false;
-use const JSON_PRETTY_PRINT;
-use function array_key_exists;
-use function array_keys;
-use function count;
 use function date;
-use function json_encode;
+use function count;
+use function array_keys;
+use function array_key_exists;
 
 use Yii;
-use yii\base\InvalidParamException;
 use yii\db\Query;
-use yii\helpers\ArrayHelper;
-use yii\web\BadRequestHttpException;
+use yii\web\Response;
 use yii\web\Controller;
+use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
+use yii\base\InvalidParamException;
+use yii\web\BadRequestHttpException;
 
 use common\models\Logs;
 use common\models\LoginForm;
@@ -28,9 +27,6 @@ use frontend\models\LogsForm;
 use frontend\models\TransactionsForm;
 use frontend\models\Users\ResetPasswordForm;
 
-/**
- * Site Controller
- */
 class MainController extends Controller
 {
     public function behaviors()
@@ -238,35 +234,25 @@ class MainController extends Controller
 
     public function actionCountry()
     {
-        $this->layout = 'empty';
-
         $country = Countries::find()
-            ->select(
-                [
-                    'id',
-                    'name',
-                ]
-            )
-            ->where(
-                [
-                    'iso' => $_GET['iso'],
-                ]
-            )
+            ->select([
+                'id',
+                'name',
+            ])
+            ->where([
+                'iso' => $_GET['iso'],
+            ])
             ->asArray()
             ->one();
 
         $providers = Providers::find()
-            ->select(
-                [
-                    'name_alias',
-                    'id',
-                ]
-            )
-            ->where(
-                [
-                    'id_country' => $country['id'],
-                ]
-            )
+            ->select([
+                'name_alias',
+                'id',
+            ])
+            ->where([
+                'id_country' => $country['id'],
+            ])
             ->indexBy('name_alias')
             ->asArray()
             ->all();
@@ -284,8 +270,8 @@ class MainController extends Controller
             ->from('xmp_reports')
             ->select([
                 'SUM(lp_hits) as lp_hits',
-                'SUM(mo) as mo',
-                'SUM(mo_success) as mo_success',
+                'SUM(mo_total) as mo',
+                'SUM(mo_charge_success) as mo_success',
 
                 "date_trunc('day', report_at) as report_at_day",
                 'operator_code',
@@ -325,7 +311,8 @@ class MainController extends Controller
             }
         }
 
-        echo json_encode($data, JSON_PRETTY_PRINT);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return $data;
     }
 
     private function userIps()
