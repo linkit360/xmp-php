@@ -9,7 +9,13 @@ $this->title = 'Dashboard';
 $this->params['subtitle'] = 'Reports and Stats for Today';
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->registerJs('server = "ws://' . $_SERVER['HTTP_HOST'] . ':3000/echo";');
+$addr = 'ws://' . $_SERVER['HTTP_HOST'];
+if (YII_ENV === "testing") {
+    $addr = "ws://ws.test-xmp.linkit360.ru";
+}
+
+$this->registerJs('server = "' . $addr . ':2082/echo";');
+unset($addr);
 ?>
 <div class="col-lg-3">
     <div class="ibox">
