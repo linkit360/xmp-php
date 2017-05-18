@@ -10,6 +10,14 @@ use miloschuman\highcharts\Highcharts;
  * @var frontend\models\Reports\RevenueReport $model
  */
 
+$colors = [
+    'total' => '#006699',
+    'success' => '#069306',
+    'failed' => '#ac0606',
+    'rejected' => '#cca300',
+    'footer' => '#d9d9d9',
+];
+
 $this->title = 'Revenue';
 $this->params['subtitle'] = 'Report And Chart';
 $this->params['breadcrumbs'][] = [
@@ -17,6 +25,58 @@ $this->params['breadcrumbs'][] = [
     'url' => '/reports/index',
 ];
 $this->params['breadcrumbs'][] = $this->title;
+
+function colors($name, $data, $longest, $colors, $footer = false)
+{
+    $pad_string = "~";
+
+    // Row
+    $output = "";
+    foreach ($data as $color => $number) {
+        $output .= Html::tag(
+            'span',
+            str_pad($number, $longest, $pad_string, STR_PAD_LEFT),
+            [
+                'style' => 'color: ' . $colors[$color],
+            ]
+        );
+    }
+
+    $cl = !$footer ? "white" : $colors['footer'];
+    $output = str_replace(
+        '~',
+        Html::tag('span', '0', ['style' => 'color: ' . $cl]),
+        $output
+    );
+
+    // Tooltip
+    ob_start();
+    foreach ($data as $color => $number) {
+        ?>
+        <tr>
+            <td class='nw'>
+                <?= $name . '&nbsp;' . ucfirst($color) ?>:
+            </td>
+
+            <td class='nw2' style='color: <?= $colors[$color] ?>'>
+                <?= $number ?>
+            </td>
+        </tr>
+        <?php
+    }
+    $tooltip = "<table style='width: 1%;' class='table'>" . ob_get_contents() . "</table>";
+    ob_end_clean();
+
+    return '<span class="po" data-container="body" data-placement="top" data-content="' . $tooltip . '">' . $output . '</span>';
+}
+
+$js = <<<JS
+        $('.po').popover({
+            html: true,
+            trigger: 'hover focus'
+        });
+JS;
+$this->registerJs($js, $this::POS_LOAD);
 
 $excludeColums = [
     'id_campaign',
@@ -27,17 +87,29 @@ $excludeColums = [
 
 $total = [
     'lp_hits' => 0,
-    'mo' => 0,
-    'mo_success' => 0,
-    'mo_charge_failed' => 0,
-    'mo_rejected' => 0,
+    'mo' => [
+        'mo_total' => 0,
+        'mo_success' => 0,
+        'mo_charge_failed' => 0,
+        'mo_rejected' => 0,
+    ],
     'outflow' => 0,
-    'renewal_total' => 0,
-    'renewal_charge_success' => 0,
-    'renewal_failed' => 0,
+    'renewal' => [
+        'renewal_total' => 0,
+        'renewal_charge_success' => 0,
+        'renewal_failed' => 0,
+    ],
     'revenue' => 0,
-    'injection_charge_success' => 0,
-    'injection_failed' => 0,
+    'injection' => [
+        'injection_charge_success' => 0,
+        'injection_failed' => 0,
+    ],
+];
+
+$spec = [
+    'mo',
+    'renewal',
+    'injection',
 ];
 
 $dp = $model->data();
@@ -48,6 +120,14 @@ if (!empty($dp->getModels())) {
                 continue;
             }
 
+            // spec
+            foreach ($spec as $skey) {
+                if (array_key_exists($key, $total[$skey])) {
+                    $total[$skey][$key] += $val;
+                    continue;
+                }
+            }
+
             if (!array_key_exists($key, $total)) {
                 $total[$key] = 0;
             }
@@ -56,6 +136,24 @@ if (!empty($dp->getModels())) {
         }
     }
 }
+
+// MO
+$total['mo']['total'] = number_format($total['mo']['mo_total']);
+$total['mo']['success'] = number_format($total['mo']['mo_success']);
+$total['mo']['failed'] = number_format($total['mo']['mo_charge_failed']);
+$total['mo']['rejected'] = number_format($total['mo']['mo_rejected']);
+unset($total['mo']['mo_total'], $total['mo']['mo_success'], $total['mo']['mo_charge_failed'], $total['mo']['mo_rejected']);
+
+// Renewal
+$total['renewal']['total'] = number_format($total['renewal']['renewal_total']);
+$total['renewal']['success'] = number_format($total['renewal']['renewal_charge_success']);
+$total['renewal']['failed'] = number_format($total['renewal']['renewal_failed']);
+unset($total['renewal']['renewal_total'], $total['renewal']['renewal_charge_success'], $total['renewal']['renewal_failed']);
+
+// Injection
+$total['injection']['success'] = number_format($total['injection']['injection_charge_success']);
+$total['injection']['failed'] = number_format($total['injection']['injection_failed']);
+unset($total['injection']['injection_charge_success'], $total['injection']['injection_failed']);
 
 $gridColumns = [
     [
@@ -73,7 +171,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
     ],
     [
@@ -84,7 +182,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
     ],
     [
@@ -94,7 +192,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
     ],
     [
@@ -108,7 +206,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
     ],
     [
@@ -122,7 +220,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
     ],
     [
@@ -141,89 +239,34 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['lp_hits']),
     ],
     [
-        'attribute' => 'mo',
-        'label' => 'MO Total',
+        'label' => 'MO',
         'headerOptions' => [
-            'class' => 'text-right',
             'style' => 'width: 1%; white-space: nowrap;',
+            'class' => 'text-center',
         ],
         'contentOptions' => [
             'class' => 'text-right',
             'style' => 'width: 1%; white-space: nowrap;',
         ],
-        'content' => function ($data) {
-            return number_format($data['mo']);
+        'content' => function ($row) use ($colors) {
+            $data = [];
+            $data['total'] = number_format($row['mo_total']);
+            $data['success'] = number_format($row['mo_success']);
+            $data['failed'] = number_format($row['mo_charge_failed']);
+            $data['rejected'] = number_format($row['mo_rejected']);
+
+            return colors('MO', $data, 6, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => number_format($total['mo']),
-    ],
-    [
-        'attribute' => 'mo_success',
-        'label' => 'MO Success',
-        'headerOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'contentOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'content' => function ($data) {
-            return number_format($data['mo_success']);
-        },
-        'footerOptions' => [
-            'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
-        ],
-        'footer' => number_format($total['mo_success']),
-    ],
-    [
-        'attribute' => 'mo_charge_failed',
-        'label' => 'MO Failed',
-        'headerOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'contentOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'content' => function ($data) {
-            return number_format($data['mo_charge_failed']);
-        },
-        'footerOptions' => [
-            'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
-        ],
-        'footer' => number_format($total['mo_charge_failed']),
-    ],
-    [
-        'attribute' => 'mo_rejected',
-        'label' => 'MO Rejected',
-        'headerOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'contentOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'content' => function ($data) {
-            return number_format($data['mo_rejected']);
-        },
-        'footerOptions' => [
-            'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
-        ],
-        'footer' => number_format($total['mo_rejected']),
+        'footer' => colors('MO', $total['mo'], 6, $colors, true),
     ],
     [
         'attribute' => 'outflow',
@@ -241,109 +284,57 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
         'footer' => number_format($total['outflow']),
     ],
     [
-        'attribute' => 'renewal_total',
-        'label' => 'Renewal Total',
+        'label' => 'Renewal',
         'headerOptions' => [
-            'class' => 'text-right',
+            'class' => 'text-center',
             'style' => 'width: 1%; white-space: nowrap;',
         ],
         'contentOptions' => [
             'class' => 'text-right',
             'style' => 'width: 1%; white-space: nowrap;',
         ],
-        'content' => function ($data) {
-            return number_format($data['renewal_total']);
+        'content' => function ($row) use ($colors) {
+            $data = [];
+            $data['total'] = number_format($row['renewal_total']);
+            $data['success'] = number_format($row['renewal_charge_success']);
+            $data['failed'] = number_format($row['renewal_failed']);
+
+            return colors('Renewal', $data, 6, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => number_format($total['renewal_total']),
-    ],
-    [
-        'attribute' => 'renewal_charge_success',
-        'label' => 'Renewal Success',
-        'headerOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'contentOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'content' => function ($data) {
-            return number_format($data['renewal_charge_success']);
-        },
-        'footerOptions' => [
-            'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
-        ],
-        'footer' => number_format($total['renewal_charge_success']),
-    ],
-    [
-        'attribute' => 'renewal_failed',
-        'label' => 'Renewal Failed',
-        'headerOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'contentOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'content' => function ($data) {
-            return number_format($data['renewal_failed']);
-        },
-        'footerOptions' => [
-            'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
-        ],
-        'footer' => number_format($total['renewal_failed']),
+        'footer' => colors('Renewal', $total['renewal'], 6, $colors, true),
     ],
     [
         'attribute' => 'injection_charge_success',
-        'label' => 'Injections Success',
+        'label' => 'Injections',
         'headerOptions' => [
-            'class' => 'text-right',
+            'class' => 'text-center',
             'style' => 'width: 1%; white-space: nowrap;',
         ],
         'contentOptions' => [
             'class' => 'text-right',
             'style' => 'width: 1%; white-space: nowrap;',
         ],
-        'content' => function ($data) {
-            return number_format($data['injection_charge_success']);
+        'content' => function ($row) use ($colors) {
+            $data = [];
+            $data['success'] = number_format($row['injection_charge_success']);
+            $data['failed'] = number_format($row['injection_failed']);
+
+            return colors('Injections', $data, 6, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => number_format($total['injection_charge_success']),
-    ],
-    [
-        'attribute' => 'injection_failed',
-        'label' => 'Injections Failed',
-        'headerOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'contentOptions' => [
-            'class' => 'text-right',
-            'style' => 'width: 1%; white-space: nowrap;',
-        ],
-        'content' => function ($data) {
-            return number_format($data['injection_failed']);
-        },
-        'footerOptions' => [
-            'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
-        ],
-        'footer' => number_format($total['injection_failed']),
+        'footer' => colors('Injections', $total['injection'], 6, $colors, true),
     ],
     [
         'label' => 'Conversion Rate',
@@ -360,7 +351,7 @@ $gridColumns = [
             $conv = "0.00";
             if ($data['lp_hits'] > 0) {
                 $conv = number_format(
-                    $data['mo'] / $data['lp_hits'] * 100,
+                    $data['mo_total'] / $data['lp_hits'] * 100,
                     2
                 );
             }
@@ -369,7 +360,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
     ],
     [
@@ -388,7 +379,7 @@ $gridColumns = [
         },
         'footerOptions' => [
             'class' => 'text-right',
-            'style' => 'font-weight: bold; background-color: #d9d9d9;',
+            'style' => 'background-color: #d9d9d9;',
         ],
         'footer' => number_format(floor($total['revenue'] / 100)),
     ],
@@ -493,8 +484,26 @@ $gridColumns = [
                 'dataProvider' => $dp,
                 'showFooter' => true,
                 'columns' => $gridColumns,
+                'tableOptions' => [
+                    'class' => 'table table-bordered differentTable',
+                ],
             ]);
             ?>
         </div>
     </div>
 </div>
+
+<!--suppress CssUnusedSymbol -->
+<style type="text/css">
+    .nw, .nw2 {
+        white-space: nowrap;
+    }
+
+    .nw2 {
+        text-align: right;
+    }
+
+    .differentTable {
+        border-collapse: inherit;
+    }
+</style>

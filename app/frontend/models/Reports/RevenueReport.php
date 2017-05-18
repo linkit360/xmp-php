@@ -22,7 +22,7 @@ class RevenueReport extends Common
             ->select([
                 'SUM(lp_hits) as lp_hits',
                 'SUM(lp_msisdn_hits) as lp_msisdn_hits',
-                'SUM(mo_total) as mo',
+                'SUM(mo_total) as mo_total',
                 'SUM(mo_charge_success) as mo_success',
                 'SUM(renewal_charge_success) as renewal_charge_success',
                 'SUM(renewal_failed) as renewal_failed',
@@ -34,7 +34,6 @@ class RevenueReport extends Common
                 'SUM(injection_failed) as injection_failed',
 
                 'SUM(mo_charge_sum) + SUM(renewal_charge_sum) as revenue',
-
 
                 "date_trunc('day', report_at) as report_at_day",
                 'id_campaign',
