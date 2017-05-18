@@ -8,7 +8,8 @@ class SoapHelper
     public function GetSubInfo($obj)
     {
         return [
-            'Status' => 'OK',
+            'Status' => 'KO',
+            'Reason' => 'Not found.',
             'Attrib1' => null,
             'Attrib2' => null,
             'Attrib3' => null,
