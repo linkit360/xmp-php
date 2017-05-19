@@ -1,0 +1,22 @@
+stdClass Object
+(
+    [Header] => stdClass Object
+        (
+            [Username] => slypee_mod
+            [Password] => Slyp33mOb1423!
+        )
+
+    [RequestID] => test-123
+    [Action] => SubInfo
+    [MSISDN] => 923088290736
+    [AttribList] => stdClass Object
+        (
+            [AttribElement] => stdClass Object
+                (
+                    [Name] => ServiceName
+                    [Value] => Slypee
+                )
+
+        )
+
+)

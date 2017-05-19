@@ -2,11 +2,16 @@
 
 namespace frontend\controllers;
 
+use const PHP_EOL;
 use function print_r;
+use function str_replace;
+use function htmlspecialchars;
+
 use SoapClient;
 use SoapServer;
 
 use yii\web\Controller;
+
 use common\helpers\SoapHelper;
 
 class SoapController extends Controller
@@ -49,6 +54,7 @@ class SoapController extends Controller
             ]
         );
 
+        echo "<pre><h1>KO?</h1>";
         $obj = [
             'Header' => [
                 'Username' => 'slypee_mod',
@@ -64,15 +70,29 @@ class SoapController extends Controller
                 ],
             ],
         ];
-
-
         print_r($client->GetSubInfo($obj));
+        $resp = htmlspecialchars($client->__getLastResponse());
+        print_r(str_replace('&lt;', PHP_EOL . '&lt;', $resp));
 
-        print_r(
-            $client->__getLastResponse()
-        );
-
-
+        echo "<hr/><h1>OK?</h1>";
+        $obj = [
+            'Header' => [
+                'Username' => 'slypee_mod',
+                'Password' => 'Slyp33mOb1423!',
+            ],
+            'RequestID' => 'test-123',
+            'Action' => 'SubInfo',
+            'MSISDN' => '923088290736',
+            'AttribList' => [
+                'AttribElement' => [
+                    'Name' => 'ServiceName',
+                    'Value' => 'Slypee',
+                ],
+            ],
+        ];
+        print_r($client->GetSubInfo($obj));
+        $resp = htmlspecialchars($client->__getLastResponse());
+        print_r(str_replace('&lt;', PHP_EOL . '&lt;', $resp));
+        echo "</pre>";
     }
-
 }
