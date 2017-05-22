@@ -2,18 +2,13 @@
 
 namespace common\helpers;
 
-use function file_put_contents;
-use function print_r;
-
 class SoapHelper
 {
     public function GetSubInfo($obj)
     {
+        //file_put_contents("log", print_r($obj, true));
 
-
-//        file_put_contents("log", print_r($obj, true));
-
-
+        /*
         if ($obj->MSISDN == 923088290736) {
             return [
                 'Status' => 'OK',
@@ -30,6 +25,7 @@ class SoapHelper
                 ],
             ];
         }
+        */
 
         return [
             'Status' => 'KO',
