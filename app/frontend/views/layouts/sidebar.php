@@ -147,6 +147,11 @@ if (in_array('usersManage', $permissions)) {
         'name' => 'Users',
         'url' => 'users/index',
     ];
+
+    $menu[$group]['items'][] = [
+        'name' => 'Instances',
+        'url' => 'instances/index',
+    ];
 }
 
 function drawItem($item, $path)
