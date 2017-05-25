@@ -6,8 +6,8 @@ use miloschuman\highcharts\Highcharts;
 use yii\helpers\Html;
 
 /**
- * @var yii\web\View                $this
- * @var frontend\models\ReportsForm $model
+ * @var yii\web\View                     $this
+ * @var frontend\models\Reports\AdReport $model
  */
 
 $this->title = 'Advertising';
