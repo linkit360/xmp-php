@@ -4,25 +4,25 @@ namespace frontend\models\Instances;
 
 use yii\helpers\ArrayHelper;
 
-use common\models\Operators;
+use common\models\Providers;
 
 class Instances extends \common\models\Instances
 {
     # Data
-    private $operators = [];
+    private $providers = [];
 
     public function attributeLabels()
     {
         return [
-            'id_operator' => 'Operator',
+            'id_provider' => 'Provider',
         ];
     }
 
-    # Operators
-    public function getOperators()
+    # Providers
+    public function getProviders()
     {
-        if (!count($this->operators)) {
-            $data = Operators::find()
+        if (!count($this->providers)) {
+            $data = Providers::find()
                 ->select([
                     'name',
                     'id',
@@ -44,7 +44,7 @@ class Instances extends \common\models\Instances
                 ];
             }
 
-            $this->operators = $tmp +
+            $this->providers = $tmp +
                 ArrayHelper::map(
                     $data,
                     'id',
@@ -52,7 +52,7 @@ class Instances extends \common\models\Instances
                 );
         }
 
-        return $this->operators;
+        return $this->providers;
     }
 
 }

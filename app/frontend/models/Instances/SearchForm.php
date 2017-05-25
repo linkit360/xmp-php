@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\models\Search;
+namespace frontend\models\Instances;
 
 use Yii;
 use yii\base\Model;
@@ -19,7 +19,7 @@ class SearchForm extends InstancesModel
     {
         return [
             [['id'], 'safe'],
-            [['id_operator', 'status'], 'integer'],
+            [['id_provider', 'status'], 'integer'],
         ];
     }
 
@@ -49,6 +49,7 @@ class SearchForm extends InstancesModel
             'query' => $query,
         ]);
 
+
         $this->load($params);
 
         if (!$this->validate()) {
@@ -59,11 +60,10 @@ class SearchForm extends InstancesModel
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id_operator' => $this->id_operator,
+            'id_provider' => $this->id_provider,
             'status' => $this->status,
+            'id' => $this->id,
         ]);
-
-        $query->andFilterWhere(['like', 'id', $this->id]);
 
         return $dataProvider;
     }

@@ -2,11 +2,12 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\ActiveForm;
 
 /**
- * @var yii\web\View                      $this
- * @var frontend\models\Search\SearchForm $searchModel
- * @var yii\data\ActiveDataProvider       $dataProvider
+ * @var yii\web\View                         $this
+ * @var frontend\models\Instances\SearchForm $searchModel
+ * @var yii\data\ActiveDataProvider          $dataProvider
  */
 
 $this->title = 'Instances';
@@ -16,7 +17,25 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="ibox">
         <div class="ibox-content">
             <?php
-            echo $this->render('_search', ['model' => $searchModel]);
+            $form = ActiveForm::begin([
+                'action' => ['index'],
+                'method' => 'get',
+            ]);
+
+            echo $form->field($searchModel, 'id');
+            echo $form->field($searchModel, 'id_provider');
+            echo $form->field($searchModel, 'status');
+            ?>
+
+            <div class="form-group">
+                <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+                <?php
+                //echo Html::resetButton('Reset', ['class' => 'btn btn-default'])
+                ?>
+            </div>
+
+            <?php
+            ActiveForm::end();
             ?>
         </div>
     </div>
@@ -37,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                    ['class' => 'yii\grid\SerialColumn'],
 
                     'id',
-                    'id_operator',
+                    'id_provider',
                     'status',
 
                     ['class' => 'yii\grid\ActionColumn'],

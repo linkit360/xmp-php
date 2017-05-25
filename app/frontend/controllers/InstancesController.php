@@ -2,9 +2,9 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Instances\SearchForm;
 use Yii;
 use common\models\Instances;
-use frontend\models\Search\SearchForm as InstancesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,13 +35,16 @@ class InstancesController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new InstancesSearch();
+        $searchModel = new SearchForm();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render(
+            'index',
+            [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
+        );
     }
 
     /**

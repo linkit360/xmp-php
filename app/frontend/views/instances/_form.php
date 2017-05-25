@@ -16,13 +16,14 @@ use yii\widgets\ActiveForm;
             $form = ActiveForm::begin();
             //            echo $form->field($model, 'id')->textInput();
             //            echo $form->field($model, 'id_operator')->textInput();
-            echo $form->field($model, 'id_operator')->dropDownList($model->getOperators());
+            echo $form->field($model, 'id_provider')->dropDownList($model->getProviders());
             //            echo $form->field($model, 'status')->textInput();
 
             echo Html::submitButton(
                 $model->isNewRecord ? 'Create' : 'Update',
                 ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
             );
+
             ActiveForm::end();
             ?>
         </div>

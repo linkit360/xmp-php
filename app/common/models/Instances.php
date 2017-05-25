@@ -7,7 +7,7 @@ use yii\db\ActiveRecord;
 
 /**
  * @property string  $id
- * @property integer $id_operator
+ * @property integer $id_provider
  * @property integer $status
  */
 class Instances extends ActiveRecord
@@ -28,7 +28,7 @@ class Instances extends ActiveRecord
         return [
             [
                 [
-                    'id_operator',
+                    'id_provider',
                 ],
                 'required',
             ],
@@ -40,7 +40,7 @@ class Instances extends ActiveRecord
             ],
             [
                 [
-                    'id_operator',
+                    'id_provider',
                     'status',
                 ],
                 'integer',
@@ -55,7 +55,7 @@ class Instances extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_operator' => 'Id Operator',
+            'id_provider' => 'Provider ID',
             'status' => 'Status',
         ];
     }
