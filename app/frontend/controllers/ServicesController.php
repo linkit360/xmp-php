@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\models\Users;
+use frontend\models\Services\QrtechForm;
 use const null;
 use function json_encode;
 use const JSON_PRETTY_PRINT;
@@ -15,6 +15,7 @@ use yii\web\NotFoundHttpException;
 use common\models\Services;
 use common\models\Countries;
 use common\models\Providers;
+use common\models\Users;
 
 use frontend\models\Services\ServicesForm;
 use frontend\models\Services\CheeseForm;
@@ -195,6 +196,11 @@ class ServicesController extends Controller
             // TH - Cheese Mobile
             case 1:
                 return new CheeseForm();
+                break;
+
+            // TH - QR Tech
+            case 2:
+                return new QrtechForm();
                 break;
 
             default:

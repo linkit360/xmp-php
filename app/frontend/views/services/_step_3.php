@@ -16,9 +16,8 @@ $this->params['subtitle'] = 'Service Info';
 
 /** @var \frontend\models\Services\ServicesForm $model */
 $model = $models['model_service'];
-$form = ActiveForm::begin();
-
 $content = $model->getContentForm($opts['country']->id);
+$form = ActiveForm::begin();
 ?>
 <div class="col-lg-6">
     <div class="ibox">
@@ -44,6 +43,11 @@ $content = $model->getContentForm($opts['country']->id);
             <?php
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();
+
+            echo $form->field($model, 'price')
+                ->textInput(['maxlength' => true])
+                ->hint($opts['country']->currency != '' ? 'Currency: ' . $opts['country']->currency : '');
+
             echo $form->field($model, 'id_service')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_provider')->hiddenInput()->label(false);
             echo $form->field($model, 'content')->widget(
@@ -59,19 +63,6 @@ $content = $model->getContentForm($opts['country']->id);
                     ],
                 ]
             );
-
-            /*
-            echo $form->field($model, 'status')
-                ->radioList(
-                    [
-                        1 => 'Active',
-                        0 => 'Inactive',
-                    ],
-                    [
-                        'separator' => '<br/>',
-                    ]
-                );
-            */
             ?>
             <div class="text-right">
                 <?php
