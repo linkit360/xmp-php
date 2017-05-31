@@ -2,8 +2,6 @@
 
 namespace frontend\models\Reports;
 
-use common\models\Campaigns;
-use function dump;
 use const SORT_ASC;
 use function count;
 use function array_keys;
@@ -16,6 +14,7 @@ use common\models\Reports;
 use common\models\Countries;
 use common\models\Operators;
 use common\models\Providers;
+use common\models\Instances;
 
 class Common extends Model
 {
@@ -38,6 +37,9 @@ class Common extends Model
     public $providersByNames = [];
     public $providersByNamesCountry = [];
 
+    public $instances = [];
+    public $instancesById = [];
+
     public $campaigns = [];
     public $chart = [];
     public $struct = [];
@@ -48,20 +50,36 @@ class Common extends Model
         $this->dateTo = date('Y-m-d');
     }
 
+    # Instances
+    public function getInstances()
+    {
+        if (!count($this->instances)) {
+            $this->instances = Instances::find()
+                ->select([
+                    'id',
+                    'id_provider',
+                ])
+                ->indexBy('id_provider')
+                ->asArray()
+                ->column();
+
+            $this->instancesById = Instances::find()
+                ->select([
+                    'id_provider',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->asArray()
+                ->column();
+        }
+
+        return $this->instances;
+    }
+
     # Campaigns
     public function getCampaigns()
     {
         if (!count($this->campaigns)) {
-            $this->campaigns = [];
-//            $db = Reports::find()
-//                ->select('DISTINCT ON (id_campaign) *')
-//                ->all();
-
-            /** @var Reports $report */
-//            foreach ($db as $report) {
-//                $this->campaigns[$report->id_campaign] = "" . $report->id_campaign;
-//            }
-
             $this->campaigns = Reports::find()
                 ->select('id_campaign')
                 ->groupBy('id_campaign')
@@ -111,14 +129,9 @@ class Common extends Model
                 ->orderBy([
                     'name' => SORT_ASC,
                 ])
+                ->indexBy('id')
                 ->asArray()
                 ->all();
-
-            $this->providersByNames = ArrayHelper::map(
-                $this->providers,
-                'name',
-                'name_alias'
-            );
 
             $this->providersByNamesCountry = ArrayHelper::map(
                 $this->providers,
@@ -222,11 +235,7 @@ class Common extends Model
         # Provider
         if ($this->provider !== null && $this->provider !== "0") {
             $query->andWhere([
-                'provider_name' => ArrayHelper::map(
-                    $this->getProviders(),
-                    'id',
-                    'name'
-                )[$this->provider],
+                'id_instance' => $this->getInstances()[$this->provider],
             ]);
         }
 

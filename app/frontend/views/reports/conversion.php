@@ -6,8 +6,8 @@ use miloschuman\highcharts\Highcharts;
 use yii\helpers\Html;
 
 /**
- * @var yii\web\View                $this
- * @var frontend\models\ReportsForm $model
+ * @var yii\web\View                       $this
+ * @var frontend\models\Reports\ConvReport $model
  */
 
 $this->title = 'Conversion';
@@ -63,17 +63,25 @@ $gridColumns = [
     ],
     [
         'label' => 'Country',
-        'content' => function ($data) use ($model) {
-            return $model->countries[$model->providersByNamesCountry[$data['provider_name']]]['name'];
+        'content' => function ($row) use ($model) {
+            if (in_array($row["id_instance"], $model->getInstances())) {
+                $prov = $model->instancesById[$row['id_instance']];
+
+                return $model->countries[$model->providers[$prov]['id_country']]['name'];
+            }
+
+            return '';
         },
     ],
     [
-        'attribute' => 'id_provider',
         'label' => 'Provider',
-        'content' => function ($data) use ($model) {
-            if (array_key_exists($data['provider_name'], $model->providersByNames)) {
-                return $model->providersByNames[$data['provider_name']];
+        'content' => function ($row) use ($model) {
+            if (in_array($row["id_instance"], $model->getInstances())) {
+                $prov = $model->instancesById[$row['id_instance']];
+
+                return $model->providers[$prov]['name'];
             }
+
             return '';
         },
     ],
@@ -84,6 +92,7 @@ $gridColumns = [
             if (array_key_exists($data['operator_code'], $model->operatorsByCode)) {
                 return $model->operatorsByCode[$data['operator_code']];
             }
+
             return '';
         },
     ],

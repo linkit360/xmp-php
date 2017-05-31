@@ -26,13 +26,13 @@ class ConvReport extends Common
 
                 "date_trunc('day', report_at) as report_at_day",
                 'id_campaign',
-                'provider_name',
+                'id_instance',
                 'operator_code',
             ])
             ->groupBy([
                 'report_at_day',
                 'id_campaign',
-                'provider_name',
+                'id_instance',
                 'operator_code',
             ])
             ->orderBy([
