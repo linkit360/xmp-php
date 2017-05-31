@@ -41,7 +41,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<div class="col-lg-12">
+<?= "</div><div class='row'>" ?>
+
+<div class="col-lg-6">
     <div class="ibox">
         <div class="ibox-content">
             <p>
@@ -53,11 +55,36 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
 //                'filterModel' => $searchModel,
                 'columns' => [
-//                    ['class' => 'yii\grid\SerialColumn'],
-
                     'id',
-                    'id_provider',
-                    'status',
+                    [
+                        'label' => 'Provider',
+                        'headerOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%;',
+                        ],
+                        'content' => function ($row) use ($searchModel) {
+                            if (array_key_exists($row["id_provider"], $searchModel->getProviders())) {
+                                return $searchModel->providers[$row["id_provider"]];
+                            }
+
+                            return '';
+                        },
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'headerOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%;',
+                        ],
+                    ],
 
                     ['class' => 'yii\grid\ActionColumn'],
                 ],

@@ -2,7 +2,7 @@
 
 namespace frontend\models\Instances;
 
-use Yii;
+use common\models\Providers;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Instances as InstancesModel;
@@ -12,6 +12,8 @@ use common\models\Instances as InstancesModel;
  */
 class SearchForm extends InstancesModel
 {
+    public $providers = [];
+
     /**
      * @inheritdoc
      */
@@ -22,6 +24,28 @@ class SearchForm extends InstancesModel
             [['id_provider', 'status'], 'integer'],
         ];
     }
+
+
+    # Providers
+    public function getProviders()
+    {
+        if (!count($this->providers)) {
+            $this->providers = Providers::find()
+                ->select([
+                    'name',
+                    'id',
+                ])
+                ->orderBy([
+                    'name' => SORT_ASC,
+                ])
+                ->indexBy('id')
+                ->asArray()
+                ->column();
+        }
+
+        return $this->providers;
+    }
+
 
     /**
      * @inheritdoc
@@ -48,7 +72,6 @@ class SearchForm extends InstancesModel
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
 
         $this->load($params);
 
