@@ -1,1 +1,0 @@
-{"name":"yii2-pjax","version":"2.0.1","main":".\/jquery.pjax.js","dependencies":{"jquery":">=1.8"},"ignore":[".travis.yml","test\/"],"time":"2014-10-10T13:44:50Z","support":{"source":"https:\/\/github.com\/yiisoft\/jquery-pjax\/tree\/v2.0.1","issues":"https:\/\/github.com\/yiisoft\/jquery-pjax\/issues"}}
