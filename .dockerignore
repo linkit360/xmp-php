@@ -1,2 +1,3 @@
 app/*/web/assets/*
 app/*/runtime/*
+composer/home
