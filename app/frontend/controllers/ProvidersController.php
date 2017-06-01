@@ -38,11 +38,13 @@ class ProvidersController extends Controller
 
     /**
      * Lists all Providers models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
         $model = new ProvidersForm();
+
         return $this->render(
             'index',
             [
@@ -72,13 +74,17 @@ class ProvidersController extends Controller
     /**
      * Creates a new Providers model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new Providers();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->name_alias = $model->name;
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render(
