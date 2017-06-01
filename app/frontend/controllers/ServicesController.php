@@ -2,13 +2,14 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Services\QrtechForm;
+use common\models\Instances;
 use const null;
 use function json_encode;
 use const JSON_PRETTY_PRINT;
 
 use Yii;
 use yii\base\Model;
+use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -19,6 +20,7 @@ use common\models\Users;
 
 use frontend\models\Services\ServicesForm;
 use frontend\models\Services\CheeseForm;
+use frontend\models\Services\QrtechForm;
 
 /**
  * ServicesController implements the CRUD actions for Services model.
@@ -27,6 +29,7 @@ class ServicesController extends Controller
 {
     /**
      * Lists all Services models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -93,6 +96,7 @@ class ServicesController extends Controller
         $model = $this->findModel($id);
         $modelProvider = $this->getProviderModel($model->id_provider);
         $modelProvider->load(json_decode($model->service_opts, true), '');
+
         return $this->render(
             'view',
             [
@@ -105,6 +109,7 @@ class ServicesController extends Controller
     /**
      * Creates a new Services model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -165,7 +170,39 @@ class ServicesController extends Controller
 
                     # Service
                     if ($model->validate()) {
+//                        echo "testing";
+
                         $model->save();
+
+                        // Get instance
+                        $instance = Instances::find()
+                            ->select('id')
+                            ->where([
+                                'status' => 1,
+                                'id_provider' => $model->id_provider,
+                            ])
+                            ->asArray()
+                            ->one();
+
+                        // If found - send notify
+                        if ($instance) {
+                            $payload = [];
+                            $payload['type'] = 'service.new';
+                            $payload['for'] = $instance["id"];
+                            $payload['data'] = $model->attributes;
+                            $payload['data']['id'] = "6f257e12-f1f1-47d4-9a43-5bb966f94d6a";
+                            $payload['data']['price'] = (int)$payload['data']['price'];
+                            unset($payload['data']['time_create']);
+
+//                            dump($payload);
+                            $json = json_encode($payload);
+//                            dump($json);
+
+                            Yii::$app->getDb()
+                                ->createCommand("NOTIFY xmp_update, '" . $json . "';")
+                                ->execute();
+                        }
+
                         return $this->redirect(['index']);
                     }
                 }
@@ -252,6 +289,7 @@ class ServicesController extends Controller
                 # Service
                 if ($model->validate()) {
                     $model->save();
+
                     return $this->redirect(['index']);
                 }
             }

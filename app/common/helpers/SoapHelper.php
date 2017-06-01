@@ -8,8 +8,7 @@ class SoapHelper
     {
         //file_put_contents("log", print_r($obj, true));
 
-        /*
-        if ($obj->MSISDN == 923088290736) {
+        if ($obj->MSISDN == 923030303303) {
             return [
                 'Status' => 'OK',
                 'Reason' => '',
@@ -25,7 +24,6 @@ class SoapHelper
                 ],
             ];
         }
-        */
 
         return [
             'Status' => 'KO',

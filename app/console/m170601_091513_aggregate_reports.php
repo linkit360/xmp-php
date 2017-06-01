@@ -75,7 +75,12 @@ class m170601_091513_aggregate_reports extends Migration
                 ]);
 
             $rows = $query->all();
-            if (count($rows)) {
+            $cnt = count($rows);
+            if ($cnt) {
+                echo $from . PHP_EOL;
+                echo $to . PHP_EOL;
+                echo number_format($cnt) . PHP_EOL . PHP_EOL;
+
                 foreach ($rows as $row) {
                     // prep query
                     $row['report_at'] = new DateTime($row['report_at_day']);
@@ -101,15 +106,12 @@ class m170601_091513_aggregate_reports extends Migration
                     // add new row for 23:59:59 time
                     $q->execute();
                 }
-
             }
         }
     }
 
     public function safeDown()
     {
-        echo "m170601_091513_aggregate_reports cannot be reverted.\n";
-
-        return false;
+        // no need
     }
 }
