@@ -50,8 +50,7 @@ class Common extends Model
         $this->dateTo = date('Y-m-d');
     }
 
-    # Instances
-
+    # Campaigns
     public function getCampaigns()
     {
         if (!count($this->campaigns)) {
@@ -66,8 +65,6 @@ class Common extends Model
 
         return $this->campaigns;
     }
-
-    # Campaigns
 
     /**
      * @inheritdoc
@@ -90,7 +87,23 @@ class Common extends Model
         ];
     }
 
-    # Countries
+    public function getInstancesById()
+    {
+        if (!count($this->instancesById)) {
+            $this->instancesById = Instances::find()
+                ->select([
+                    'id_provider',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->asArray()
+                ->column();
+        }
+
+        return $this->instancesById;
+    }
+
+    # Instances
 
     protected function applyFilters(Query $query)
     {
@@ -167,7 +180,7 @@ class Common extends Model
         return $query;
     }
 
-    # Providers
+    # Instances By Id
 
     public function getInstances()
     {
@@ -193,8 +206,6 @@ class Common extends Model
 
         return $this->instances;
     }
-
-    # Operators
 
     public function getStruct()
     {
@@ -231,6 +242,7 @@ class Common extends Model
         return $this->struct;
     }
 
+    # Countries
     public function getCountries()
     {
         if (!count($this->countries)) {
@@ -253,6 +265,7 @@ class Common extends Model
         return $this->countries;
     }
 
+    # Providers
     public function getProviders()
     {
         if (!count($this->providers)) {
@@ -279,6 +292,7 @@ class Common extends Model
         return $this->providers;
     }
 
+    # Operators
     public function getOperators()
     {
         if (!count($this->operators)) {

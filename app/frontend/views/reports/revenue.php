@@ -188,13 +188,13 @@ $gridColumns = [
     [
         'label' => 'Country',
         'content' => function ($row) use ($model) {
-            if (in_array($row["id_instance"], $model->getInstances())) {
-                $prov = $model->instancesById[$row['id_instance']];
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
 
                 return $model->countries[$model->providers[$prov]['id_country']]['name'];
             }
 
-            return '';
+            return '-';
         },
         'footerOptions' => [
             'class' => 'text-right',
@@ -204,13 +204,13 @@ $gridColumns = [
     [
         'label' => 'Provider',
         'content' => function ($row) use ($model) {
-            if (in_array($row["id_instance"], $model->getInstances())) {
-                $prov = $model->instancesById[$row['id_instance']];
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
 
                 return $model->providers[$prov]['name'];
             }
 
-            return '';
+            return '-';
         },
         'footerOptions' => [
             'class' => 'text-right',
@@ -225,7 +225,7 @@ $gridColumns = [
                 return $model->operatorsByCode[$data['operator_code']];
             }
 
-            return '';
+            return '-';
         },
         'footerOptions' => [
             'class' => 'text-right',

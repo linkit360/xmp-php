@@ -64,8 +64,8 @@ $gridColumns = [
     [
         'label' => 'Country',
         'content' => function ($row) use ($model) {
-            if (in_array($row["id_instance"], $model->getInstances())) {
-                $prov = $model->instancesById[$row['id_instance']];
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
 
                 return $model->countries[$model->providers[$prov]['id_country']]['name'];
             }
@@ -76,8 +76,8 @@ $gridColumns = [
     [
         'label' => 'Provider',
         'content' => function ($row) use ($model) {
-            if (in_array($row["id_instance"], $model->getInstances())) {
-                $prov = $model->instancesById[$row['id_instance']];
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
 
                 return $model->providers[$prov]['name'];
             }
