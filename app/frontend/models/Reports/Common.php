@@ -51,32 +51,7 @@ class Common extends Model
     }
 
     # Instances
-    public function getInstances()
-    {
-        if (!count($this->instances)) {
-            $this->instances = Instances::find()
-                ->select([
-                    'id',
-                    'id_provider',
-                ])
-                ->indexBy('id_provider')
-                ->asArray()
-                ->column();
 
-            $this->instancesById = Instances::find()
-                ->select([
-                    'id_provider',
-                    'id',
-                ])
-                ->indexBy('id')
-                ->asArray()
-                ->column();
-        }
-
-        return $this->instances;
-    }
-
-    # Campaigns
     public function getCampaigns()
     {
         if (!count($this->campaigns)) {
@@ -92,87 +67,7 @@ class Common extends Model
         return $this->campaigns;
     }
 
-    # Countries
-    public function getCountries()
-    {
-        if (!count($this->countries)) {
-            $this->countries = Countries::find()
-                ->select([
-                    'name',
-                    'id',
-                ])
-                ->where([
-                    'status' => 1,
-                ])
-                ->orderBy([
-                    'name' => SORT_ASC,
-                ])
-                ->indexBy('id')
-                ->asArray()
-                ->all();
-        }
-
-        return $this->countries;
-    }
-
-    # Providers
-    public function getProviders()
-    {
-        if (!count($this->providers)) {
-            $this->providers = Providers::find()
-                ->select([
-                    'name',
-                    'name_alias',
-                    'id',
-                    'id_country',
-                ])
-                ->orderBy([
-                    'name' => SORT_ASC,
-                ])
-                ->indexBy('id')
-                ->asArray()
-                ->all();
-
-            $this->providersByNamesCountry = ArrayHelper::map(
-                $this->providers,
-                'name',
-                'id_country'
-            );
-        }
-
-        return $this->providers;
-    }
-
-    # Operators
-    public function getOperators()
-    {
-        if (!count($this->operators)) {
-            $this->operators = Operators::find()
-                ->select([
-                    'name',
-                    'id',
-                    'code',
-                    'id_provider',
-                ])
-                ->where([
-                    'status' => 1,
-                ])
-                ->orderBy([
-                    'name' => SORT_ASC,
-                ])
-                ->asArray()
-                ->all();
-
-
-            $this->operatorsByCode = ArrayHelper::map(
-                $this->operators,
-                'code',
-                'name'
-            );
-        }
-
-        return $this->operators;
-    }
+    # Campaigns
 
     /**
      * @inheritdoc
@@ -195,40 +90,7 @@ class Common extends Model
         ];
     }
 
-    public function getStruct()
-    {
-        if (!count($this->struct)) {
-            $struct = [];
-            foreach ($this->getCountries() as $country) {
-                $struct[$country['id']] = [
-                    'name' => $country['name'],
-                    'items' => [],
-                ];
-
-                foreach ($this->getProviders() as $provider) {
-                    if ($provider['id_country'] !== $country['id']) {
-                        continue;
-                    }
-
-                    $struct[$country['id']]['items'][$provider['id']] = [
-                        'name' => $provider['name_alias'],
-                        'items' => [],
-                    ];
-
-                    foreach ($this->getOperators() as $operator) {
-                        if ($operator['id_provider'] !== $provider['id']) {
-                            continue;
-                        }
-
-                        $struct[$country['id']]['items'][$provider['id']]['items'][$operator['id']] = $operator['name'];
-                    }
-                }
-            }
-            $this->struct = $struct;
-        }
-
-        return $this->struct;
-    }
+    # Countries
 
     protected function applyFilters(Query $query)
     {
@@ -303,5 +165,147 @@ class Common extends Model
         }
 
         return $query;
+    }
+
+    # Providers
+
+    public function getInstances()
+    {
+        if (!count($this->instances)) {
+            $this->instances = Instances::find()
+                ->select([
+                    'id',
+                    'id_provider',
+                ])
+                ->indexBy('id_provider')
+                ->asArray()
+                ->column();
+
+            $this->instancesById = Instances::find()
+                ->select([
+                    'id_provider',
+                    'id',
+                ])
+                ->indexBy('id')
+                ->asArray()
+                ->column();
+        }
+
+        return $this->instances;
+    }
+
+    # Operators
+
+    public function getStruct()
+    {
+        if (!count($this->struct)) {
+            $struct = [];
+            foreach ($this->getCountries() as $country) {
+                $struct[$country['id']] = [
+                    'name' => $country['name'],
+                    'items' => [],
+                ];
+
+                foreach ($this->getProviders() as $provider) {
+                    if ($provider['id_country'] !== $country['id']) {
+                        continue;
+                    }
+
+                    $struct[$country['id']]['items'][$provider['id']] = [
+                        'name' => $provider['name'],
+                        'items' => [],
+                    ];
+
+                    foreach ($this->getOperators() as $operator) {
+                        if ($operator['id_provider'] !== $provider['id']) {
+                            continue;
+                        }
+
+                        $struct[$country['id']]['items'][$provider['id']]['items'][$operator['id']] = $operator['name'];
+                    }
+                }
+            }
+            $this->struct = $struct;
+        }
+
+        return $this->struct;
+    }
+
+    public function getCountries()
+    {
+        if (!count($this->countries)) {
+            $this->countries = Countries::find()
+                ->select([
+                    'name',
+                    'id',
+                ])
+                ->where([
+                    'status' => 1,
+                ])
+                ->orderBy([
+                    'name' => SORT_ASC,
+                ])
+                ->indexBy('id')
+                ->asArray()
+                ->all();
+        }
+
+        return $this->countries;
+    }
+
+    public function getProviders()
+    {
+        if (!count($this->providers)) {
+            $this->providers = Providers::find()
+                ->select([
+                    'name',
+                    'id',
+                    'id_country',
+                ])
+                ->orderBy([
+                    'name' => SORT_ASC,
+                ])
+                ->indexBy('id')
+                ->asArray()
+                ->all();
+
+            $this->providersByNamesCountry = ArrayHelper::map(
+                $this->providers,
+                'name',
+                'id_country'
+            );
+        }
+
+        return $this->providers;
+    }
+
+    public function getOperators()
+    {
+        if (!count($this->operators)) {
+            $this->operators = Operators::find()
+                ->select([
+                    'name',
+                    'id',
+                    'code',
+                    'id_provider',
+                ])
+                ->where([
+                    'status' => 1,
+                ])
+                ->orderBy([
+                    'name' => SORT_ASC,
+                ])
+                ->asArray()
+                ->all();
+
+
+            $this->operatorsByCode = ArrayHelper::map(
+                $this->operators,
+                'code',
+                'name'
+            );
+        }
+
+        return $this->operators;
     }
 }

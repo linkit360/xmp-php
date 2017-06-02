@@ -40,7 +40,6 @@ $countries = \common\models\Countries::find()
                 'columns' => [
 //                    'id',
                     'name',
-                    'name_alias',
                     [
                         'attribute' => 'id_country',
                         'filter' => false,

@@ -72,6 +72,24 @@ class ProvidersController extends Controller
     }
 
     /**
+     * Finds the Providers model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param integer $id
+     *
+     * @return Providers the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Providers::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
      * Creates a new Providers model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
@@ -81,7 +99,6 @@ class ProvidersController extends Controller
     {
         $model = new Providers();
         if ($model->load(Yii::$app->request->post())) {
-            $model->name_alias = $model->name;
             if ($model->save()) {
                 return $this->redirect(['index']);
             }
@@ -133,23 +150,5 @@ class ProvidersController extends Controller
         $model->save();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Providers model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param integer $id
-     *
-     * @return Providers the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Providers::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

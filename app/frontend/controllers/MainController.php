@@ -148,6 +148,20 @@ class MainController extends Controller
         );
     }
 
+    private function userIps()
+    {
+        $ips = [];
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            $ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+
+        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+            $ips['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
+        }
+
+        return $ips;
+    }
+
     /**
      * Logs out the current user.
      *
@@ -189,6 +203,7 @@ class MainController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
             Yii::$app->session->setFlash('success', 'New password saved.');
+
             return $this->goHome();
         }
 
@@ -202,6 +217,7 @@ class MainController extends Controller
 
     /**
      * Lists all Transactions models.
+     *
      * @return mixed
      */
     public function actionTransactions()
@@ -247,19 +263,19 @@ class MainController extends Controller
 
         $providers = Providers::find()
             ->select([
-                'name_alias',
+                'name',
                 'id',
             ])
             ->where([
                 'id_country' => $country['id'],
             ])
-            ->indexBy('name_alias')
+            ->indexBy('name')
             ->asArray()
             ->all();
 
         $operators = Operators::find()
             ->where([
-                'id_provider' => array_keys(ArrayHelper::map($providers, 'id', 'name_alias')),
+                'id_provider' => array_keys(ArrayHelper::map($providers, 'id', 'name')),
             ])
             ->orderBy('name')
             ->indexBy('code')
@@ -312,19 +328,7 @@ class MainController extends Controller
         }
 
         Yii::$app->response->format = Response::FORMAT_JSON;
+
         return $data;
-    }
-
-    private function userIps()
-    {
-        $ips = [];
-        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
-            $ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            $ips['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
-        }
-        return $ips;
     }
 }
