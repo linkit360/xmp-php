@@ -50,6 +50,12 @@ $form = ActiveForm::begin();
 
             echo $form->field($model, 'id_service')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_provider')->hiddenInput()->label(false);
+
+            //            if ($model->id_content) {
+            //                $cont = json_decode($model->id_content, true);
+            //                dump($cont);
+            //            }
+
             echo $form->field($model, 'content')->widget(
                 Select2::classname(),
                 [

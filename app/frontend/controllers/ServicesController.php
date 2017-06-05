@@ -2,22 +2,21 @@
 
 namespace frontend\controllers;
 
-use common\models\Content\Content;
-use common\models\Instances;
 use const null;
-use function json_encode;
 use const JSON_PRETTY_PRINT;
+use function json_encode;
 
 use Yii;
 use yii\base\Model;
-use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
+use common\models\Users;
 use common\models\Services;
 use common\models\Countries;
 use common\models\Providers;
-use common\models\Users;
+use common\models\Instances;
+use common\models\Content\Content;
 
 use frontend\models\Services\ServicesForm;
 use frontend\models\Services\CheeseForm;
@@ -213,57 +212,9 @@ class ServicesController extends Controller
 
                     # Service
                     if ($model->validate()) {
-                        // Get instance
-                        $instance = Instances::find()
-                            ->select('id')
-                            ->where([
-                                'status' => 1,
-                                'id_provider' => $model->id_provider,
-                            ])
-                            ->asArray()
-                            ->one();
-
                         $model->save();
 
-                        // If found - send notify
-                        if ($instance) {
-                            $payload = [];
-                            $payload['type'] = 'service.new';
-                            $payload['for'] = $instance["id"];
-                            $payload['data'] = $model->attributes;
-                            $payload['data']['id'] = $model->id;
-                            $payload['data']['price'] = (int)$payload['data']['price'];
-
-                            // Content
-                            $payload['data']['contents'] = [];
-                            $payload['data']['id_content'] = json_decode($payload['data']['id_content']);
-                            if (count($payload['data']['id_content'])) {
-                                $conts = Content::find()
-                                    ->where([
-                                        'id' => $payload['data']['id_content'],
-                                    ])
-                                    ->all();
-
-                                if (count($conts)) {
-                                    /** @var Content $cont */
-                                    foreach ($conts as $cont) {
-                                        $payload['data']['contents'][] = [
-                                            'id' => $cont->id,
-                                            'title' => $cont->title,
-                                            'name' => $cont->filename,
-                                        ];
-                                    }
-                                }
-                            }
-
-                            unset($payload['data']['time_create']);
-                            $payload['data'] = json_encode($payload['data']);
-                            $json = json_encode($payload);
-
-                            Yii::$app->getDb()
-                                ->createCommand("NOTIFY xmp_update, '" . $json . "';")
-                                ->execute();
-                        }
+                        $this->sendGoData($model, true);
 
                         return $this->redirect(['index']);
                     }
@@ -315,6 +266,64 @@ class ServicesController extends Controller
         return $countries;
     }
 
+    public function sendGoData($model, $create)
+    {
+        // Get instance
+        $instance = Instances::find()
+            ->select('id')
+            ->where([
+                'status' => 1,
+                'id_provider' => $model->id_provider,
+            ])
+            ->asArray()
+            ->one();
+
+        // If found - send notify
+        if ($instance) {
+            $payload = [];
+
+            $payload['type'] = 'service.update';
+            if ($create) {
+                $payload['type'] = 'service.new';
+            }
+
+            $payload['for'] = $instance["id"];
+            $payload['data'] = $model->attributes;
+            $payload['data']['id'] = $model->id;
+            $payload['data']['price'] = (int)$payload['data']['price'];
+
+            // Content
+            $payload['data']['contents'] = [];
+            $payload['data']['id_content'] = json_decode($payload['data']['id_content']);
+            if (count($payload['data']['id_content'])) {
+                $conts = Content::find()
+                    ->where([
+                        'id' => $payload['data']['id_content'],
+                    ])
+                    ->all();
+
+                if (count($conts)) {
+                    /** @var Content $cont */
+                    foreach ($conts as $cont) {
+                        $payload['data']['contents'][] = [
+                            'id' => $cont->id,
+                            'title' => $cont->title,
+                            'name' => $cont->filename,
+                        ];
+                    }
+                }
+            }
+
+            unset($payload['data']['time_create']);
+            $payload['data'] = json_encode($payload['data']);
+            $json = json_encode($payload);
+
+            Yii::$app->getDb()
+                ->createCommand("NOTIFY xmp_update, '" . $json . "';")
+                ->execute();
+        }
+    }
+
     /**
      * Updates an existing Services model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -349,7 +358,10 @@ class ServicesController extends Controller
         ) {
             # Provider
             if ($modelProvider->validate()) {
-                unset($model->id_user);
+                if ($model->id_user !== Yii::$app->user->id) {
+                    return $this->redirect(['index']);
+                }
+
                 $model->service_opts = json_encode(
                     $modelProvider->attributes,
                     JSON_PRETTY_PRINT
@@ -359,10 +371,14 @@ class ServicesController extends Controller
                 if ($model->validate()) {
                     $model->save();
 
+                    $this->sendGoData($model, false);
+
                     return $this->redirect(['index']);
                 }
             }
         }
+
+        dump($model->getErrors());
 
         return $this->render(
             'update',
