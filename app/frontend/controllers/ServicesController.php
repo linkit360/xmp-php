@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Content\Content;
 use common\models\Instances;
 use const null;
 use function json_encode;
@@ -107,6 +108,48 @@ class ServicesController extends Controller
     }
 
     /**
+     * @param $id
+     *
+     * @return array|Services|\yii\db\ActiveRecord
+     * @throws NotFoundHttpException
+     */
+    protected function findModel($id)
+    {
+        $model = Services::findOne($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @param int $id_provider
+     *
+     * @return Model|null
+     */
+    public function getProviderModel($id_provider)
+    {
+        switch ($id_provider) {
+            // TH - Cheese Mobile
+            case 1:
+                return new CheeseForm();
+                break;
+
+            // TH - QR Tech
+            case 2:
+                return new QrtechForm();
+                break;
+
+            default:
+                return null;
+                break;
+        }
+    }
+
+    /**
      * Creates a new Services model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
@@ -170,10 +213,6 @@ class ServicesController extends Controller
 
                     # Service
                     if ($model->validate()) {
-//                        echo "testing";
-
-                        $model->save();
-
                         // Get instance
                         $instance = Instances::find()
                             ->select('id')
@@ -184,19 +223,42 @@ class ServicesController extends Controller
                             ->asArray()
                             ->one();
 
+                        $model->save();
+
                         // If found - send notify
                         if ($instance) {
                             $payload = [];
                             $payload['type'] = 'service.new';
                             $payload['for'] = $instance["id"];
                             $payload['data'] = $model->attributes;
-                            $payload['data']['id'] = "6f257e12-f1f1-47d4-9a43-5bb966f94d6a";
+                            $payload['data']['id'] = $model->id;
                             $payload['data']['price'] = (int)$payload['data']['price'];
-                            unset($payload['data']['time_create']);
 
-//                            dump($payload);
+                            // Content
+                            $payload['data']['contents'] = [];
+                            $payload['data']['id_content'] = json_decode($payload['data']['id_content']);
+                            if (count($payload['data']['id_content'])) {
+                                $conts = Content::find()
+                                    ->where([
+                                        'id' => $payload['data']['id_content'],
+                                    ])
+                                    ->all();
+
+                                if (count($conts)) {
+                                    /** @var Content $cont */
+                                    foreach ($conts as $cont) {
+                                        $payload['data']['contents'][] = [
+                                            'id' => $cont->id,
+                                            'title' => $cont->title,
+                                            'name' => $cont->filename,
+                                        ];
+                                    }
+                                }
+                            }
+
+                            unset($payload['data']['time_create']);
+                            $payload['data'] = json_encode($payload['data']);
                             $json = json_encode($payload);
-//                            dump($json);
 
                             Yii::$app->getDb()
                                 ->createCommand("NOTIFY xmp_update, '" . $json . "';")
@@ -222,28 +284,35 @@ class ServicesController extends Controller
         );
     }
 
-    /**
-     * @param int $id_provider
-     *
-     * @return Model|null
-     */
-    public function getProviderModel($id_provider)
+    public function createStep1()
     {
-        switch ($id_provider) {
-            // TH - Cheese Mobile
-            case 1:
-                return new CheeseForm();
-                break;
+        $providers = Providers::find()
+            ->select('id_country')
+            ->where([
+                'id' => [
+                    // TH - Cheese Mobile
+                    1,
+                ],
+            ])
+            ->groupBy('id_country')
+            ->asArray()
+            ->column();
 
-            // TH - QR Tech
-            case 2:
-                return new QrtechForm();
-                break;
+        $countries = Countries::find()
+            ->select([
+                'id',
+                'name',
+                'flag',
+            ])
+            ->where([
+                'id' => $providers,
+            ])
+            ->orderBy('name')
+            ->indexBy('id')
+            ->asArray()
+            ->all();
 
-            default:
-                return null;
-                break;
-        }
+        return $countries;
     }
 
     /**
@@ -322,54 +391,5 @@ class ServicesController extends Controller
         $model->save();
 
         return $this->redirect(['index']);
-    }
-
-    public function createStep1()
-    {
-        $providers = Providers::find()
-            ->select('id_country')
-            ->where([
-                'id' => [
-                    // TH - Cheese Mobile
-                    1,
-                ],
-            ])
-            ->groupBy('id_country')
-            ->asArray()
-            ->column();
-
-        $countries = Countries::find()
-            ->select([
-                'id',
-                'name',
-                'flag',
-            ])
-            ->where([
-                'id' => $providers,
-            ])
-            ->orderBy('name')
-            ->indexBy('id')
-            ->asArray()
-            ->all();
-
-        return $countries;
-    }
-
-    /**
-     * @param $id
-     *
-     * @return array|Services|\yii\db\ActiveRecord
-     * @throws NotFoundHttpException
-     */
-    protected function findModel($id)
-    {
-        $model = Services::findOne($id);
-        if ($model !== null) {
-            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
-                return $model;
-            }
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
