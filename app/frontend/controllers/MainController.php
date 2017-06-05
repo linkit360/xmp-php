@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Instances;
 use const true;
 use const false;
 use function date;
@@ -273,9 +274,22 @@ class MainController extends Controller
             ->asArray()
             ->all();
 
+        $prov_keys = ArrayHelper::map($providers, 'id', 'name');
+        $instances = Instances::find()
+            ->select([
+                "id",
+                "id_provider",
+            ])
+            ->where([
+                'id_provider' => array_keys($prov_keys),
+            ])
+            ->indexBy('id_provider')
+            ->asArray()
+            ->column();
+
         $operators = Operators::find()
             ->where([
-                'id_provider' => array_keys(ArrayHelper::map($providers, 'id', 'name')),
+                'id_provider' => array_keys($prov_keys),
             ])
             ->orderBy('name')
             ->indexBy('code')
@@ -296,13 +310,14 @@ class MainController extends Controller
                 'AND',
                 "report_at >= '" . date('Y-m-d') . "'",
                 [
-                    'provider_name' => array_keys($providers),
+                    'id_instance' => $instances,
                 ],
             ])
             ->groupBy([
                 'operator_code',
                 'report_at_day',
-            ])->all();
+            ])
+            ->all();
 
         $data = [];
         $data['total'] = [
