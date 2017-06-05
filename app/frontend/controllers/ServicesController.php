@@ -18,9 +18,10 @@ use common\models\Providers;
 use common\models\Instances;
 use common\models\Content\Content;
 
-use frontend\models\Services\ServicesForm;
 use frontend\models\Services\CheeseForm;
 use frontend\models\Services\QrtechForm;
+use frontend\models\Services\MobilinkForm;
+use frontend\models\Services\ServicesForm;
 
 /**
  * ServicesController implements the CRUD actions for Services model.
@@ -45,7 +46,6 @@ class ServicesController extends Controller
             ])
             ->indexBy('id')
             ->all();
-
 
         $countries = Countries::find()
             ->select([
@@ -142,6 +142,11 @@ class ServicesController extends Controller
                 return new QrtechForm();
                 break;
 
+            // PK - Mobilink
+            case 5:
+                return new MobilinkForm();
+                break;
+
             default:
                 return null;
                 break;
@@ -198,10 +203,7 @@ class ServicesController extends Controller
                 return $this->redirect('/services/create?step=1');
             }
 
-            if (
-                $model->load(Yii::$app->request->post()) &&
-                $modelProvider->load(Yii::$app->request->post())
-            ) {
+            if ($model->load(Yii::$app->request->post())) {
                 # Provider
                 if ($modelProvider->validate()) {
                     $model->id_user = Yii::$app->user->id;
@@ -241,8 +243,9 @@ class ServicesController extends Controller
             ->select('id_country')
             ->where([
                 'id' => [
-                    // TH - Cheese Mobile
-                    1,
+                    1, // cheese
+                    2, // qrtech
+                    5, // mobilink
                 ],
             ])
             ->groupBy('id_country')
@@ -266,7 +269,11 @@ class ServicesController extends Controller
         return $countries;
     }
 
-    public function sendGoData($model, $create)
+    /**
+     * @param Services $model
+     * @param bool     $create
+     */
+    public function sendGoData($model, $create = false)
     {
         // Get instance
         $instance = Instances::find()
@@ -292,6 +299,10 @@ class ServicesController extends Controller
             $payload['data']['id'] = $model->id;
             $payload['data']['price'] = (int)$payload['data']['price'];
 
+            // Service ID (code)
+            $payload['data']['code'] = $model->id_service;
+            unset($payload['data']['id_service']);
+
             // Content
             $payload['data']['contents'] = [];
             $payload['data']['id_content'] = json_decode($payload['data']['id_content']);
@@ -314,7 +325,21 @@ class ServicesController extends Controller
                 }
             }
 
-            unset($payload['data']['time_create']);
+            // Service Opts
+            $opts = json_decode($payload['data']['service_opts'], true);
+            if (count($opts)) {
+                foreach ($opts as $key => $val) {
+                    $set = $val;
+
+                    if (in_array($key, ["retry_days", "inactive_days", "grace_days", "minimal_touch_times"])) {
+                        $set = (int)$set;
+                    }
+
+                    $payload['data'][$key] = $set;
+                }
+            }
+            unset($payload['data']['service_opts']);
+
             $payload['data'] = json_encode($payload['data']);
             $json = json_encode($payload);
 
@@ -352,10 +377,7 @@ class ServicesController extends Controller
             )
             ->one();
 
-        if (
-            $model->load(Yii::$app->request->post()) &&
-            $modelProvider->load(Yii::$app->request->post())
-        ) {
+        if ($model->load(Yii::$app->request->post())) {
             # Provider
             if ($modelProvider->validate()) {
                 if ($model->id_user !== Yii::$app->user->id) {
@@ -371,14 +393,12 @@ class ServicesController extends Controller
                 if ($model->validate()) {
                     $model->save();
 
-                    $this->sendGoData($model, false);
+                    $this->sendGoData($model);
 
                     return $this->redirect(['index']);
                 }
             }
         }
-
-        dump($model->getErrors());
 
         return $this->render(
             'update',
@@ -404,7 +424,9 @@ class ServicesController extends Controller
     {
         $model = $this->findModel($id);
         $model->status = 0;
-        $model->save();
+        if ($model->save()) {
+            $this->sendGoData($model);
+        }
 
         return $this->redirect(['index']);
     }

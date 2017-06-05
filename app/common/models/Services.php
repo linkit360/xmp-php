@@ -36,7 +36,7 @@ class Services extends ActiveRecord
         return [
             [['title', 'id_user', 'id_provider', 'id_service', 'service_opts', 'price'], 'required'],
             [['id', 'id_user', 'service_opts'], 'string'],
-            [['id_provider', 'status'], 'integer'],
+            [['id_provider', 'status', 'price'], 'integer'],
             [['title', 'id_service'], 'string', 'max' => 64],
             [['description'], 'string', 'max' => 255],
             [
