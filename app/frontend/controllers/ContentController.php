@@ -199,15 +199,17 @@ class ContentController extends Controller
                 unset($model->id_publisher);
             }
 
-            if ($model->save()) {
+            if ($model->validate()) {
                 if (array_key_exists('ContentForm', $_FILES) && count($_FILES['ContentForm']['tmp_name'])) {
-                    $this->fileUpload(
+                    $model = $this->fileUpload(
                         $model,
                         $_FILES['ContentForm']
                     );
                 }
 
-                return $this->redirect(['index']);
+                if ($model->save()) {
+                    return $this->redirect(['index']);
+                }
             }
         }
 
@@ -222,15 +224,16 @@ class ContentController extends Controller
     /**
      * @param Content $model
      * @param array   $file
+     * @return Content
      */
     private function fileUpload($model, $file)
     {
-        $newName = self::normalizeString($model->filename) . "." . pathinfo($file['name']['file'])['extension'];
+        $model->filename = self::normalizeString($model->filename) . "." . pathinfo($file['name']['file'])['extension'];
         $fileZip = tempnam('/tmp', 'zip');
 
         $zip = new ZipArchive();
         $zip->open($fileZip, ZipArchive::OVERWRITE);
-        $zip->addFile($file['tmp_name']['file'], $newName);
+        $zip->addFile($file['tmp_name']['file'], $model->filename);
         $zip->close();
 
         $this->s3->putObject([
@@ -238,6 +241,8 @@ class ContentController extends Controller
             'Key' => $model->id,
             'SourceFile' => $fileZip,
         ]);
+
+        return $model;
     }
 
     public static function normalizeString($str = '')
@@ -265,13 +270,6 @@ class ContentController extends Controller
             }
 
             if ($model->save()) {
-                if (array_key_exists('ContentForm', $_FILES) && count($_FILES['ContentForm']['tmp_name'])) {
-                    $this->fileUpload(
-                        $model,
-                        $_FILES['ContentForm']
-                    );
-                }
-
                 return $this->redirect(['index']);
             }
         }

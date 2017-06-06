@@ -29,9 +29,6 @@ $form = ActiveForm::begin([
             echo $form->field($model, 'title')
                 ->textInput(['maxlength' => true]);
 
-            echo $form->field($model, 'filename')
-                ->textInput(['maxlength' => true]);
-
             echo $form->field($model, 'id_category')
                 ->dropDownList(
                     [null => 'Please Select'] + $model->getCategories()
@@ -57,6 +54,9 @@ $form = ActiveForm::begin([
             );
 
             if ($model->isNewRecord) {
+                echo $form->field($model, 'filename')
+                    ->textInput(['maxlength' => true]);
+
                 echo $form->field($model, 'file')
                     ->widget(
                         FileInput::classname(),

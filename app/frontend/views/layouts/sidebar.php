@@ -53,13 +53,6 @@ if (in_array('campaignsManage', $permissions)) {
     ];
 }
 
-if (in_array('contentManage', $permissions)) {
-    $menu[$group]['items'][] = [
-        'name' => 'Content Management',
-        'url' => 'content/index',
-    ];
-}
-
 if (in_array('lpCreate', $permissions)) {
     $menu[$group]['items'][] = [
         'name' => 'LP Management',
@@ -71,6 +64,13 @@ if (in_array('campaignsManage', $permissions)) {
     $menu[$group]['items'][] = [
         'name' => 'Services Management',
         'url' => 'services/index',
+    ];
+}
+
+if (in_array('contentManage', $permissions)) {
+    $menu[$group]['items'][] = [
+        'name' => 'Content Management',
+        'url' => 'content/index',
     ];
 }
 

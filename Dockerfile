@@ -31,7 +31,7 @@ RUN set -ex \
 
 # REMEMBER: only RUN under non-root USER, not COPY
 USER 1000
-RUN composer global require -n -vv --prefer-dist "hirak/prestissimo:^0.3" "fxp/composer-asset-plugin:^1.2.0"
+RUN composer global require -n -vv --prefer-dist "hirak/prestissimo:^0.3" "fxp/composer-asset-plugin:^1.3.1"
 USER root
 
 # Configs
