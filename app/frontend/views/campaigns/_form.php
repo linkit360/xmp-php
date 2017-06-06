@@ -18,7 +18,6 @@ $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();
             echo $form->field($model, 'link')->textInput(['maxlength' => true]);
-            echo $form->field($model, 'id_operator')->dropDownList($model->getOperators());
             echo $form->field($model, 'id_service')->dropDownList($model->getServices());
             echo $form->field($model, 'id_lp')->dropDownList($model->getLps());
             echo $form->field($model, 'autoclick_enabled')->checkbox();
@@ -37,9 +36,9 @@ $form = ActiveForm::begin();
 
                 echo "&nbsp;";
                 echo Html::submitButton(
-                    'Create',
+                    $model->isNewRecord ? 'Create' : 'Update',
                     [
-                        'class' => 'btn btn-success',
+                        'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
                     ]
                 );
                 ?>

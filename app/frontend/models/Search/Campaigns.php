@@ -58,8 +58,6 @@ class Campaigns extends CampaignsModel
     {
         $query = CampaignsModel::find();
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -72,12 +70,6 @@ class Campaigns extends CampaignsModel
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id_operator' => $this->id_operator,
-            'status' => 1,
-        ]);
-
         if (!Yii::$app->user->can('Admin')) {
             $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
         } else {
@@ -85,6 +77,7 @@ class Campaigns extends CampaignsModel
         }
 
         $query
+            ->andFilterWhere(['status' => 1,])
             ->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;

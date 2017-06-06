@@ -2,16 +2,15 @@
 
 namespace frontend\models\Campaigns;
 
-use function count;
 use const false;
+use function count;
 
 use Yii;
 use yii\helpers\ArrayHelper;
 
 use common\models\Lps;
-use common\models\Campaigns;
-use common\models\Operators;
 use common\models\Services;
+use common\models\Campaigns;
 
 /**
  * Campaigns Form
@@ -21,44 +20,6 @@ class CampaignsForm extends Campaigns
     # Data
     private $lps = [];
     private $services = [];
-    private $operators = [];
-
-    # Operators
-    public function getOperators()
-    {
-        if (!count($this->operators)) {
-            $data = Operators::find()
-                ->select([
-                    'name',
-                    'id',
-                ])
-                ->where([
-                    'status' => 1,
-                ])
-                ->orderBy([
-                    'name' => SORT_ASC,
-                ])
-                ->asArray()
-                ->indexBy('id')
-                ->all();
-
-            $tmp = [];
-            if ($this->isNewRecord) {
-                $tmp = [
-                    null => 'Please Select',
-                ];
-            }
-
-            $this->operators = $tmp +
-                ArrayHelper::map(
-                    $data,
-                    'id',
-                    'name'
-                );
-        }
-
-        return $this->operators;
-    }
 
     # LPs
     public function getLps()

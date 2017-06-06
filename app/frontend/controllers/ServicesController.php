@@ -205,6 +205,7 @@ class ServicesController extends Controller
 
             if ($model->load(Yii::$app->request->post())) {
                 # Provider
+                $modelProvider->load(Yii::$app->request->post());
                 if ($modelProvider->validate()) {
                     $model->id_user = Yii::$app->user->id;
                     $model->service_opts = json_encode(
@@ -379,6 +380,7 @@ class ServicesController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             # Provider
+            $modelProvider->load(Yii::$app->request->post());
             if ($modelProvider->validate()) {
                 if ($model->id_user !== Yii::$app->user->id) {
                     return $this->redirect(['index']);
