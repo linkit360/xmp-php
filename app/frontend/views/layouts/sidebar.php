@@ -119,6 +119,11 @@ if (in_array('monitoringView', $permissions)) {
         'name' => 'Monitoring',
         'url' => 'main/monitoring',
     ];
+
+    $menu[$group]['items'][] = [
+        'name' => 'Status',
+        'url' => 'main/status',
+    ];
 }
 
 if (in_array('countriesManage', $permissions)) {

@@ -199,17 +199,16 @@ class ContentController extends Controller
                 unset($model->id_publisher);
             }
 
-            if ($model->validate()) {
+            if ($model->save()) {
                 if (array_key_exists('ContentForm', $_FILES) && count($_FILES['ContentForm']['tmp_name'])) {
                     $model = $this->fileUpload(
                         $model,
                         $_FILES['ContentForm']
                     );
+                    $model->save();
                 }
 
-                if ($model->save()) {
-                    return $this->redirect(['index']);
-                }
+                return $this->redirect(['index']);
             }
         }
 

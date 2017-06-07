@@ -26,28 +26,24 @@ $this->params['breadcrumbs'][] = [
 ];
 $this->params['breadcrumbs'][] = $this->title;
 
-function colors($name, $data, $longest, $colors, $footer = false)
+function colors($name, $data, $colors)
 {
-    $pad_string = "~";
-
     // Row
-    $output = "";
+    $width = "width: " . (count($data) * 45) . "px;";
+    $output = "<table style='" . $width . "'><tr>";
     foreach ($data as $color => $number) {
-        $output .= Html::tag(
-            'span',
-            str_pad($number, $longest, $pad_string, STR_PAD_LEFT),
+        $out = Html::tag(
+            'td',
+            $number,
             [
-                'style' => 'color: ' . $colors[$color],
+                'style' => 'width: 45px; color: ' . $colors[$color],
+                'class' => 'text-right',
             ]
         );
-    }
 
-    $cl = !$footer ? "white" : $colors['footer'];
-    $output = str_replace(
-        '~',
-        Html::tag('span', '0', ['style' => 'color: ' . $cl]),
-        $output
-    );
+        $output .= $out;
+    }
+    $output .= "</tr></table>";
 
     // Tooltip
     ob_start();
@@ -269,13 +265,13 @@ $gridColumns = [
             $data['failed'] = number_format($row['mo_charge_failed']);
             $data['rejected'] = number_format($row['mo_rejected']);
 
-            return colors('MO', $data, 7, $colors);
+            return colors('MO', $data, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => colors('MO', $total['mo'], 7, $colors, true),
+        'footer' => colors('MO', $total['mo'], $colors),
     ],
     [
         'attribute' => 'outflow',
@@ -313,13 +309,13 @@ $gridColumns = [
             $data['success'] = number_format($row['renewal_charge_success']);
             $data['failed'] = number_format($row['renewal_failed']);
 
-            return colors('Renewal', $data, 7, $colors);
+            return colors('Renewal', $data, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => colors('Renewal', $total['renewal'], 7, $colors, true),
+        'footer' => colors('Renewal', $total['renewal'], $colors),
     ],
     [
         'attribute' => 'injection_charge_success',
@@ -337,13 +333,13 @@ $gridColumns = [
             $data['success'] = number_format($row['injection_charge_success']);
             $data['failed'] = number_format($row['injection_failed']);
 
-            return colors('Injections', $data, 7, $colors);
+            return colors('Injections', $data, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => colors('Injections', $total['injection'], 7, $colors, true),
+        'footer' => colors('Injections', $total['injection'], $colors),
     ],
     [
         'label' => 'Conversion Rate',
@@ -390,7 +386,7 @@ $gridColumns = [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => number_format(floor($total['revenue'] / 100)),
+//        'footer' => number_format(floor($total['revenue'] / 100)),
     ],
 ];
 ?>

@@ -87,6 +87,7 @@ class Common extends Model
         ];
     }
 
+    # Instances By Id
     public function getInstancesById()
     {
         if (!count($this->instancesById)) {
@@ -102,8 +103,6 @@ class Common extends Model
 
         return $this->instancesById;
     }
-
-    # Instances
 
     protected function applyFilters(Query $query)
     {
@@ -180,8 +179,7 @@ class Common extends Model
         return $query;
     }
 
-    # Instances By Id
-
+    # Instances
     public function getInstances()
     {
         if (!count($this->instances)) {
@@ -213,7 +211,7 @@ class Common extends Model
             $struct = [];
             foreach ($this->getCountries() as $country) {
                 $struct[$country['id']] = [
-                    'name' => $country['name'],
+                    'name' => ucfirst($country['name']),
                     'items' => [],
                 ];
 
@@ -223,7 +221,7 @@ class Common extends Model
                     }
 
                     $struct[$country['id']]['items'][$provider['id']] = [
-                        'name' => $provider['name'],
+                        'name' => ucfirst($provider['name']),
                         'items' => [],
                     ];
 
@@ -232,7 +230,7 @@ class Common extends Model
                             continue;
                         }
 
-                        $struct[$country['id']]['items'][$provider['id']]['items'][$operator['id']] = $operator['name'];
+                        $struct[$country['id']]['items'][$provider['id']]['items'][$operator['id']] = ucfirst($operator['name']);
                     }
                 }
             }
@@ -274,6 +272,9 @@ class Common extends Model
                     'name',
                     'id',
                     'id_country',
+                ])
+                ->where([
+                    'status' => 1,
                 ])
                 ->orderBy([
                     'name' => SORT_ASC,

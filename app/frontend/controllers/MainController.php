@@ -50,6 +50,7 @@ class MainController extends Controller
                         'actions' => [
                             'index',
                             'monitoring',
+                            'status',
                             'logout',
                             'country',
                             'reset-password',
@@ -111,6 +112,11 @@ class MainController extends Controller
     public function actionMonitoring()
     {
         return $this->render('monitoring');
+    }
+
+    public function actionStatus()
+    {
+        return $this->render('status');
     }
 
     /**
