@@ -176,6 +176,10 @@ class Common extends Model
             ]);
         }
 
+//        dump($query->createCommand()->getRawSql());
+//        dump($this->getInstances());
+//        dump($this->getInstancesById());
+
         return $query;
     }
 
@@ -188,6 +192,9 @@ class Common extends Model
                     'id',
                     'id_provider',
                 ])
+                ->where([
+                    'status' => 1,
+                ])
                 ->indexBy('id_provider')
                 ->asArray()
                 ->column();
@@ -196,6 +203,9 @@ class Common extends Model
                 ->select([
                     'id_provider',
                     'id',
+                ])
+                ->where([
+                    'status' => 1,
                 ])
                 ->indexBy('id')
                 ->asArray()
