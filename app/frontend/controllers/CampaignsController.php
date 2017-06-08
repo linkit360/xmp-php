@@ -197,6 +197,7 @@ class CampaignsController extends Controller
             $data = $model->attributes;
             $data['lp'] = $data['id_lp'];
             $data["autoclick_enabled"] = (bool)$data["autoclick_enabled"];
+            $data['id_old'] = "" . $data['id_old'];
 
             unset(
                 $data["id_user"],
@@ -205,12 +206,20 @@ class CampaignsController extends Controller
                 $data["id_lp"]
             );
 
-            $payload['data'] = json_encode($data);
-            $json = json_encode($payload);
+            $payload['data'] = json_encode($data, JSON_PRETTY_PRINT);
+
+//            dump($payload['data']);
+
+
+            $json = json_encode($payload, JSON_PRETTY_PRINT);
+
+//            dump($json);
+
 
             Yii::$app->getDb()
                 ->createCommand("NOTIFY xmp_update, '" . $json . "';")
                 ->execute();
+//            die;
         }
     }
 
