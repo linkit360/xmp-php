@@ -84,7 +84,7 @@ class SearchForm extends InstancesModel
         // grid filtering conditions
         $query->andFilterWhere([
             'id_provider' => $this->id_provider,
-            'status' => $this->status,
+            'status' => 1,
             'id' => $this->id,
         ]);
 
