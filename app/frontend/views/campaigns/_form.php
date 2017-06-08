@@ -15,6 +15,7 @@ $form = ActiveForm::begin();
     <div class="ibox">
         <div class="ibox-content">
             <?php
+            echo $form->field($model, 'id_old')->textInput(['maxlength' => true]);
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();
             echo $form->field($model, 'link')->textInput(['maxlength' => true]);
