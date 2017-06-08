@@ -51,40 +51,36 @@ class ServicesForm extends Services
     public function beforeValidate()
     {
         $this->id_content = json_encode($this->content);
+
         return parent::beforeValidate();
     }
 
     public function getContentForm($countryId)
     {
         $cont = Content::find()
-            ->select(
+            ->select([
+                'id',
+                'title',
+            ])
+            ->where([
+                'AND',
                 [
-                    'id',
-                    'title',
-                ]
-            )
-            ->where(
+                    'id_user' => Yii::$app->user->id,
+                ],
                 [
-                    'AND',
+                    'OR',
                     [
-                        'id_user' => Yii::$app->user->id,
+                        "blacklist" => null,
                     ],
                     [
-                        'OR',
-                        [
-                            "blacklist" => null,
-                        ],
-                        [
-                            'NOT',
-                            'blacklist @> \'["' . (integer)$countryId . '"]\'::jsonb',
-                        ],
+                        'NOT',
+                        'blacklist @> \'["' . (integer)$countryId . '"]\'::jsonb',
                     ],
-                ]
-            )
+                ],
+            ])
             ->asArray()
             ->all();
 
-        $cont = ArrayHelper::map($cont, 'id', 'title');
-        return $cont;
+        return ArrayHelper::map($cont, 'id', 'title');
     }
 }

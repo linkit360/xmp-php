@@ -1,9 +1,12 @@
 <?php
 
-use kartik\widgets\Select2;
 use yii\helpers\Html;
-use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+
+use kartik\widgets\Select2;
+
+use common\models\Content\Content;
 
 /**
  * @var yii\web\View           $this
@@ -16,7 +19,6 @@ $this->params['subtitle'] = 'Service Info';
 
 /** @var \frontend\models\Services\ServicesForm $model */
 $model = $models['model_service'];
-$content = $model->getContentForm($opts['country']->id);
 $form = ActiveForm::begin();
 ?>
 <div class="col-lg-6">
@@ -51,24 +53,22 @@ $form = ActiveForm::begin();
             echo $form->field($model, 'id_service')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_provider')->hiddenInput()->label(false);
 
-            //            if ($model->id_content) {
-            //                $cont = json_decode($model->id_content, true);
-            //                dump($cont);
-            //            }
+            $model->content = [];
+            if ($model->id_content) {
+                $model->content = json_decode($model->id_content, true);
+            }
 
-            echo $form->field($model, 'content')->widget(
-                Select2::classname(),
-                [
-                    'data' => $content,
-                    'options' => [
-                        'placeholder' => 'Select content ...',
-                        'multiple' => true,
-                    ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
-                    ],
-                ]
-            );
+            echo $form->field($model, 'content')
+                ->widget(
+                    Select2::classname(),
+                    [
+                        'data' => $model->getContentForm($opts['country']->id),
+                        'options' => [
+                            'placeholder' => 'Select content',
+                            'multiple' => true,
+                        ],
+                    ]
+                );
             ?>
             <div class="text-right">
                 <?php

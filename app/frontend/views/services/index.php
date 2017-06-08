@@ -1,11 +1,9 @@
 <?php
-
-
+use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\grid\SerialColumn;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 
 use kartik\widgets\Select2;
 use kartik\daterange\DateRangePicker;
