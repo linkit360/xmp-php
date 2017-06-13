@@ -2,7 +2,6 @@
 
 namespace frontend\models\Search;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -10,7 +9,6 @@ use common\models\MsisdnBlacklist;
 
 class Blacklist extends MsisdnBlacklist
 {
-
     public $dateFrom;
     public $dateTo;
 

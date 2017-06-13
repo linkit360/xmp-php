@@ -14,6 +14,10 @@ if (YII_ENV === "testing") {
     $addr = "ws://ws.test-xmp.linkit360.ru";
 }
 
+if (YII_ENV === "production") {
+    $addr = "ws://ws.xmp2.linkit360.ru";
+}
+
 $this->registerJs('server = "' . $addr . ':2082/echo";');
 unset($addr);
 ?>

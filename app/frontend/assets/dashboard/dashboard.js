@@ -52,10 +52,15 @@ function start() {
             oldData = data['countries'];
             var series = [];
             $.each(data['countries'], function (index, value) {
-                series.push([
-                    iso.countries[index]['ioc'],
-                    value
-                ]);
+                if (index in iso.countries) {
+                    series.push([
+                        iso.countries[index]['ioc'],
+                        value
+                    ]);
+                }
+                // else {
+                //     dump("Error: no index: " + index);
+                // }
             });
 
             var onlyValues = series.map(function (obj) {

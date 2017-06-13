@@ -3,15 +3,14 @@
 namespace common\models;
 
 use yii\db\ActiveRecord;
+
 use common\helpers\LogsHelper;
 
 /**
- * This is the model class for table "xmp_msisdn_blacklist".
- *
  * @property string  $id
  * @property string  $msisdn
- * @property string  $provider_name
- * @property integer $operator_code
+ * @property string  $id_provider
+ * @property integer $id_operator
  * @property string  $created_at
  * @property string  $id_user
  */
@@ -160,6 +159,7 @@ class MsisdnBlacklist extends ActiveRecord
     {
         $logs = new LogsHelper();
         $logs->logDelete($this);
+
         return parent::afterDelete();
     }
 }

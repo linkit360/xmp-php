@@ -20,6 +20,10 @@ class m170601_091513_aggregate_reports extends Migration
             ->limit(1)
             ->column();
 
+        if (!count($query)) {
+            return true;
+        }
+
         $lastDay = new DateTime($query[0]);
 
         $now = new DateTime(date('Y-m-d'));

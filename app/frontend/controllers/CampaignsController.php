@@ -207,19 +207,10 @@ class CampaignsController extends Controller
             );
 
             $payload['data'] = json_encode($data, JSON_PRETTY_PRINT);
-
-//            dump($payload['data']);
-
-
             $json = json_encode($payload, JSON_PRETTY_PRINT);
-
-//            dump($json);
-
-
             Yii::$app->getDb()
                 ->createCommand("NOTIFY xmp_update, '" . $json . "';")
                 ->execute();
-//            die;
         }
     }
 
