@@ -39,7 +39,6 @@ class Campaigns extends ActiveRecord
             [
                 [
                     'id_user',
-                    'id_old',
                     'id_service',
                     'id_lp',
                     'title',
