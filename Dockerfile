@@ -63,6 +63,10 @@ RUN chown -R 1000:1000 /app/console && chmod -R 0700 /app/console
 COPY app/frontend /app/frontend
 RUN chown -R 1000:1000 /app/frontend && chmod -R 0700 /app/frontend
 
+RUN mkdir -p /usr/local/etc/php
+RUN mv /config/phpini.ini /usr/local/etc/php/php.ini
+RUN chown -R 1000:1000 /usr/local/etc/php && chmod -R 0700 /usr/local/etc/php
+
 # User switch
 WORKDIR /app
 USER 1000

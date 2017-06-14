@@ -94,6 +94,10 @@ unset($addr);
     </div>
 </div>
 
+<div id="summary">
+
+</div>
+
 <?php
 /*
 if (Yii::$app->user->can('monitoringView')) {

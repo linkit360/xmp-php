@@ -47,6 +47,9 @@ function start() {
 
         output[3].innerText = conv + "%";
 
+
+        dump(data['countries']);
+
         // Map
         if (chart && oldData !== data['countries']) {
             oldData = data['countries'];
