@@ -6,31 +6,18 @@ var oldData;
 var graphs = [];
 var last = [];
 var first = [];
+var wCountries = {};
 
 function dump(message) {
     console.log(message);
 }
 
 function start() {
-    dump("WS: server: " + server);
     ws = new WebSocket(server);
     if (!ws) {
         dump("Error: WS Creation");
         return false;
     }
-
-    ws.onopen = function () {
-        dump("Connected");
-    };
-
-    ws.onclose = function () {
-        dump("Disconnected");
-        reset();
-        ws = null;
-        setTimeout(function () {
-            start()
-        }, 5000);
-    };
 
     ws.onmessage = function (evt) {
         var data = JSON.parse(evt.data);
@@ -47,9 +34,6 @@ function start() {
 
         output[3].innerText = conv + "%";
 
-
-        dump(data['countries']);
-
         // Map
         if (chart && oldData !== data['countries']) {
             oldData = data['countries'];
@@ -64,6 +48,26 @@ function start() {
                 // else {
                 //     dump("Error: no index: " + index);
                 // }
+
+                if (!(index in wCountries)) {
+                    $("#summary").append(
+                        "<div class='col-lg-2'>" +
+                        "<div class='ibox'>" +
+                        "<div class='ibox-content' id='wc_" + index + "'>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>"
+                    );
+
+                    wCountries[index] = $("#wc_" + index);
+                }
+
+                wCountries[index].html(
+                    "<h1 class='no-margins'>" +
+                    formatNumber(value) +
+                    "</h1>" +
+                    iso.countries[index]["name"]
+                );
             });
 
             var onlyValues = series.map(function (obj) {
@@ -94,8 +98,19 @@ function start() {
         updateGraphs(3, parseInt(conv));
     };
 
+    ws.onopen = function () {
+        dump("Connected");
+    };
+
+    ws.onclose = function () {
+        dump("Disconnected");
+        ws = null;
+        setTimeout(function () {
+            start()
+        }, 5000);
+    };
+
     ws.onerror = function (evt) {
-        reset();
         dump("ERROR: " + evt.data);
     };
 }
@@ -200,15 +215,14 @@ function reset() {
 }
 
 function showPopup(code) {
-    // con(code);
     $.getJSON("/main/country?iso=" + code, function (data) {
         $('.modal_output_table_row').remove();
         if (data && data['total']['name'] !== null) {
-            // dump(data);
             $('#modal_output_name').html(formatNumber(data['total']['name']));
             $('#modal_output_lp').html(formatNumber(data['total']['lp_hits']));
             $('#modal_output_mo').html(formatNumber(data['total']['mo']));
             $('#modal_output_mos').html(formatNumber(data['total']['mo_success']));
+
             var conv = 0;
             if (data['total']['lp_hits'] > 0) {
                 conv = (parseFloat(formatNumber((data['total']['mo_success'] / data['total']['lp_hits']) * 100))).toFixed(2);
@@ -217,26 +231,29 @@ function showPopup(code) {
 
             var table = $('#modal_output_table');
             $.each(data, function (index, value) {
-                if (index !== 'total') {
-                    var convv = 0;
-                    if (value['cnt']['lp_hits'] > 0) {
-                        convv = (parseFloat(formatNumber((value['cnt']['mo_success'] / value['cnt']['lp_hits']) * 100))).toFixed(2);
-                    }
-
-                    table.find('tbody').append(
-                        '<tr class="modal_output_table_row">' +
-                        '<td>' + value['op']['name'] + '</td>' +
-                        '<td class="text-right">' + formatNumber(value['cnt']['lp_hits']) + '</td>' +
-                        '<td class="text-right">' + formatNumber(value['cnt']['mo']) + '</td>' +
-                        '<td class="text-right">' + formatNumber(value['cnt']['mo_success']) + '</td>' +
-                        '<td class="text-right">' + convv + '%</td>' +
-                        '</tr>'
-                    );
+                if (index === 'total') {
+                    return;
                 }
+
+                var convv = 0;
+                if (value['cnt']['lp_hits'] > 0) {
+                    convv = (parseFloat(formatNumber((value['cnt']['mo_success'] / value['cnt']['lp_hits']) * 100))).toFixed(2);
+                }
+
+                table.find('tbody').append(
+                    '<tr class="modal_output_table_row">' +
+                    '<td>' + value['op'] + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + formatNumber(value['cnt']['lp_hits']) + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + formatNumber(value['cnt']['mo']) + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + formatNumber(value['cnt']['mo_success']) + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + convv + '%</td>' +
+                    '</tr>'
+                );
             });
 
             $('#myModal').modal('show');
         }
     });
+
     return true;
 }

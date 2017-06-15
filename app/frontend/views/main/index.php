@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $addr = 'ws://' . $_SERVER['HTTP_HOST'];
 if (YII_ENV === "testing") {
-    $addr = "ws://ws.test-xmp.linkit360.ru";
+    $addr = "ws://ws.test-xmp2.linkit360.ru";
 }
 
 if (YII_ENV === "production") {

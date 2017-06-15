@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\models\Instances;
 use const true;
 use const false;
 use function date;
@@ -24,6 +23,8 @@ use common\models\LoginForm;
 use common\models\Countries;
 use common\models\Operators;
 use common\models\Providers;
+use common\models\Instances;
+
 use frontend\models\LogsForm;
 use frontend\models\TransactionsForm;
 use frontend\models\Users\ResetPasswordForm;
@@ -294,13 +295,17 @@ class MainController extends Controller
             ->column();
 
         $operators = Operators::find()
+            ->select([
+                "name",
+                "code",
+            ])
             ->where([
                 'id_provider' => array_keys($prov_keys),
             ])
             ->orderBy('name')
             ->indexBy('code')
             ->asArray()
-            ->all();
+            ->column();
 
         $query = (new Query())
             ->from('xmp_reports')
@@ -336,8 +341,15 @@ class MainController extends Controller
         if (count($query)) {
             foreach ($query as $operator) {
                 if (array_key_exists($operator['operator_code'], $operators)) {
+
+                    $z = $operator;
+                    unset(
+                        $z["report_at_day"],
+                        $z["operator_code"]
+                    );
+
                     $data[$operator['operator_code']] = [
-                        'cnt' => $operator,
+                        'cnt' => $z,
                         'op' => $operators[$operator['operator_code']],
                     ];
                 }
@@ -348,6 +360,8 @@ class MainController extends Controller
             }
         }
 
+//        echo json_encode($data, JSON_PRETTY_PRINT);
+//        die;
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         return $data;
