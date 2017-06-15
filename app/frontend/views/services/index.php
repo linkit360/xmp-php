@@ -137,6 +137,11 @@ echo '</div><div class="row">';
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
+                'rowOptions' => function ($model) {
+                    return [
+                        "class" => $model->status ?: "danger",
+                    ];
+                },
                 'columns' => [
                     [
                         'class' => SerialColumn::class,
@@ -207,6 +212,10 @@ echo '</div><div class="row">';
                                     'class' => 'btn btn-xs btn-success',
                                 ]
                             );
+
+                            if (!$row->status) {
+                                return $html;
+                            }
 
                             $html .= '&nbsp;';
                             $html .= Html::a(

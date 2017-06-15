@@ -60,25 +60,28 @@ class Campaigns extends CampaignsModel
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ],
+            ],
         ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
         if (!Yii::$app->user->can('Admin')) {
-            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+            $query
+                ->andFilterWhere(['id_user' => Yii::$app->user->id])
+                ->andFilterWhere(['status' => 1]);
         } else {
             $query->andFilterWhere(['id_user' => $this->id_user]);
         }
 
-        $query
-            ->andFilterWhere(['status' => 1,])
-            ->andFilterWhere(['like', 'title', $this->title]);
+        $query->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

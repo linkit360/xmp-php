@@ -82,6 +82,10 @@ $columns = [
                 ]
             );
 
+            if (!$row->status) {
+                return $html;
+            }
+
             $html .= '&nbsp;';
             $html .= Html::a(
                 'Update',
@@ -175,6 +179,11 @@ echo '</div><div class="row">';
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
+                'rowOptions' => function ($model) {
+                    return [
+                        "class" => $model->status ?: "danger",
+                    ];
+                },
                 'columns' => $columns,
             ]);
             ?>

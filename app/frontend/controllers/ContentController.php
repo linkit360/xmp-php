@@ -70,22 +70,21 @@ class ContentController extends Controller
      */
     public function actionIndex()
     {
+        $where = [];
+        if (!Yii::$app->user->can('Admin')) {
+            $where = [
+                'status' => 1,
+            ];
+        }
+
         $data = [];
         $data['pubs'] = Publishers::find()
-            ->where(
-                [
-                    'status' => 1,
-                ]
-            )
+            ->where($where)
             ->indexBy('id')
             ->all();
 
         $data['cats'] = Categories::find()
-            ->where(
-                [
-                    'status' => 1,
-                ]
-            )
+            ->where($where)
             ->indexBy('id')
             ->all();
 
@@ -105,7 +104,6 @@ class ContentController extends Controller
             ])
             ->indexBy('id')
             ->column();
-
 
         $data['id_publisher'] = Content::find()
             ->select('id_publisher')
@@ -223,6 +221,7 @@ class ContentController extends Controller
     /**
      * @param Content $model
      * @param array   $file
+     *
      * @return Content
      */
     private function fileUpload($model, $file)
@@ -303,16 +302,10 @@ class ContentController extends Controller
     public function actionDownload($id)
     {
         $model = $this->findModel($id);
-        if ($model->id_user !== Yii::$app->user->id) {
-            return new NotFoundHttpException();
-        }
-
-        $result = $this->s3->getObject(
-            [
-                'Bucket' => 'xmp-content',
-                'Key' => $model->id,
-            ]
-        );
+        $result = $this->s3->getObject([
+            'Bucket' => 'xmp-content',
+            'Key' => $model->id,
+        ]);
 
         header("Pragma: public");
         header("Expires: 0");
