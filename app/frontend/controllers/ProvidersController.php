@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Countries;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -49,7 +50,10 @@ class ProvidersController extends Controller
             'index',
             [
                 'dataProvider' => $model->search(Yii::$app->request->queryParams),
-                'search' => $model,
+                'countries' => Countries::find()
+                    ->indexBy('id')
+                    ->asArray()
+                    ->all(),
             ]
         );
     }
