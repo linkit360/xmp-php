@@ -2,22 +2,19 @@
 
 namespace frontend\controllers;
 
-use common\models\Instances;
 use Yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 use common\models\Users;
+use common\models\Instances;
 use common\models\MsisdnBlacklist;
 
 use frontend\models\Search\Blacklist;
 
 class BlacklistController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
@@ -39,9 +36,7 @@ class BlacklistController extends Controller
     }
 
     /**
-     * Lists all MsisdnBlacklist models.
-     *
-     * @return mixed
+     * @return string
      */
     public function actionIndex()
     {
@@ -67,11 +62,9 @@ class BlacklistController extends Controller
     }
 
     /**
-     * Displays a single MsisdnBlacklist model.
+     * @param $id
      *
-     * @param integer $id
-     *
-     * @return mixed
+     * @return string
      */
     public function actionView($id)
     {
@@ -84,15 +77,12 @@ class BlacklistController extends Controller
     }
 
     /**
-     * Finds the MsisdnBlacklist model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
      *
-     * @param integer $id
-     *
-     * @return MsisdnBlacklist the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return MsisdnBlacklist
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    protected function findModel(string $id)
     {
         if (($model = MsisdnBlacklist::findOne($id)) !== null) {
             return $model;
@@ -102,10 +92,7 @@ class BlacklistController extends Controller
     }
 
     /**
-     * Creates a new MsisdnBlacklist model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
+     * @return \yii\web\Response
      */
     public function actionCreate()
     {

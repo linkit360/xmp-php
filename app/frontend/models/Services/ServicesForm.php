@@ -2,17 +2,15 @@
 
 namespace frontend\models\Services;
 
-use function array_merge_recursive;
 use const null;
+use function array_merge_recursive;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+
 use common\models\Services;
 use common\models\Content\Content;
 
-/**
- * Services Form
- */
 class ServicesForm extends Services
 {
     # Fields
@@ -57,6 +55,15 @@ class ServicesForm extends Services
 
     public function getContentForm($countryId)
     {
+        $where = [
+            "status" => 1,
+            "id_user" => Yii::$app->user->id,
+        ];
+
+        if (Yii::$app->user->can('Admin')) {
+            unset($where["id_user"]);
+        }
+
         $cont = Content::find()
             ->select([
                 'id',
@@ -64,9 +71,7 @@ class ServicesForm extends Services
             ])
             ->where([
                 'AND',
-                [
-                    'id_user' => Yii::$app->user->id,
-                ],
+                $where,
                 [
                     'OR',
                     [

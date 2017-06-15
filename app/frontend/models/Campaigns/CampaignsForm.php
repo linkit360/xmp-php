@@ -12,9 +12,6 @@ use common\models\Lps;
 use common\models\Services;
 use common\models\Campaigns;
 
-/**
- * Campaigns Form
- */
 class CampaignsForm extends Campaigns
 {
     # Data
@@ -25,15 +22,21 @@ class CampaignsForm extends Campaigns
     public function getLps()
     {
         if (!count($this->lps)) {
+            $where = [
+                "status" => 1,
+                "id_user" => Yii::$app->user->id,
+            ];
+
+            if (Yii::$app->user->can('Admin')) {
+                unset($where["id_user"]);
+            }
+
             $data = Lps::find()
                 ->select([
                     'title',
                     'id',
                 ])
-                ->where([
-                    'status' => 1,
-                    'id_user' => Yii::$app->user->id,
-                ])
+                ->where($where)
                 ->orderBy([
                     'title' => SORT_ASC,
                 ])
@@ -63,15 +66,21 @@ class CampaignsForm extends Campaigns
     public function getServices()
     {
         if (!count($this->services)) {
+            $where = [
+                "status" => 1,
+                "id_user" => Yii::$app->user->id,
+            ];
+
+            if (Yii::$app->user->can('Admin')) {
+                unset($where["id_user"]);
+            }
+
             $data = Services::find()
                 ->select([
                     'title',
                     'id',
                 ])
-                ->where([
-                    'status' => 1,
-                    'id_user' => Yii::$app->user->id,
-                ])
+                ->where($where)
                 ->orderBy([
                     'title' => SORT_ASC,
                 ])

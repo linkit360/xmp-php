@@ -23,15 +23,10 @@ use frontend\models\Services\QrtechForm;
 use frontend\models\Services\MobilinkForm;
 use frontend\models\Services\ServicesForm;
 
-/**
- * ServicesController implements the CRUD actions for Services model.
- */
 class ServicesController extends Controller
 {
     /**
-     * Lists all Services models.
-     *
-     * @return mixed
+     * @return string
      */
     public function actionIndex()
     {
@@ -85,13 +80,11 @@ class ServicesController extends Controller
     }
 
     /**
-     * Displays a single Services model.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return string
      */
-    public function actionView($id)
+    public function actionView(string $id)
     {
         $model = $this->findModel($id);
         $modelProvider = $this->getProviderModel($model->id_provider);
@@ -154,10 +147,7 @@ class ServicesController extends Controller
     }
 
     /**
-     * Creates a new Services model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
@@ -208,10 +198,14 @@ class ServicesController extends Controller
                 $modelProvider->load(Yii::$app->request->post());
                 if ($modelProvider->validate()) {
                     $model->id_user = Yii::$app->user->id;
-                    $model->service_opts = json_encode(
-                        $modelProvider->attributes,
-                        JSON_PRETTY_PRINT
-                    );
+
+                    $model->service_opts = "{}";
+                    if (count($modelProvider->attributes)) {
+                        $model->service_opts = json_encode(
+                            $modelProvider->attributes,
+                            JSON_PRETTY_PRINT
+                        );
+                    }
 
                     # Service
                     if ($model->validate()) {
@@ -351,14 +345,11 @@ class ServicesController extends Controller
     }
 
     /**
-     * Updates an existing Services model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return string|\yii\web\Response
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $id)
     {
         $opts = [];
         $model = ServicesForm::findOne($id);
@@ -371,25 +362,26 @@ class ServicesController extends Controller
         $modelProvider->load(json_decode($model->service_opts, true), '');
         $provider = Providers::findOne($model->id_provider);
         $opts['country'] = Countries::find()
-            ->where(
-                [
-                    'id' => $provider->id_country,
-                ]
-            )
+            ->where([
+                'id' => $provider->id_country,
+            ])
             ->one();
 
         if ($model->load(Yii::$app->request->post())) {
             # Provider
             $modelProvider->load(Yii::$app->request->post());
             if ($modelProvider->validate()) {
-                if ($model->id_user !== Yii::$app->user->id) {
+                if ($model->id_user !== Yii::$app->user->id && !Yii::$app->user->can('Admin')) {
                     return $this->redirect(['index']);
                 }
 
-                $model->service_opts = json_encode(
-                    $modelProvider->attributes,
-                    JSON_PRETTY_PRINT
-                );
+                $model->service_opts = "{}";
+                if (count($modelProvider->attributes)) {
+                    $model->service_opts = json_encode(
+                        $modelProvider->attributes,
+                        JSON_PRETTY_PRINT
+                    );
+                }
 
                 # Service
                 if ($model->validate()) {
@@ -415,14 +407,11 @@ class ServicesController extends Controller
     }
 
     /**
-     * Deletes an existing Services model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return \yii\web\Response
      */
-    public function actionDelete($id)
+    public function actionDelete(string $id)
     {
         $model = $this->findModel($id);
         $model->status = 0;
