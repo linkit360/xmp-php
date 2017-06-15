@@ -37,10 +37,13 @@ USER root
 # Configs
 COPY config/ /config
 RUN set -ex \
-    && mv /config/php.ini /usr/local/etc/php-fpm.conf \
+    && mkdir -p /usr/local/etc/php \
+    && mv /config/php.ini /usr/local/etc/php/php.ini \
+    && mv /config/php-fpm.ini /usr/local/etc/php-fpm.conf \
     && mv /config/php-www.ini /usr/local/etc/php-fpm.d/www.conf \
     && cp /config/.bashrc /home/docker \
-    && mv /config/.bashrc /root
+    && mv /config/.bashrc /root \
+    && chown -R 1000:1000 /usr/local/etc/php && chmod -R 0700 /usr/local/etc/php
 
 # App
 RUN set -ex \
@@ -62,10 +65,6 @@ RUN chown -R 1000:1000 /app/console && chmod -R 0700 /app/console
 # frontend
 COPY app/frontend /app/frontend
 RUN chown -R 1000:1000 /app/frontend && chmod -R 0700 /app/frontend
-
-RUN mkdir -p /usr/local/etc/php
-RUN mv /config/phpini.ini /usr/local/etc/php/php.ini
-RUN chown -R 1000:1000 /usr/local/etc/php && chmod -R 0700 /usr/local/etc/php
 
 # User switch
 WORKDIR /app

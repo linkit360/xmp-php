@@ -22,7 +22,18 @@ $form = ActiveForm::begin();
             echo $form->field($model, 'id_service')->dropDownList($model->getServices());
             echo $form->field($model, 'id_lp')->dropDownList($model->getLps());
             echo $form->field($model, 'autoclick_enabled')->checkbox();
-            echo $form->field($model, 'autoclick_ratio')->dropDownList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+            echo $form->field($model, 'autoclick_ratio')->dropDownList([
+                1 => 1,
+                2 => 2,
+                3 => 3,
+                4 => 4,
+                5 => 5,
+                6 => 6,
+                7 => 7,
+                8 => 8,
+                9 => 9,
+                10 => 10,
+            ]);
             ?>
 
             <div class="text-right">
