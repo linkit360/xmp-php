@@ -159,17 +159,35 @@ if (in_array('usersManage', $permissions)) {
     ];
 }
 
-function drawItem($item, $path)
+/**
+ * @param array  $urls
+ * @param string $url
+ *
+ * @return array
+ */
+function addActions(array $urls, string $url)
 {
+    if (substr_count($url, '/index')) {
+        $ex = explode('/', $url, 2);
+        $urls[$ex[0] . "/view"] = null;
+        $urls[$ex[0] . "/delete"] = null;
+        $urls[$ex[0] . "/create"] = null;
+        $urls[$ex[0] . "/update"] = null;
+    }
+
+    return $urls;
+}
+
+function drawItem($item)
+{
+    $urls = [];
+    $urls[$item['url']] = null;
+    $urls = addActions($urls, $item['url']);
+
+    $path = Yii::$app->request->pathInfo;
     if ($path == '') {
         $path = '/';
     }
-
-    $pathNow = str_replace(
-        '/index',
-        '',
-        $item['url']
-    );
 
     echo Html::tag(
         'li',
@@ -178,29 +196,27 @@ function drawItem($item, $path)
             Url::toRoute($item['url'])
         ),
         [
-            'class' => $pathNow !== $path ?: 'active',
+            'class' => !array_key_exists($path, $urls) ?: 'active',
         ]
     );
 }
 
-function drawSub($menu, $path)
+function drawSub($menu)
 {
     $urls = [];
     foreach ($menu['items'] as $item) {
-        $urls[] = $item['url'];
-
-        // actions
-        if (substr_count($item['url'], '/')) {
-            $urls[] = explode('/', $item['url'], 2)[0];
-        }
+        $urls[$item['url']] = null;
+        $urls = addActions($urls, $item['url']);
     }
+
+    $path = Yii::$app->request->pathInfo;
     ?>
-    <li class="<?= !in_array($path, $urls) ?: 'active' ?>">
+    <li class="<?= !array_key_exists($path, $urls) ?: 'active' ?>">
         <a href="#"><span class="nav-label"><?= $menu['name'] ?></span> <span class="fa arrow"></span></a>
         <ul class="nav nav-second-level collapse">
             <?php
             foreach ($menu['items'] as $item) {
-                drawItem($item, $path);
+                drawItem($item);
             }
             ?>
         </ul>
@@ -208,7 +224,6 @@ function drawSub($menu, $path)
     <?php
 }
 
-$ex = explode('/', Yii::$app->request->pathInfo, 2);
 ?>
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
@@ -224,13 +239,14 @@ $ex = explode('/', Yii::$app->request->pathInfo, 2);
             foreach ($menu as $item) {
                 if (!array_key_exists('url', $item)) {
                     if (count($item['items'])) {
-                        drawSub($item, $ex[0]);
+                        drawSub($item);
                     }
                 } else {
-                    drawItem($item, $ex[0]);
+                    drawItem($item);
                 }
             }
             ?>
         </ul>
     </div>
 </nav>
+<?php unset($menu) ?>
