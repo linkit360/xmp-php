@@ -15,6 +15,7 @@ class ServicesForm extends Services
 {
     # Fields
     public $content = [];
+    public $price_raw;
 
     /**
      * @inheritdoc
@@ -25,12 +26,24 @@ class ServicesForm extends Services
             parent::rules(),
             [
                 [
-                    ['content'],
+                    [
+                        'content',
+                        'price_raw',
+                    ],
                     'required',
                 ],
                 [
-                    ['content'],
+                    [
+                        'content',
+                    ],
                     'safe',
+                ],
+                [
+                    [
+                        'price_raw',
+                    ],
+                    'double',
+                    'min' => 0,
                 ],
             ]
         );
@@ -42,6 +55,7 @@ class ServicesForm extends Services
             parent::attributeLabels(),
             [
                 'content' => 'Content',
+                'price_raw' => 'Price',
             ]
         );
     }
@@ -49,6 +63,7 @@ class ServicesForm extends Services
     public function beforeValidate()
     {
         $this->id_content = json_encode($this->content);
+        $this->price = (int)(round($this->price_raw, 2) * 100);
 
         return parent::beforeValidate();
     }

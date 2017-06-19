@@ -1,12 +1,9 @@
 <?php
-
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
 
 use kartik\widgets\Select2;
-
-use common\models\Content\Content;
+use kartik\money\MaskMoney;
 
 /**
  * @var yii\web\View           $this
@@ -46,9 +43,20 @@ $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();
 
-            echo $form->field($model, 'price')
-                ->textInput(['maxlength' => true])
-                ->hint($opts['country']->currency != '' ? 'Currency: ' . $opts['country']->currency : '');
+            if (!$model->price_raw && $model->price) {
+                // crud update
+                $model->price_raw = $model->price / 100;
+            }
+            echo $form->field($model, 'price_raw')
+                ->widget(
+                    MaskMoney::className(),
+                    [
+                        'pluginOptions' => [
+                            'prefix' => $opts['country']->currency . ' ',
+                            'precision' => 2,
+                        ],
+                    ]
+                );
 
             echo $form->field($model, 'id_service')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_provider')->hiddenInput()->label(false);

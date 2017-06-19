@@ -292,7 +292,8 @@ class ServicesController extends Controller
             $payload['for'] = $instance["id"];
             $payload['data'] = $model->attributes;
             $payload['data']['id'] = $model->id;
-            $payload['data']['price'] = (int)$payload['data']['price'];
+            $payload['data']['price_cents'] = (int)$payload['data']['price'];
+            $payload['data']['price'] = (int)round($payload['data']['price'] / 100);
 
             // Service ID (code)
             $payload['data']['code'] = $model->id_service;

@@ -15,7 +15,8 @@
     "kartik-v/yii2-date-range": "^1.6",
     "aws/aws-sdk-php": "^3.25",
     "miloschuman/yii2-highcharts-widget": "^5.0",
-    "FortAwesome/Font-Awesome": "^4.7"
+    "FortAwesome/Font-Awesome": "^4.7",
+    "kartik-v/yii2-money": "^1.2"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",

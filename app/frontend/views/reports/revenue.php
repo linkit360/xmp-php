@@ -173,7 +173,11 @@ $gridColumns = [
     [
         'attribute' => 'id_campaign',
         'label' => 'Campaign',
-        'content' => function ($data) {
+        'content' => function ($data) use ($model) {
+
+
+//            dump($model->getCampaigns());
+
             return number_format($data['id_campaign']);
         },
         'footerOptions' => [
