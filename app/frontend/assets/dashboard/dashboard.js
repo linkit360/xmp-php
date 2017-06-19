@@ -44,30 +44,29 @@ function start() {
                         iso.countries[index]['ioc'],
                         value
                     ]);
-                }
-                // else {
-                //     dump("Error: no index: " + index);
-                // }
 
-                if (!(index in wCountries)) {
-                    $("#summary").append(
-                        "<div class='col-lg-2'>" +
-                        "<div class='ibox'>" +
-                        "<div class='ibox-content' id='wc_" + index + "'>" +
-                        "</div>" +
-                        "</div>" +
-                        "</div>"
+                    if (!(index in wCountries)) {
+                        $("#summary").append(
+                            "<div class='col-lg-2'>" +
+                            "<div class='ibox'>" +
+                            "<div class='ibox-content' id='wc_" + index + "'>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>"
+                        );
+
+                        wCountries[index] = $("#wc_" + index);
+                    }
+
+                    wCountries[index].html(
+                        "<h1 class='no-margins'>" +
+                        formatNumber(value) +
+                        "</h1>" +
+                        iso.countries[index]["name"]
                     );
-
-                    wCountries[index] = $("#wc_" + index);
+                } else {
+                    dump("Error: no index: " + index);
                 }
-
-                wCountries[index].html(
-                    "<h1 class='no-margins'>" +
-                    formatNumber(value) +
-                    "</h1>" +
-                    iso.countries[index]["name"]
-                );
             });
 
             var onlyValues = series.map(function (obj) {
