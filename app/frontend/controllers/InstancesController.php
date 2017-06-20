@@ -13,9 +13,6 @@ use frontend\models\Instances\SearchForm;
 
 class InstancesController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
@@ -70,13 +67,13 @@ class InstancesController extends Controller
      * @return Instances the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(string $id)
     {
         if (($model = Instances::findOne($id)) !== null) {
             return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     /**
@@ -89,11 +86,30 @@ class InstancesController extends Controller
     {
         $model = new \frontend\models\Instances\Instances();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render(
             'create',
+            [
+                'model' => $model,
+            ]
+        );
+    }
+
+    public function actionUpdate($id)
+    {
+        $model = \frontend\models\Instances\Instances::findOne($id);
+        if ($model) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['index']);
+            }
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
+        return $this->render(
+            'update',
             [
                 'model' => $model,
             ]

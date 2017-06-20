@@ -14,10 +14,13 @@ use yii\widgets\ActiveForm;
         <div class="ibox-content">
             <?php
             $form = ActiveForm::begin();
-            //            echo $form->field($model, 'id')->textInput();
+            echo $form->field($model, 'id')->textInput();
             //            echo $form->field($model, 'id_operator')->textInput();
             echo $form->field($model, 'id_provider')->dropDownList($model->getProviders());
             //            echo $form->field($model, 'status')->textInput();
+
+            echo $form->field($model, 'title')->textInput();
+            echo $form->field($model, 'hostname')->textInput();
 
             echo Html::submitButton(
                 $model->isNewRecord ? 'Create' : 'Update',

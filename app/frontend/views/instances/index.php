@@ -53,9 +53,30 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
-//                'filterModel' => $searchModel,
                 'columns' => [
                     'id',
+                    [
+                        'attribute' => 'title',
+                        'headerOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%;',
+                        ],
+                    ],
+                    [
+                        'attribute' => 'hostname',
+                        'headerOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%;',
+                        ],
+                    ],
                     [
                         'label' => 'Provider',
                         'headerOptions' => [
@@ -84,6 +105,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'class' => 'text-right',
                             'style' => 'width: 1%;',
                         ],
+                        'content' => function ($row) {
+                            if ($row->status === 1) {
+                                return "ON";
+                            }
+
+                            return "OFF";
+                        },
                     ],
 
                     ['class' => 'yii\grid\ActionColumn'],

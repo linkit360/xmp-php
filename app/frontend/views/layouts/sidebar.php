@@ -185,8 +185,11 @@ function drawItem($item)
     $urls = addActions($urls, $item['url']);
 
     $path = Yii::$app->request->pathInfo;
-    if ($path == '') {
-        $path = '/';
+    if ($path == "") {
+        $path = "/";
+    } else {
+        $path = explode("/", $path, 3);
+        $path = $path[0] . "/" . $path[1];
     }
 
     echo Html::tag(
@@ -209,7 +212,8 @@ function drawSub($menu)
         $urls = addActions($urls, $item['url']);
     }
 
-    $path = Yii::$app->request->pathInfo;
+    $path = explode("/", Yii::$app->request->pathInfo, 3);
+    $path = $path[0] . "/" . $path[1];
     ?>
     <li class="<?= !array_key_exists($path, $urls) ?: 'active' ?>">
         <a href="#"><span class="nav-label"><?= $menu['name'] ?></span> <span class="fa arrow"></span></a>
