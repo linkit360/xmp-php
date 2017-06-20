@@ -83,6 +83,8 @@ class MobilinkForm extends Model
 
     public function beforeValidate()
     {
+        $this->periodic_days = json_encode($this->periodic_days);
+
         $int_fields = [
             "retry_days",
             "inactive_days",

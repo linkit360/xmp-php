@@ -2,6 +2,7 @@
 
 namespace frontend\models\Reports;
 
+use common\models\Campaigns;
 use const SORT_ASC;
 use function count;
 use function array_keys;
@@ -39,8 +40,10 @@ class Common extends Model
 
     public $instances = [];
     public $instancesById = [];
+    public $instances_links = [];
 
     public $campaigns = [];
+    public $campaigns_links = [];
     public $chart = [];
     public $struct = [];
 
@@ -51,6 +54,36 @@ class Common extends Model
     }
 
     # Campaigns
+
+    public function getCampaignsLinks()
+    {
+        if (!count($this->campaigns_links)) {
+            $this->instances_links = Instances::find()
+                ->select([
+                    "hostname",
+                    "id",
+                ])
+                ->asArray()
+                ->indexBy("id")
+                ->column();
+
+            $this->campaigns_links = Campaigns::find()
+                ->select([
+                    "link",
+                    "title",
+                    "id_old",
+                ])
+                ->where([
+                    "id_old" => $this->getCampaigns(),
+                ])
+                ->indexBy("id_old")
+                ->asArray()
+                ->all();
+        }
+
+        return $this->campaigns_links;
+    }
+
     public function getCampaigns()
     {
         if (!count($this->campaigns)) {

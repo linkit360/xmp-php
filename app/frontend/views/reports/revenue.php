@@ -151,6 +151,7 @@ $total['injection']['success'] = number_format($total['injection']['injection_ch
 $total['injection']['failed'] = number_format($total['injection']['injection_failed']);
 unset($total['injection']['injection_charge_success'], $total['injection']['injection_failed']);
 
+$model->getCampaignsLinks();
 $gridColumns = [
     [
         'attribute' => 'report_date',
@@ -173,12 +174,25 @@ $gridColumns = [
     [
         'attribute' => 'id_campaign',
         'label' => 'Campaign',
-        'content' => function ($data) use ($model) {
+        'content' => function ($row) use ($model) {
+            if (
+                !array_key_exists($row["id_campaign"], $model->campaigns_links) ||
+                !array_key_exists($row["id_instance"], $model->instances_links)
+            ) {
+                return number_format($row['id_campaign']);
+            }
 
+            $camp = $model->campaigns_links[$row["id_campaign"]];
+            $url = "http://" . $model->instances_links[$row["id_instance"]] . "/" . $camp["link"];
 
-//            dump($model->getCampaigns());
-
-            return number_format($data['id_campaign']);
+            return Html::a(
+                $camp["title"],
+                $url,
+                [
+                    "target" => "_blank",
+                    "title" => $url,
+                ]
+            );
         },
         'footerOptions' => [
             'class' => 'text-right',

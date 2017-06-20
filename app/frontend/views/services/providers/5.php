@@ -23,6 +23,10 @@ echo $form->field($model, 'minimal_touch_times');
 echo $form->field($model, 'trial_days');
 echo $form->field($model, 'purge_after_days');
 
+if ($model->periodic_days) {
+    $model->periodic_days = json_decode($model->periodic_days);
+}
+
 echo $form->field($model, 'periodic_days')
     ->widget(
         Select2::classname(),

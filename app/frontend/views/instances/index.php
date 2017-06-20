@@ -41,9 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<?= "</div><div class='row'>" ?>
-
-<div class="col-lg-6">
+<div class="col-lg-8">
     <div class="ibox">
         <div class="ibox-content">
             <p>
@@ -54,29 +52,19 @@ $this->params['breadcrumbs'][] = $this->title;
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
                 'columns' => [
-                    'id',
                     [
-                        'attribute' => 'title',
+                        'attribute' => "id",
                         'headerOptions' => [
                             'class' => 'text-right',
                             'style' => 'width: 1%; white-space: nowrap;',
                         ],
                         'contentOptions' => [
                             'class' => 'text-right',
-                            'style' => 'width: 1%;',
-                        ],
-                    ],
-                    [
-                        'attribute' => 'hostname',
-                        'headerOptions' => [
-                            'class' => 'text-right',
                             'style' => 'width: 1%; white-space: nowrap;',
                         ],
-                        'contentOptions' => [
-                            'class' => 'text-right',
-                            'style' => 'width: 1%;',
-                        ],
                     ],
+                    "title",
+                    "hostname",
                     [
                         'label' => 'Provider',
                         'headerOptions' => [
@@ -85,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'contentOptions' => [
                             'class' => 'text-right',
-                            'style' => 'width: 1%;',
+                            'style' => 'width: 1%; white-space: nowrap;',
                         ],
                         'content' => function ($row) use ($searchModel) {
                             if (array_key_exists($row["id_provider"], $searchModel->getProviders())) {
@@ -103,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'contentOptions' => [
                             'class' => 'text-right',
-                            'style' => 'width: 1%;',
+                            'style' => 'width: 1%; white-space: nowrap;',
                         ],
                         'content' => function ($row) {
                             if ($row->status === 1) {
