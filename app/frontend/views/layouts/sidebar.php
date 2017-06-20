@@ -212,8 +212,11 @@ function drawSub($menu)
         $urls = addActions($urls, $item['url']);
     }
 
-    $path = explode("/", Yii::$app->request->pathInfo, 3);
-    $path = $path[0] . "/" . $path[1];
+    $path = Yii::$app->request->getPathInfo();
+    if (substr_count($path, "/")) {
+        $path = explode("/", Yii::$app->request->getPathInfo(), 3);
+        $path = $path[0] . "/" . $path[1];
+    }
     ?>
     <li class="<?= !array_key_exists($path, $urls) ?: 'active' ?>">
         <a href="#"><span class="nav-label"><?= $menu['name'] ?></span> <span class="fa arrow"></span></a>

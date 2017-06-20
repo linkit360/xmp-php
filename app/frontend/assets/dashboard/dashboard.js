@@ -73,12 +73,8 @@ function start() {
                 return obj[1];
             });
 
-            var minValue = Math.min.apply(null, onlyValues),
-                maxValue = Math.max.apply(null, onlyValues);
-
-            var paletteScale = d3.scale.linear()
-                .domain([minValue, maxValue])
-                .range(["#EFEFFF", "#0d80ca"]);
+            var maxValue = Math.max.apply(null, onlyValues),
+                paletteScale = d3.scale.linear().domain([0, maxValue]).range(["#EFEFFF", "#0d80ca"]);
 
             var dataset = {};
             series.forEach(function (item) {
