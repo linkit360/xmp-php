@@ -20,6 +20,9 @@ echo $form->field($model, 'inactive_days');
 echo $form->field($model, 'grace_days');
 echo $form->field($model, 'minimal_touch_times');
 
+echo $form->field($model, 'trial_days');
+echo $form->field($model, 'purge_after_days');
+
 echo $form->field($model, 'periodic_days')
     ->widget(
         Select2::classname(),

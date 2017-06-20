@@ -10,11 +10,14 @@ class MobilinkForm extends Model
     public $sms_on_content;
     public $sms_on_subscribe;
     public $sms_on_unsubscribe;
-    public $retry_days;
-    public $inactive_days;
-    public $grace_days;
     public $periodic_days;
-    public $minimal_touch_times;
+
+    public $retry_days = 0;
+    public $inactive_days = 0;
+    public $grace_days = 0;
+    public $minimal_touch_times = 0;
+    public $trial_days = 0;
+    public $purge_after_days = 0;
 
     public function rules()
     {
@@ -29,6 +32,8 @@ class MobilinkForm extends Model
                     "grace_days",
                     "periodic_days",
                     "minimal_touch_times",
+                    "trial_days",
+                    "purge_after_days",
                 ],
                 "required",
             ],
@@ -46,11 +51,15 @@ class MobilinkForm extends Model
                     "inactive_days",
                     "grace_days",
                     "minimal_touch_times",
+                    "trial_days",
+                    "purge_after_days",
                 ],
                 "integer",
             ],
             [
                 [
+                    "trial_days",
+                    "purge_after_days",
                     "periodic_days",
                 ],
                 "safe",
@@ -74,32 +83,21 @@ class MobilinkForm extends Model
 
     public function beforeValidate()
     {
-        // retry_days
-        if ($this->retry_days) {
-            $this->retry_days = (int)$this->retry_days;
-        } else {
-            unset($this->retry_days);
-        }
+        $int_fields = [
+            "retry_days",
+            "inactive_days",
+            "grace_days",
+            "minimal_touch_times",
+            "trial_days",
+            "purge_after_days",
+        ];
 
-        // inactive_days
-        if ($this->inactive_days) {
-            $this->inactive_days = (int)$this->inactive_days;
-        } else {
-            unset($this->inactive_days);
-        }
-
-        // grace_days
-        if ($this->grace_days) {
-            $this->grace_days = (int)$this->grace_days;
-        } else {
-            unset($this->grace_days);
-        }
-
-        // minimal_touch_times
-        if ($this->minimal_touch_times) {
-            $this->minimal_touch_times = (int)$this->minimal_touch_times;
-        } else {
-            unset($this->minimal_touch_times);
+        foreach ($int_fields as $field) {
+            if ($this->{$field}) {
+                $this->{$field} = (int)$this->{$field};
+            } else {
+                $this->{$field} = 0;
+            }
         }
 
         return parent::beforeValidate();
