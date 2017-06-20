@@ -2,7 +2,6 @@
 
 namespace frontend\models\Reports;
 
-use common\models\Campaigns;
 use const SORT_ASC;
 use function count;
 use function array_keys;
@@ -16,6 +15,7 @@ use common\models\Countries;
 use common\models\Operators;
 use common\models\Providers;
 use common\models\Instances;
+use common\models\Campaigns;
 
 class Common extends Model
 {
@@ -54,7 +54,6 @@ class Common extends Model
     }
 
     # Campaigns
-
     public function getCampaignsLinks()
     {
         if (!count($this->campaigns_links)) {

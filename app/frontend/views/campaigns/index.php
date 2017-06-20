@@ -11,6 +11,7 @@ use kartik\widgets\Select2;
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var array                       $data
  * @var array                       $users
+ * @var array                       $srv
  */
 
 $this->title = 'Campaigns';
@@ -28,6 +29,33 @@ $columns = [
         ],
     ],
     'title',
+    [
+        'attribute' => 'link',
+        'visible' => count($users),
+        'filter' => false,
+        'headerOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) use ($srv) {
+            if (array_key_exists($row["id_service"], $srv)) {
+                $url = "http://" . $srv[$row["id_service"]] . "/" . $row["link"];
+
+                return Html::a(
+                    "/" . $row["link"],
+                    $url,
+                    [
+                        "target" => "_blank",
+                        "title" => $url,
+                    ]
+                );
+            }
+
+            return "-";
+        },
+    ],
     [
         'attribute' => 'id_user',
         'visible' => count($users),
@@ -166,10 +194,9 @@ $form = ActiveForm::begin([
 
 <?php
 ActiveForm::end();
-echo '</div><div class="row">';
 ?>
 
-<div class="col-lg-6">
+<div class="col-lg-8">
     <div class="ibox">
         <div class="ibox-content">
             <p>

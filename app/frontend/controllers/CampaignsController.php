@@ -53,6 +53,34 @@ class CampaignsController extends Controller
                 ->column();
         }
 
+        $srv = Services::find()
+            ->select([
+                "id_provider",
+                "id",
+            ])
+            ->indexBy("id")
+            ->asArray()
+            ->column();
+
+        $insts = Instances::find()
+            ->select([
+                "hostname",
+                "id_provider",
+            ])
+            ->where([
+                "id_provider" => $srv,
+            ])
+            ->indexBy("id_provider")
+            ->asArray()
+            ->column();
+
+
+        foreach ($srv as $id => $prov) {
+            $srv[$id] = $insts[$prov];
+        }
+        unset ($insts);
+
+
         $searchModel = new \frontend\models\Search\Campaigns();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -62,6 +90,7 @@ class CampaignsController extends Controller
                 'model' => $searchModel,
                 'dataProvider' => $dataProvider,
                 'users' => $users,
+                'srv' => $srv,
             ]
         );
     }
