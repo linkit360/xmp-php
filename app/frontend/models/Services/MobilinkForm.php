@@ -16,9 +16,6 @@ class MobilinkForm extends Model
     public $periodic_days;
     public $minimal_touch_times;
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
@@ -33,15 +30,15 @@ class MobilinkForm extends Model
                     "periodic_days",
                     "minimal_touch_times",
                 ],
-                'required',
+                "required",
             ],
             [
                 [
-                    'sms_on_content',
+                    "sms_on_content",
                     "sms_on_subscribe",
                     "sms_on_unsubscribe",
                 ],
-                'string',
+                "string",
             ],
             [
                 [
@@ -50,13 +47,13 @@ class MobilinkForm extends Model
                     "grace_days",
                     "minimal_touch_times",
                 ],
-                'integer',
+                "integer",
             ],
             [
                 [
                     "periodic_days",
                 ],
-                'safe',
+                "safe",
             ],
         ];
     }
@@ -77,7 +74,33 @@ class MobilinkForm extends Model
 
     public function beforeValidate()
     {
-        $this->periodic_days = implode(",", $this->periodic_days);
+        // retry_days
+        if ($this->retry_days) {
+            $this->retry_days = (int)$this->retry_days;
+        } else {
+            unset($this->retry_days);
+        }
+
+        // inactive_days
+        if ($this->inactive_days) {
+            $this->inactive_days = (int)$this->inactive_days;
+        } else {
+            unset($this->inactive_days);
+        }
+
+        // grace_days
+        if ($this->grace_days) {
+            $this->grace_days = (int)$this->grace_days;
+        } else {
+            unset($this->grace_days);
+        }
+
+        // minimal_touch_times
+        if ($this->minimal_touch_times) {
+            $this->minimal_touch_times = (int)$this->minimal_touch_times;
+        } else {
+            unset($this->minimal_touch_times);
+        }
 
         return parent::beforeValidate();
     }

@@ -20,22 +20,18 @@ echo $form->field($model, 'inactive_days');
 echo $form->field($model, 'grace_days');
 echo $form->field($model, 'minimal_touch_times');
 
-if ($model->periodic_days) {
-    $model->periodic_days = explode(",", $model->periodic_days);
-}
-
 echo $form->field($model, 'periodic_days')
     ->widget(
         Select2::classname(),
         [
             'data' => [
-                0 => "Monday",
-                1 => "Tuesday",
-                2 => "Wednesday",
-                3 => "Thursday",
-                4 => "Friday",
-                5 => "Saturday",
-                6 => "Sunday",
+                "mon" => "Monday",
+                "tue" => "Tuesday",
+                "wed" => "Wednesday",
+                "thu" => "Thursday",
+                "fri" => "Friday",
+                "sat" => "Saturday",
+                "sun" => "Sunday",
             ],
             'showToggleAll' => true,
             'hideSearch' => true,
