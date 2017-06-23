@@ -1,8 +1,9 @@
 <?php
-use yii\grid\SerialColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\grid\SerialColumn;
 use yii\widgets\ActiveForm;
+
 use kartik\widgets\Select2;
 
 /**
@@ -10,6 +11,7 @@ use kartik\widgets\Select2;
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var array                       $data
  * @var array                       $users
+ * @var array                       $srv
  */
 
 $this->title = 'Campaigns';
@@ -18,6 +20,124 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
+
+$columns = [
+    [
+        'class' => SerialColumn::class,
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+    ],
+    'title',
+    [
+        'attribute' => 'link',
+        'headerOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) use ($srv) {
+            if (array_key_exists($row["id_service"], $srv)) {
+                $url = "http://" . $srv[$row["id_service"]] . "/" . $row["link"];
+
+                return Html::a(
+                    "/" . $row["link"],
+                    $url,
+                    [
+                        "target" => "_blank",
+                        "title" => $url,
+                    ]
+                );
+            }
+
+            return "-";
+        },
+    ],
+    [
+        'attribute' => 'id_user',
+        'visible' => count($users),
+        'headerOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) use ($users) {
+            return Html::a(
+                $users[$row['id_user']],
+                '/users/' . $row['id_user'],
+                [
+                    'target' => '_blank',
+                ]
+            );
+        },
+    ],
+    [
+        'attribute' => 'created_at',
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($data) {
+            return date('Y-m-d H:i:s', strtotime($data['created_at']));
+        },
+    ],
+    [
+        'attribute' => 'updated_at',
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($data) {
+            return date('Y-m-d H:i:s', strtotime($data['updated_at']));
+        },
+    ],
+    [
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) {
+            $html = Html::a(
+                'View',
+                [
+                    'view',
+                    'id' => $row['id'],
+                ],
+                [
+                    'class' => 'btn btn-xs btn-success',
+                ]
+            );
+
+            if (!$row->status) {
+                return $html;
+            }
+
+            $html .= '&nbsp;';
+            $html .= Html::a(
+                'Update',
+                [
+                    'update',
+                    'id' => $row['id'],
+                ],
+                [
+                    'class' => 'btn btn-xs btn-primary',
+                ]
+            );
+
+            $html .= '&nbsp;';
+            $html .= Html::button(
+                'Delete',
+                [
+                    'class' => 'btn btn-xs btn-danger',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalDelete',
+                    'data-rowid' => $row['id'],
+                ]
+            );
+
+            return $html;
+        },
+    ],
+];
 
 $form = ActiveForm::begin([
     'action' => ['index'],
@@ -29,35 +149,22 @@ $form = ActiveForm::begin([
         <div class="ibox-content">
             <div class="row">
                 <div class="col-lg-12">
-                    <?php
-                    echo $form->field($model, 'id_operator')->widget(
-                        Select2::classname(),
-                        [
-                            'data' => $data['id_operator'],
-                            'options' => [
-                                'placeholder' => 'Operator',
-                            ],
-                        ]
-                    );
-                    ?>
-                </div>
-
-                <div class="col-lg-12">
                     <?= $form->field($model, 'title') ?>
                 </div>
 
                 <div class="col-lg-12">
                     <?php
                     if (count($users)) {
-                        echo $form->field($model, 'id_user')->widget(
-                            Select2::classname(),
-                            [
-                                'data' => $users,
-                                'options' => [
-                                    'placeholder' => 'User',
-                                ],
-                            ]
-                        );
+                        echo $form->field($model, 'id_user')
+                            ->widget(
+                                Select2::classname(),
+                                [
+                                    'data' => $users,
+                                    'options' => [
+                                        'placeholder' => 'User',
+                                    ],
+                                ]
+                            );
                     }
                     ?>
                 </div>
@@ -84,7 +191,6 @@ $form = ActiveForm::begin([
 
 <?php
 ActiveForm::end();
-echo '</div><div class="row">';
 ?>
 
 <div class="col-lg-8">
@@ -97,104 +203,12 @@ echo '</div><div class="row">';
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
-                'columns' => [
-                    [
-                        'class' => SerialColumn::class,
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                    ],
-                    'title',
-                    [
-                        'attribute' => 'id_operator',
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) use ($data) {
-                            return $data['id_operator'][$row['id_operator']];
-                        },
-                    ],
-                    [
-                        'attribute' => 'id_user',
-                        'visible' => count($users),
-                        'filter' => false,
-                        'headerOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) use ($users) {
-                            return Html::a(
-                                $users[$row['id_user']],
-                                '/users/' . $row['id_user'],
-                                [
-                                    'target' => '_blank',
-                                ]
-                            );
-                        },
-                    ],
-                    [
-                        'attribute' => 'created_at',
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($data) {
-                            return date('Y-m-d H:i:s', strtotime($data['created_at']));
-                        },
-                    ],
-                    [
-                        'attribute' => 'updated_at',
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($data) {
-                            return date('Y-m-d H:i:s', strtotime($data['updated_at']));
-                        },
-                    ],
-                    [
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) {
-                            $html = Html::a(
-                                'View',
-                                [
-                                    'view',
-                                    'id' => $row['id'],
-                                ],
-                                [
-                                    'class' => 'btn btn-xs btn-success',
-                                ]
-                            );
-
-                            $html .= '&nbsp;';
-                            $html .= Html::a(
-                                'Update',
-                                [
-                                    'update',
-                                    'id' => $row['id'],
-                                ],
-                                [
-                                    'class' => 'btn btn-xs btn-primary',
-                                ]
-                            );
-
-                            $html .= '&nbsp;';
-                            $html .= Html::button(
-                                'Delete',
-                                [
-                                    'class' => 'btn btn-xs btn-danger',
-                                    'data-toggle' => 'modal',
-                                    'data-target' => '#modalDelete',
-                                    'data-rowid' => $row['id'],
-                                ]
-                            );
-
-                            return $html;
-                        },
-                    ],
-                ],
+                'rowOptions' => function ($model) {
+                    return [
+                        "class" => $model->status ?: "danger",
+                    ];
+                },
+                'columns' => $columns,
             ]);
             ?>
         </div>

@@ -1,11 +1,9 @@
 <?php
-
-
+use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\grid\SerialColumn;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 
 use kartik\widgets\Select2;
 use kartik\daterange\DateRangePicker;
@@ -139,6 +137,11 @@ echo '</div><div class="row">';
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
+                'rowOptions' => function ($model) {
+                    return [
+                        "class" => $model->status ?: "danger",
+                    ];
+                },
                 'columns' => [
                     [
                         'class' => SerialColumn::class,
@@ -209,6 +212,10 @@ echo '</div><div class="row">';
                                     'class' => 'btn btn-xs btn-success',
                                 ]
                             );
+
+                            if (!$row->status) {
+                                return $html;
+                            }
 
                             $html .= '&nbsp;';
                             $html .= Html::a(

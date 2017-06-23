@@ -1,9 +1,9 @@
 <?php
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 use kartik\widgets\Select2;
-use yii\helpers\Html;
-use yii\web\JsExpression;
-use yii\widgets\ActiveForm;
+use kartik\money\MaskMoney;
 
 /**
  * @var yii\web\View           $this
@@ -16,10 +16,9 @@ $this->params['subtitle'] = 'Service Info';
 
 /** @var \frontend\models\Services\ServicesForm $model */
 $model = $models['model_service'];
-$content = $model->getContentForm($opts['country']->id);
 $form = ActiveForm::begin();
 ?>
-<div class="col-lg-6">
+<div class="col-lg-4">
     <div class="ibox">
         <div class="ibox-title">
             <h5>
@@ -44,25 +43,40 @@ $form = ActiveForm::begin();
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();
 
-            echo $form->field($model, 'price')
-                ->textInput(['maxlength' => true])
-                ->hint($opts['country']->currency != '' ? 'Currency: ' . $opts['country']->currency : '');
+            if (!$model->price_raw && $model->price) {
+                // crud update
+                $model->price_raw = $model->price / 100;
+            }
+            echo $form->field($model, 'price_raw')
+                ->widget(
+                    MaskMoney::className(),
+                    [
+                        'pluginOptions' => [
+                            'prefix' => html_entity_decode($opts['country']->currency . " "),
+                            'precision' => 2,
+                        ],
+                    ]
+                );
 
             echo $form->field($model, 'id_service')->textInput(['maxlength' => true]);
             echo $form->field($model, 'id_provider')->hiddenInput()->label(false);
-            echo $form->field($model, 'content')->widget(
-                Select2::classname(),
-                [
-                    'data' => $content,
-                    'options' => [
-                        'placeholder' => 'Select content ...',
-                        'multiple' => true,
-                    ],
-                    'pluginOptions' => [
-                        'escapeMarkup' => new JsExpression("function(m) { return m; }"),
-                    ],
-                ]
-            );
+
+            $model->content = [];
+            if ($model->id_content) {
+                $model->content = json_decode($model->id_content, true);
+            }
+
+            echo $form->field($model, 'content')
+                ->widget(
+                    Select2::classname(),
+                    [
+                        'data' => $model->getContentForm($opts['country']->id),
+                        'options' => [
+                            'placeholder' => 'Select content',
+                            'multiple' => true,
+                        ],
+                    ]
+                );
             ?>
             <div class="text-right">
                 <?php
@@ -78,7 +92,7 @@ $form = ActiveForm::begin();
     </div>
 </div>
 
-<div class="col-lg-6">
+<div class="col-lg-4">
     <div class="ibox">
         <div class="ibox-title">
             <h5>

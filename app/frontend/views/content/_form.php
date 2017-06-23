@@ -27,8 +27,7 @@ $form = ActiveForm::begin([
         <div class="ibox-content">
             <?php
             echo $form->field($model, 'title')
-                ->textInput(['maxlength' => true])
-                ->hint('Note: the name of content file will be same as content title name.');
+                ->textInput(['maxlength' => true]);
 
             echo $form->field($model, 'id_category')
                 ->dropDownList(
@@ -55,6 +54,9 @@ $form = ActiveForm::begin([
             );
 
             if ($model->isNewRecord) {
+                echo $form->field($model, 'filename')
+                    ->textInput(['maxlength' => true]);
+
                 echo $form->field($model, 'file')
                     ->widget(
                         FileInput::classname(),

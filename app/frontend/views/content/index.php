@@ -19,6 +19,117 @@ $this->params['breadcrumbs'][] = $this->title;
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
 
+$columns = [
+    [
+        'class' => \yii\grid\SerialColumn::class,
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+    ],
+    'title',
+    [
+        'attribute' => 'id_category',
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) use ($data) {
+            if (array_key_exists($row['id_category'], $data['cats'])) {
+                return $data['cats'][$row['id_category']]->title;
+            }
+
+            return '';
+        },
+    ],
+    [
+        'attribute' => 'id_publisher',
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) use ($data) {
+            if (array_key_exists($row['id_publisher'], $data['pubs'])) {
+                return $data['pubs'][$row['id_publisher']]->title;
+            }
+
+            return '';
+        },
+    ],
+    [
+        'attribute' => 'id_user',
+        'visible' => count($users),
+        'filter' => false,
+        'headerOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) use ($users) {
+            return Html::a(
+                $users[$row['id_user']],
+                '/users/' . $row['id_user'],
+                [
+                    'target' => '_blank',
+                ]
+            );
+        },
+    ],
+    [
+        'attribute' => 'time_create',
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) {
+            return date('Y-m-d H:i:s', strtotime($row['time_create']));
+        },
+    ],
+    [
+        'contentOptions' => [
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'content' => function ($row) {
+            $html = Html::a(
+                'View',
+                [
+                    'view',
+                    'id' => $row['id'],
+                ],
+                [
+                    'class' => 'btn btn-xs btn-success',
+                ]
+            );
+
+            if (!$row->status) {
+                return $html;
+            }
+
+            $html .= '&nbsp;';
+            $html .= Html::a(
+                'Update',
+                [
+                    'update',
+                    'id' => $row['id'],
+                ],
+                [
+                    'class' => 'btn btn-xs btn-primary',
+                ]
+            );
+
+            $html .= '&nbsp;';
+            $html .= Html::button(
+                'Delete',
+                [
+                    'class' => 'btn btn-xs btn-danger',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalDelete',
+                    'data-rowid' => $row['id'],
+                ]
+            );
+
+            return $html;
+        },
+    ],
+];
+
 $form = ActiveForm::begin([
     'action' => ['index'],
     'method' => 'get',
@@ -133,111 +244,12 @@ echo '</div><div class="row">';
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
-                'columns' => [
-
-                    [
-                        'class' => \yii\grid\SerialColumn::class,
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                    ],
-                    'title',
-                    [
-                        'attribute' => 'id_category',
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) use ($data) {
-                            if (array_key_exists($row['id_category'], $data['cats'])) {
-                                return $data['cats'][$row['id_category']]->title;
-                            }
-                            return '';
-                        },
-                    ],
-                    [
-                        'attribute' => 'id_publisher',
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) use ($data) {
-                            if (array_key_exists($row['id_publisher'], $data['pubs'])) {
-                                return $data['pubs'][$row['id_publisher']]->title;
-                            }
-                            return '';
-                        },
-                    ],
-                    [
-                        'attribute' => 'id_user',
-                        'visible' => count($users),
-                        'filter' => false,
-                        'headerOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) use ($users) {
-                            return Html::a(
-                                $users[$row['id_user']],
-                                '/users/' . $row['id_user'],
-                                [
-                                    'target' => '_blank',
-                                ]
-                            );
-                        },
-                    ],
-                    [
-                        'attribute' => 'time_create',
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) {
-                            return date('Y-m-d H:i:s', strtotime($row['time_create']));
-                        },
-                    ],
-                    [
-                        'contentOptions' => [
-                            'style' => 'width: 1%; white-space: nowrap;',
-                        ],
-                        'content' => function ($row) {
-                            $html = Html::a(
-                                'View',
-                                [
-                                    'view',
-                                    'id' => $row['id'],
-                                ],
-                                [
-                                    'class' => 'btn btn-xs btn-success',
-                                ]
-                            );
-
-                            $html .= '&nbsp;';
-                            $html .= Html::a(
-                                'Update',
-                                [
-                                    'update',
-                                    'id' => $row['id'],
-                                ],
-                                [
-                                    'class' => 'btn btn-xs btn-primary',
-                                ]
-                            );
-
-                            $html .= '&nbsp;';
-                            $html .= Html::button(
-                                'Delete',
-                                [
-                                    'class' => 'btn btn-xs btn-danger',
-                                    'data-toggle' => 'modal',
-                                    'data-target' => '#modalDelete',
-                                    'data-rowid' => $row['id'],
-                                ]
-                            );
-
-                            return $html;
-                        },
-                    ],
-                ],
+                'rowOptions' => function ($model) {
+                    return [
+                        "class" => $model->status ?: "danger",
+                    ];
+                },
+                'columns' => $columns,
             ]);
             ?>
         </div>

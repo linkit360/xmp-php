@@ -2,61 +2,57 @@
 
 namespace common\models;
 
-use Yii;
 use yii\db\ActiveRecord;
 
 /**
  * @property string  $id
  * @property integer $id_provider
  * @property integer $status
+ * @property string  $title
+ * @property string  $hostname
  */
 class Instances extends ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
     public static function tableName()
     {
-        return 'xmp_instances';
+        return "xmp_instances";
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
             [
                 [
-                    'id_provider',
+                    "id_provider",
                 ],
-                'required',
+                "required",
             ],
             [
                 [
-                    'id',
+                    "id",
+                    "title",
+                    "hostname",
                 ],
-                'string',
+                "string",
             ],
             [
                 [
-                    'id_provider',
-                    'status',
+                    "id_provider",
+                    "status",
                 ],
-                'integer',
+                "integer",
             ],
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
             'id_provider' => 'Provider ID',
             'status' => 'Status',
+            'title' => 'Title',
+            'hostname' => 'Hostname',
         ];
     }
 }

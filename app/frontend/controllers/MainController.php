@@ -23,6 +23,8 @@ use common\models\LoginForm;
 use common\models\Countries;
 use common\models\Operators;
 use common\models\Providers;
+use common\models\Instances;
+
 use frontend\models\LogsForm;
 use frontend\models\TransactionsForm;
 use frontend\models\Users\ResetPasswordForm;
@@ -49,6 +51,7 @@ class MainController extends Controller
                         'actions' => [
                             'index',
                             'monitoring',
+                            'status',
                             'logout',
                             'country',
                             'reset-password',
@@ -112,6 +115,11 @@ class MainController extends Controller
         return $this->render('monitoring');
     }
 
+    public function actionStatus()
+    {
+        return $this->render('status');
+    }
+
     /**
      * Logs in a user.
      *
@@ -146,6 +154,20 @@ class MainController extends Controller
                 'model' => $model,
             ]
         );
+    }
+
+    private function userIps()
+    {
+        $ips = [];
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            $ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+
+        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+            $ips['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
+        }
+
+        return $ips;
     }
 
     /**
@@ -189,6 +211,7 @@ class MainController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
             Yii::$app->session->setFlash('success', 'New password saved.');
+
             return $this->goHome();
         }
 
@@ -202,6 +225,7 @@ class MainController extends Controller
 
     /**
      * Lists all Transactions models.
+     *
      * @return mixed
      */
     public function actionTransactions()
@@ -247,24 +271,39 @@ class MainController extends Controller
 
         $providers = Providers::find()
             ->select([
-                'name_alias',
+                'name',
                 'id',
             ])
             ->where([
                 'id_country' => $country['id'],
             ])
-            ->indexBy('name_alias')
+            ->indexBy('name')
             ->asArray()
             ->all();
 
-        $operators = Operators::find()
+        $prov_keys = ArrayHelper::map($providers, 'id', 'name');
+        $instances = Instances::find()
+            ->select([
+                "id",
+            ])
             ->where([
-                'id_provider' => array_keys(ArrayHelper::map($providers, 'id', 'name_alias')),
+                'id_provider' => array_keys($prov_keys),
+            ])
+            ->asArray()
+            ->column();
+
+        $operators = Operators::find()
+            ->select([
+                "name",
+                "code",
+            ])
+            ->where([
+                'id_provider' => array_keys($prov_keys),
             ])
             ->orderBy('name')
             ->indexBy('code')
             ->asArray()
-            ->all();
+            ->column();
 
         $query = (new Query())
             ->from('xmp_reports')
@@ -280,13 +319,14 @@ class MainController extends Controller
                 'AND',
                 "report_at >= '" . date('Y-m-d') . "'",
                 [
-                    'provider_name' => array_keys($providers),
+                    'id_instance' => $instances,
                 ],
             ])
             ->groupBy([
                 'operator_code',
                 'report_at_day',
-            ])->all();
+            ])
+            ->all();
 
         $data = [];
         $data['total'] = [
@@ -298,33 +338,35 @@ class MainController extends Controller
 
         if (count($query)) {
             foreach ($query as $operator) {
-                if (array_key_exists($operator['operator_code'], $operators)) {
-                    $data[$operator['operator_code']] = [
-                        'cnt' => $operator,
-                        'op' => $operators[$operator['operator_code']],
-                    ];
+                if (!$operator['lp_hits'] && !$operator['mo'] && !$operator['mo_success']) {
+                    continue;
                 }
 
                 $data['total']['lp_hits'] += $operator['lp_hits'];
                 $data['total']['mo'] += $operator['mo'];
                 $data['total']['mo_success'] += $operator['mo_success'];
+
+                if (!array_key_exists($operator['operator_code'], $operators)) {
+                    continue;
+                }
+
+                $z = $operator;
+                unset(
+                    $z["report_at_day"],
+                    $z["operator_code"]
+                );
+
+                $data[$operator['operator_code']] = [
+                    'cnt' => $z,
+                    'op' => $operators[$operator['operator_code']],
+                ];
             }
         }
 
+//        echo "<pre>" . json_encode($data, JSON_PRETTY_PRINT);
+//        die;
         Yii::$app->response->format = Response::FORMAT_JSON;
+
         return $data;
-    }
-
-    private function userIps()
-    {
-        $ips = [];
-        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
-            $ips['HTTP_X_FORWARDED_FOR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            $ips['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
-        }
-        return $ips;
     }
 }

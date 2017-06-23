@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<div class="col-lg-12">
+<div class="col-lg-8">
     <div class="ibox">
         <div class="ibox-content">
             <p>
@@ -51,13 +51,56 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
-//                'filterModel' => $searchModel,
                 'columns' => [
-//                    ['class' => 'yii\grid\SerialColumn'],
+                    [
+                        'attribute' => "id",
+                        'headerOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                    ],
+                    "title",
+                    "hostname",
+                    [
+                        'label' => 'Provider',
+                        'headerOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) use ($searchModel) {
+                            if (array_key_exists($row["id_provider"], $searchModel->getProviders())) {
+                                return $searchModel->providers[$row["id_provider"]];
+                            }
 
-                    'id',
-                    'id_provider',
-                    'status',
+                            return '';
+                        },
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'headerOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'contentOptions' => [
+                            'class' => 'text-right',
+                            'style' => 'width: 1%; white-space: nowrap;',
+                        ],
+                        'content' => function ($row) {
+                            if ($row->status === 1) {
+                                return "ON";
+                            }
+
+                            return "OFF";
+                        },
+                    ],
 
                     ['class' => 'yii\grid\ActionColumn'],
                 ],

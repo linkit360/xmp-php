@@ -78,18 +78,18 @@ class Services extends ServicesModel
     public function search($params)
     {
         $query = ServicesModel::find();
-
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'time_create' => SORT_DESC,
+                ],
+            ],
         ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
@@ -130,7 +130,9 @@ class Services extends ServicesModel
         }
 
         if (!Yii::$app->user->can('Admin')) {
-            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+            $query
+                ->andFilterWhere(['id_user' => Yii::$app->user->id])
+                ->andFilterWhere(['status' => 1]);
         } else {
             $query->andFilterWhere(['id_user' => $this->id_user]);
         }
@@ -138,7 +140,6 @@ class Services extends ServicesModel
         $query->andFilterWhere([
             'id_service' => $this->id_service,
             'id_content' => $this->id_content,
-            'status' => 1,
         ]);
 
         $query

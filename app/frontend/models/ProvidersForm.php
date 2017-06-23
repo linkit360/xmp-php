@@ -18,7 +18,7 @@ class ProvidersForm extends Providers
     {
         return [
             [['id', 'id_country', 'status'], 'integer'],
-            [['name', 'name_alias'], 'safe'],
+            [['name'], 'safe'],
         ];
     }
 
@@ -63,8 +63,7 @@ class ProvidersForm extends Providers
             'status' => 1,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'name_alias', $this->name_alias]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

@@ -11,7 +11,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $addr = 'ws://' . $_SERVER['HTTP_HOST'];
 if (YII_ENV === "testing") {
-    $addr = "ws://ws.test-xmp.linkit360.ru";
+    $addr = "ws://ws.test-xmp2.linkit360.ru";
+}
+
+if (YII_ENV === "production") {
+    $addr = "ws://ws.xmp2.linkit360.ru";
 }
 
 $this->registerJs('server = "' . $addr . ':2082/echo";');
@@ -88,6 +92,12 @@ unset($addr);
             <div id="world-map"></div>
         </div>
     </div>
+</div>
+
+<h3 style="margin-left: 17px;">LP Hits by Country</h3>
+
+<div id="summary">
+
 </div>
 
 <?php

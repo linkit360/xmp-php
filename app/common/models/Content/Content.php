@@ -2,7 +2,6 @@
 
 namespace common\models\Content;
 
-use Yii;
 use yii\db\ActiveRecord;
 
 use common\helpers\LogsHelper;
@@ -13,6 +12,7 @@ use common\helpers\LogsHelper;
  * @property string  $id_category
  * @property string  $id_publisher
  * @property string  $title
+ * @property string  $filename
  * @property integer $status
  * @property string  $time_create
  * @property string  $blacklist
@@ -33,11 +33,39 @@ class Content extends ActiveRecord
     public function rules()
     {
         return [
-            [['id_user', 'id_category', 'title'], 'required'],
-            [['id', 'id_user', 'id_category', 'id_publisher', 'blacklist'], 'string'],
-            [['status'], 'integer'],
-            [['time_create'], 'safe'],
-            [['title'], 'string', 'max' => 32],
+            [
+                [
+                    'id_user',
+                    'id_category',
+                    'title',
+                    'filename',
+                ],
+                'required',
+            ],
+            [
+                [
+                    'id',
+                    'id_user',
+                    'id_category',
+                    'id_publisher',
+                    'blacklist',
+                ],
+                'string',
+            ],
+            [
+                [
+                    'status',
+                ],
+                'integer',
+            ],
+            [
+                [
+                    'title',
+                    'filename',
+                ],
+                'string',
+                'max' => 32,
+            ],
         ];
     }
 
@@ -52,6 +80,7 @@ class Content extends ActiveRecord
             'id_category' => 'Category',
             'id_publisher' => 'Publisher',
             'title' => 'Title',
+            'filename' => 'Filename',
             'status' => 'Status',
             'time_create' => 'Created At',
         ];

@@ -23,28 +23,10 @@ use common\models\Content\Publishers;
 
 use frontend\models\ContentForm;
 
-/**
- * ContentController implements the CRUD actions for Content model.
- */
 class ContentController extends Controller
 {
     /** @var S3Client */
     public $s3;
-
-    public static function normalizeString($str = '')
-    {
-        $str = strip_tags($str);
-        $str = preg_replace('/[\r\n\t ]+/', ' ', $str);
-        $str = preg_replace('/[\"\*\/\:\<\>\?\'\|]+/', ' ', $str);
-        $str = strtolower($str);
-        $str = html_entity_decode($str, ENT_QUOTES, "utf-8");
-        $str = htmlentities($str, ENT_QUOTES, "utf-8");
-        $str = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $str);
-        $str = str_replace(' ', '-', $str);
-        $str = rawurlencode($str);
-        $str = str_replace('%', '-', $str);
-        return $str;
-    }
 
     public function init()
     {
@@ -83,31 +65,34 @@ class ContentController extends Controller
 
     /**
      * Lists all Content models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
+        $where = [];
+        if (!Yii::$app->user->can('Admin')) {
+            $where = [
+                "status" => 1,
+            ];
+        }
+
         $data = [];
         $data['pubs'] = Publishers::find()
-            ->where(
-                [
-                    'status' => 1,
-                ]
-            )
+            ->where($where)
             ->indexBy('id')
             ->all();
 
         $data['cats'] = Categories::find()
-            ->where(
-                [
-                    'status' => 1,
-                ]
-            )
+            ->where($where)
             ->indexBy('id')
             ->all();
 
         $data['id_category'] = Content::find()
             ->select('id_category')
+            ->where([
+                "id_user" => Yii::$app->user->id,
+            ])
             ->groupBy('id_category')
             ->indexBy('id_category')
             ->column();
@@ -119,10 +104,10 @@ class ContentController extends Controller
             ])
             ->where([
                 'id' => array_keys($data['id_category']),
+                "id_user" => Yii::$app->user->id,
             ])
             ->indexBy('id')
             ->column();
-
 
         $data['id_publisher'] = Content::find()
             ->select('id_publisher')
@@ -138,6 +123,7 @@ class ContentController extends Controller
             ])
             ->where([
                 'id' => array_keys($data['id_publisher']),
+                "id_user" => Yii::$app->user->id,
             ])
             ->indexBy('id')
             ->column();
@@ -184,6 +170,27 @@ class ContentController extends Controller
         );
     }
 
+    /**
+     * Finds the Content model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param string $id
+     *
+     * @return Content the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        $model = Content::findOne($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
     public function actionCreate()
     {
         $model = new ContentForm();
@@ -197,11 +204,13 @@ class ContentController extends Controller
 
             if ($model->save()) {
                 if (array_key_exists('ContentForm', $_FILES) && count($_FILES['ContentForm']['tmp_name'])) {
-                    $this->fileUpload(
+                    $model = $this->fileUpload(
                         $model,
-                        $_FILES['ContentForm']['tmp_name']['file']
+                        $_FILES['ContentForm']
                     );
+                    $model->save();
                 }
+
                 return $this->redirect(['index']);
             }
         }
@@ -214,6 +223,47 @@ class ContentController extends Controller
         );
     }
 
+    /**
+     * @param Content $model
+     * @param array   $file
+     *
+     * @return Content
+     */
+    private function fileUpload($model, $file)
+    {
+        $model->filename = self::normalizeString($model->filename) . "." . pathinfo($file['name']['file'])['extension'];
+        $fileZip = tempnam('/tmp', 'zip');
+
+        $zip = new ZipArchive();
+        $zip->open($fileZip, ZipArchive::OVERWRITE);
+        $zip->addFile($file['tmp_name']['file'], $model->filename);
+        $zip->close();
+
+        $this->s3->putObject([
+            'Bucket' => 'xmp-content',
+            'Key' => $model->id,
+            'SourceFile' => $fileZip,
+        ]);
+
+        return $model;
+    }
+
+    public static function normalizeString($str = '')
+    {
+        $str = strip_tags($str);
+        $str = preg_replace('/[\r\n\t ]+/', ' ', $str);
+        $str = preg_replace('/[\"\*\/\:\<\>\?\'\|]+/', ' ', $str);
+        $str = strtolower($str);
+        $str = html_entity_decode($str, ENT_QUOTES, "utf-8");
+        $str = htmlentities($str, ENT_QUOTES, "utf-8");
+        $str = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $str);
+        $str = str_replace(' ', '-', $str);
+        $str = rawurlencode($str);
+        $str = str_replace('%', '-', $str);
+
+        return $str;
+    }
+
     public function actionUpdate($id)
     {
         $model = ContentForm::findOne($id);
@@ -223,18 +273,12 @@ class ContentController extends Controller
             }
 
             if ($model->save()) {
-                if (array_key_exists('ContentForm', $_FILES) && count($_FILES['ContentForm']['tmp_name'])) {
-                    $this->fileUpload(
-                        $model,
-                        $_FILES['ContentForm']['tmp_name']['file']
-                    );
-                }
-
                 return $this->redirect(['index']);
             }
         }
 
         $model->blacklist_tmp = json_decode($model->blacklist);
+
         return $this->render(
             'update',
             [
@@ -263,16 +307,10 @@ class ContentController extends Controller
     public function actionDownload($id)
     {
         $model = $this->findModel($id);
-        if ($model->id_user !== Yii::$app->user->id) {
-            return new NotFoundHttpException();
-        }
-
-        $result = $this->s3->getObject(
-            [
-                'Bucket' => 'xmp-content',
-                'Key' => $model->id,
-            ]
-        );
+        $result = $this->s3->getObject([
+            'Bucket' => 'xmp-content',
+            'Key' => $model->id,
+        ]);
 
         header("Pragma: public");
         header("Expires: 0");
@@ -285,45 +323,5 @@ class ContentController extends Controller
         echo $result['Body'];
 
         return '';
-    }
-
-    /**
-     * Finds the Content model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param string $id
-     *
-     * @return Content the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        $model = Content::findOne($id);
-        if ($model !== null) {
-            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
-                return $model;
-            }
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    /**
-     * @param Content $model
-     * @param string  $file
-     */
-    private function fileUpload($model, $file)
-    {
-        $fileZip = tempnam('/tmp', 'zip');
-        $zip = new ZipArchive();
-        $zip->open($fileZip, ZipArchive::OVERWRITE);
-        $zip->addFile($file, self::normalizeString($model->title));
-        $zip->close();
-
-        $this->s3->putObject([
-            'Bucket' => 'xmp-content',
-            'Key' => $model->id . '.zip',
-            'SourceFile' => $fileZip,
-        ]);
     }
 }

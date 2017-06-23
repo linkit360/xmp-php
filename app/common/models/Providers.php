@@ -8,7 +8,6 @@ use common\helpers\LogsHelper;
 /**
  * @property integer $id
  * @property string  $name
- * @property string  $name_alias
  * @property integer $id_country
  * @property integer $status
  */
@@ -30,10 +29,33 @@ class Providers extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'name_alias', 'id_country'], 'required'],
-            [['id_country', 'status'], 'integer'],
-            [['name', 'name_alias',], 'string', 'max' => 255],
-            [['name', 'name_alias',], 'unique'],
+            [
+                [
+                    'name',
+                    'id_country',
+                ],
+                'required',
+            ],
+            [
+                [
+                    'id_country',
+                    'status',
+                ],
+                'integer',
+            ],
+            [
+                [
+                    'name',
+                ],
+                'string',
+                'max' => 255,
+            ],
+            [
+                [
+                    'name',
+                ],
+                'unique',
+            ],
         ];
     }
 

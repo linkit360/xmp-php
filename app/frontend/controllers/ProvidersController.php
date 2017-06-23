@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Countries;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -38,16 +39,21 @@ class ProvidersController extends Controller
 
     /**
      * Lists all Providers models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
         $model = new ProvidersForm();
+
         return $this->render(
             'index',
             [
                 'dataProvider' => $model->search(Yii::$app->request->queryParams),
-                'search' => $model,
+                'countries' => Countries::find()
+                    ->indexBy('id')
+                    ->asArray()
+                    ->all(),
             ]
         );
     }
@@ -70,15 +76,36 @@ class ProvidersController extends Controller
     }
 
     /**
+     * Finds the Providers model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param integer $id
+     *
+     * @return Providers the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Providers::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
      * Creates a new Providers model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new Providers();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render(
@@ -127,23 +154,5 @@ class ProvidersController extends Controller
         $model->save();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Providers model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param integer $id
-     *
-     * @return Providers the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Providers::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

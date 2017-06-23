@@ -2,13 +2,13 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Reports\RevenueReport;
 use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\filters\AccessControl;
 
 use frontend\models\Reports\AdReport;
 use frontend\models\Reports\ConvReport;
+use frontend\models\Reports\RevenueReport;
 
 class ReportsController extends Controller
 {

@@ -12,9 +12,6 @@ use common\models\Content\Categories;
 
 class ContentCategoriesController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
@@ -36,8 +33,7 @@ class ContentCategoriesController extends Controller
     }
 
     /**
-     * Lists all Categories models.
-     * @return mixed
+     * @return string
      */
     public function actionIndex()
     {
@@ -66,13 +62,11 @@ class ContentCategoriesController extends Controller
     }
 
     /**
-     * Displays a single Categories model.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return string
      */
-    public function actionView($id)
+    public function actionView(string $id)
     {
         return $this->render(
             'view',
@@ -83,9 +77,25 @@ class ContentCategoriesController extends Controller
     }
 
     /**
-     * Creates a new Categories model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @param string $id
+     *
+     * @return Categories
+     * @throws NotFoundHttpException
+     */
+    protected function findModel(string $id)
+    {
+        $model = Categories::findOne($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
@@ -107,14 +117,11 @@ class ContentCategoriesController extends Controller
     }
 
     /**
-     * Updates an existing Categories model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return string|\yii\web\Response
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $id)
     {
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -130,40 +137,16 @@ class ContentCategoriesController extends Controller
     }
 
     /**
-     * Deletes an existing Categories model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return \yii\web\Response
      */
-    public function actionDelete($id)
+    public function actionDelete(string $id)
     {
         $model = $this->findModel($id);
         $model->status = 0;
         $model->save();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Categories model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param string $id
-     *
-     * @return Categories the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        $model = Categories::findOne($id);
-        if ($model !== null) {
-            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
-                return $model;
-            }
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

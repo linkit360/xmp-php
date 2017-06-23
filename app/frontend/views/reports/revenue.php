@@ -26,28 +26,24 @@ $this->params['breadcrumbs'][] = [
 ];
 $this->params['breadcrumbs'][] = $this->title;
 
-function colors($name, $data, $longest, $colors, $footer = false)
+function colors($name, $data, $colors)
 {
-    $pad_string = "~";
-
     // Row
-    $output = "";
+    $width = "width: " . (count($data) * 45) . "px;";
+    $output = "<table style='" . $width . "'><tr>";
     foreach ($data as $color => $number) {
-        $output .= Html::tag(
-            'span',
-            str_pad($number, $longest, $pad_string, STR_PAD_LEFT),
+        $out = Html::tag(
+            'td',
+            $number,
             [
-                'style' => 'color: ' . $colors[$color],
+                'style' => 'width: 45px; color: ' . $colors[$color],
+                'class' => 'text-right',
             ]
         );
-    }
 
-    $cl = !$footer ? "white" : $colors['footer'];
-    $output = str_replace(
-        '~',
-        Html::tag('span', '0', ['style' => 'color: ' . $cl]),
-        $output
-    );
+        $output .= $out;
+    }
+    $output .= "</tr></table>";
 
     // Tooltip
     ob_start();
@@ -155,6 +151,7 @@ $total['injection']['success'] = number_format($total['injection']['injection_ch
 $total['injection']['failed'] = number_format($total['injection']['injection_failed']);
 unset($total['injection']['injection_charge_success'], $total['injection']['injection_failed']);
 
+$model->getCampaignsLinks();
 $gridColumns = [
     [
         'attribute' => 'report_date',
@@ -177,8 +174,25 @@ $gridColumns = [
     [
         'attribute' => 'id_campaign',
         'label' => 'Campaign',
-        'content' => function ($data) {
-            return number_format($data['id_campaign']);
+        'content' => function ($row) use ($model) {
+            if (
+                !array_key_exists($row["id_campaign"], $model->campaigns_links) ||
+                !array_key_exists($row["id_instance"], $model->instances_links)
+            ) {
+                return number_format($row['id_campaign']);
+            }
+
+            $camp = $model->campaigns_links[$row["id_campaign"]];
+            $url = "http://" . $model->instances_links[$row["id_instance"]] . "/" . $camp["link"];
+
+            return Html::a(
+                $camp["title"],
+                $url,
+                [
+                    "target" => "_blank",
+                    "title" => $url,
+                ]
+            );
         },
         'footerOptions' => [
             'class' => 'text-right',
@@ -187,8 +201,14 @@ $gridColumns = [
     ],
     [
         'label' => 'Country',
-        'content' => function ($data) use ($model) {
-            return $model->countries[$model->providersByNamesCountry[$data['provider_name']]]['name'];
+        'content' => function ($row) use ($model) {
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
+
+                return $model->countries[$model->providers[$prov]['id_country']]['name'];
+            }
+
+            return '-';
         },
         'footerOptions' => [
             'class' => 'text-right',
@@ -196,13 +216,15 @@ $gridColumns = [
         ],
     ],
     [
-        'attribute' => 'id_provider',
         'label' => 'Provider',
-        'content' => function ($data) use ($model) {
-            if (array_key_exists($data['provider_name'], $model->providersByNames)) {
-                return $model->providersByNames[$data['provider_name']];
+        'content' => function ($row) use ($model) {
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
+
+                return $model->providers[$prov]['name'];
             }
-            return '';
+
+            return '-';
         },
         'footerOptions' => [
             'class' => 'text-right',
@@ -216,7 +238,8 @@ $gridColumns = [
             if (array_key_exists($data['operator_code'], $model->operatorsByCode)) {
                 return $model->operatorsByCode[$data['operator_code']];
             }
-            return '';
+
+            return '-';
         },
         'footerOptions' => [
             'class' => 'text-right',
@@ -260,13 +283,13 @@ $gridColumns = [
             $data['failed'] = number_format($row['mo_charge_failed']);
             $data['rejected'] = number_format($row['mo_rejected']);
 
-            return colors('MO', $data, 6, $colors);
+            return colors('MO', $data, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => colors('MO', $total['mo'], 6, $colors, true),
+        'footer' => colors('MO', $total['mo'], $colors),
     ],
     [
         'attribute' => 'outflow',
@@ -304,13 +327,13 @@ $gridColumns = [
             $data['success'] = number_format($row['renewal_charge_success']);
             $data['failed'] = number_format($row['renewal_failed']);
 
-            return colors('Renewal', $data, 6, $colors);
+            return colors('Renewal', $data, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => colors('Renewal', $total['renewal'], 6, $colors, true),
+        'footer' => colors('Renewal', $total['renewal'], $colors),
     ],
     [
         'attribute' => 'injection_charge_success',
@@ -328,13 +351,13 @@ $gridColumns = [
             $data['success'] = number_format($row['injection_charge_success']);
             $data['failed'] = number_format($row['injection_failed']);
 
-            return colors('Injections', $data, 6, $colors);
+            return colors('Injections', $data, $colors);
         },
         'footerOptions' => [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => colors('Injections', $total['injection'], 6, $colors, true),
+        'footer' => colors('Injections', $total['injection'], $colors),
     ],
     [
         'label' => 'Conversion Rate',
@@ -381,7 +404,7 @@ $gridColumns = [
             'class' => 'text-right',
             'style' => 'background-color: #d9d9d9;',
         ],
-        'footer' => number_format(floor($total['revenue'] / 100)),
+//        'footer' => number_format(floor($total['revenue'] / 100)),
     ],
 ];
 ?>

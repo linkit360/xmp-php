@@ -58,34 +58,30 @@ class Campaigns extends CampaignsModel
     {
         $query = CampaignsModel::find();
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ],
+            ],
         ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id_operator' => $this->id_operator,
-            'status' => 1,
-        ]);
-
         if (!Yii::$app->user->can('Admin')) {
-            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+            $query
+                ->andFilterWhere(['id_user' => Yii::$app->user->id])
+                ->andFilterWhere(['status' => 1]);
         } else {
             $query->andFilterWhere(['id_user' => $this->id_user]);
         }
 
-        $query
-            ->andFilterWhere(['like', 'title', $this->title]);
+        $query->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

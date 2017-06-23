@@ -9,8 +9,8 @@ use common\helpers\LogsHelper;
  * @property string  $id
  * @property string  $id_user
  * @property string  $id_service
- * @property integer $id_operator
  * @property string  $id_lp
+ * @property integer $id_old
  * @property string  $title
  * @property string  $description
  * @property string  $link
@@ -40,7 +40,6 @@ class Campaigns extends ActiveRecord
                 [
                     'id_user',
                     'id_service',
-                    'id_operator',
                     'id_lp',
                     'title',
                     'link',
@@ -60,8 +59,8 @@ class Campaigns extends ActiveRecord
             ],
             [
                 [
-                    'id_operator',
                     'status',
+                    'id_old',
                     'autoclick_ratio',
                 ],
                 'integer',
@@ -111,7 +110,6 @@ class Campaigns extends ActiveRecord
             'id' => 'ID',
             'id_user' => 'Created By',
             'id_service' => 'Service',
-            'id_operator' => 'Operator',
             'title' => 'Title',
             'description' => 'Description',
             'link' => 'Link',
@@ -119,6 +117,7 @@ class Campaigns extends ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'id_lp' => 'Landing Page',
+            'id_old' => 'Old Campaign ID',
         ];
     }
 

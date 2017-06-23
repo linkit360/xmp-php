@@ -3,8 +3,10 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Instances */
+/**
+ * @var yii\web\View            $this
+ * @var common\models\Instances $model
+ */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Instances', 'url' => ['index']];
@@ -29,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'model' => $model,
                 'attributes' => [
                     'id',
-                    'id_operator',
+                    'id_provider',
                     'status',
                 ],
             ]);

@@ -7,6 +7,7 @@ use yii\grid\GridView;
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var \common\models\Providers    $search
+ * @var array                       $countries
  */
 $this->title = 'Providers';
 $this->params['subtitle'] = 'Providers management';
@@ -14,11 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
-
-$countries = \common\models\Countries::find()
-    ->indexBy('id')
-    ->asArray()
-    ->all()
 ?>
 <div class="col-lg-6">
     <div class="ibox">
@@ -36,11 +32,9 @@ $countries = \common\models\Countries::find()
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
-                'filterModel' => $search,
                 'columns' => [
-//                    'id',
+                    'id',
                     'name',
-                    'name_alias',
                     [
                         'attribute' => 'id_country',
                         'filter' => false,

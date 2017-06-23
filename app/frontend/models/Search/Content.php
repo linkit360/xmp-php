@@ -50,11 +50,13 @@ class Content extends ContentModel
     public function search($params)
     {
         $query = Content::find();
-
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'time_create' => SORT_DESC,
+                ],
+            ],
         ]);
 
         $this->load($params);
@@ -83,13 +85,14 @@ class Content extends ContentModel
         }
 
         if (!Yii::$app->user->can('Admin')) {
-            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+            $query
+                ->andFilterWhere(['id_user' => Yii::$app->user->id])
+                ->andFilterWhere(['status' => 1]);
         } else {
             $query->andFilterWhere(['id_user' => $this->id_user]);
         }
 
         $query
-            ->andFilterWhere(['status' => 1])
             ->andFilterWhere(['id_category' => $this->id_category])
             ->andFilterWhere(['id_publisher' => $this->id_publisher])
             ->andFilterWhere(['like', 'title', $this->title]);

@@ -1,21 +1,17 @@
 <?php
+/**
+ * @var yii\web\View            $this
+ * @var common\models\Instances $model
+ */
 
-use yii\helpers\Html;
-
-/* @var $this yii\web\View */
-/* @var $model common\models\Instances */
-
-$this->title = 'Update Instances: ' . $model->id;
+$this->title = 'Update Instance: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Instances', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
-?>
-<div class="instances-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
+echo $this->render(
+    '_form',
+    [
         'model' => $model,
-    ]) ?>
-
-</div>
+    ]
+);

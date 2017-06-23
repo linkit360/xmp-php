@@ -45,27 +45,67 @@ if (!empty($dp->getModels())) {
     }
 }
 
+$model->getCampaignsLinks();
 $gridColumns = [
     [
         'attribute' => 'report_date',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
         'content' => function ($data) {
             return date('Y-m-d', strtotime($data['report_at_day']));
         },
     ],
-    'id_campaign',
     [
-        'label' => 'Country',
-        'content' => function ($data) use ($model) {
-            return $model->countries[$model->providersByNamesCountry[$data['provider_name']]]['name'];
+        'attribute' => 'id_campaign',
+        'label' => 'Campaign',
+        'content' => function ($row) use ($model) {
+            if (
+                !array_key_exists($row["id_campaign"], $model->campaigns_links) ||
+                !array_key_exists($row["id_instance"], $model->instances_links)
+            ) {
+                return number_format($row['id_campaign']);
+            }
+
+            $camp = $model->campaigns_links[$row["id_campaign"]];
+            $url = "http://" . $model->instances_links[$row["id_instance"]] . "/" . $camp["link"];
+
+            return Html::a(
+                $camp["title"],
+                $url,
+                [
+                    "target" => "_blank",
+                    "title" => $url,
+                ]
+            );
         },
     ],
     [
-        'attribute' => 'id_provider',
-        'label' => 'Provider',
-        'content' => function ($data) use ($model) {
-            if (array_key_exists($data['provider_name'], $model->providersByNames)) {
-                return $model->providersByNames[$data['provider_name']];
+        'label' => 'Country',
+        'content' => function ($row) use ($model) {
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
+
+                return $model->countries[$model->providers[$prov]['id_country']]['name'];
             }
+
+            return '';
+        },
+    ],
+    [
+        'label' => 'Provider',
+        'content' => function ($row) use ($model) {
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
+
+                return $model->providers[$prov]['name'];
+            }
+
             return '';
         },
     ],
@@ -76,6 +116,7 @@ $gridColumns = [
             if (array_key_exists($data['operator_code'], $model->operatorsByCode)) {
                 return $model->operatorsByCode[$data['operator_code']];
             }
+
             return '';
         },
     ],
@@ -179,6 +220,7 @@ $gridColumns = [
                     2
                 );
             }
+
             return '<b>' . $conv . '</b>%';
         },
     ],
@@ -212,6 +254,7 @@ $gridColumns = [
             if ($data['lp_hits'] > 0) {
                 return number_format($data['pixels'] / $data['lp_hits']);
             }
+
             return 0;
         },
     ],

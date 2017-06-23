@@ -56,15 +56,17 @@ class Lps extends LpsModel
      */
     public function search($params)
     {
-        $query = LpsModel::find()
-            ->orderBy([
-                'created_at' => SORT_DESC,
-            ]);
+        $query = LpsModel::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ],
+            ],
         ]);
 
         $this->load($params);
@@ -93,13 +95,14 @@ class Lps extends LpsModel
         }
 
         if (!Yii::$app->user->can('Admin')) {
-            $query->andFilterWhere(['id_user' => Yii::$app->user->id]);
+            $query
+                ->andFilterWhere(['id_user' => Yii::$app->user->id])
+                ->andFilterWhere(['status' => 1]);
         } else {
             $query->andFilterWhere(['id_user' => $this->id_user]);
         }
 
         $query
-            ->andFilterWhere(['status' => 1])
             ->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'description', $this->description]);
 

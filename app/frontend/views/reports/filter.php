@@ -1,7 +1,7 @@
 <?php
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 
 use kartik\widgets\DatePicker;
 
@@ -19,16 +19,17 @@ $form = ActiveForm::begin([
 <script type="text/javascript">
     var struct = {};
     <?= 'struct = ' . json_encode($model->getStruct(), JSON_PRETTY_PRINT) . ';' ?>
+    var formname = '<?=mb_strtolower($model->formName())?>';
 
     function checkForm(obj) {
-        var country = $('#reportsform-country');
-        var provider = $('#reportsform-provider');
-        var operator = $('#reportsform-operator');
+        var country = $('#' + formname + '-country');
+        var provider = $('#' + formname + '-provider');
+        var operator = $('#' + formname + '-operator');
 
         var countryId = parseInt(country.val());
         var providerId = parseInt(provider.val());
 
-        if ($(obj).attr('id') === 'reportsform-country') {
+        if ($(obj).attr('id') === formname + '-country') {
             provider.empty();
             provider.append($('<option value=0>All</option>'));
 
@@ -44,8 +45,7 @@ $form = ActiveForm::begin([
             return true;
         }
 
-        if ($(obj).attr('id') === 'reportsform-provider') {
-
+        if ($(obj).attr('id') === formname + '-provider') {
             operator.empty();
             operator.append($('<option value=0>All</option>'));
 
@@ -107,10 +107,8 @@ $form = ActiveForm::begin([
         <?php
         $operators = [];
         if (
-            $model->country !== null &&
-            $model->country !== "0" &&
-            $model->provider !== null &&
-            $model->provider !== "0"
+            $model->country !== null && $model->country !== "0" &&
+            $model->provider !== null && $model->provider !== "0"
         ) {
             $operators = $model->getStruct()[$model->country]['items'][$model->provider]['items'];
         }

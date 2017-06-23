@@ -2,8 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\models\Operators;
-use common\models\Users;
 use function md5;
 use function mt_rand;
 
@@ -12,17 +10,15 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
+use common\models\Users;
+use common\models\Services;
 use common\models\Campaigns;
+use common\models\Instances;
+
 use frontend\models\Campaigns\CampaignsForm;
 
-/**
- * CampaignsController implements the CRUD actions for Campaigns model.
- */
 class CampaignsController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
     public function behaviors()
     {
         return [
@@ -42,23 +38,10 @@ class CampaignsController extends Controller
     }
 
     /**
-     * Lists all Campaigns models.
-     * @return mixed
+     * @return string
      */
     public function actionIndex()
     {
-        $data = [];
-        $data['id_operator'] = Operators::find()
-            ->select([
-                'name',
-                'id',
-            ])
-            ->where([
-                'status' => 1,
-            ])
-            ->indexBy('id')
-            ->column();
-
         $users = [];
         if (Yii::$app->user->can('Admin')) {
             $users = Users::find()
@@ -70,6 +53,34 @@ class CampaignsController extends Controller
                 ->column();
         }
 
+        $srv = Services::find()
+            ->select([
+                "id_provider",
+                "id",
+            ])
+            ->indexBy("id")
+            ->asArray()
+            ->column();
+
+        $insts = Instances::find()
+            ->select([
+                "hostname",
+                "id_provider",
+            ])
+            ->where([
+                "id_provider" => $srv,
+            ])
+            ->indexBy("id_provider")
+            ->asArray()
+            ->column();
+
+
+        foreach ($srv as $id => $prov) {
+            $srv[$id] = $insts[$prov];
+        }
+        unset ($insts);
+
+
         $searchModel = new \frontend\models\Search\Campaigns();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -78,38 +89,47 @@ class CampaignsController extends Controller
             [
                 'model' => $searchModel,
                 'dataProvider' => $dataProvider,
-                'data' => $data,
                 'users' => $users,
+                'srv' => $srv,
             ]
         );
     }
 
     /**
-     * Displays a single Campaigns model.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return string|NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(string $id)
     {
-        $model = $this->findModel($id);
-        if ($model->id_user !== Yii::$app->user->id) {
-            return new NotFoundHttpException();
-        }
-
         return $this->render(
             'view',
             [
-                'model' => $model,
+                'model' => $this->findModel($id),
             ]
         );
     }
 
     /**
-     * Creates a new Campaigns model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @param string $id
+     *
+     * @return Campaigns
+     * @throws NotFoundHttpException
+     */
+    protected function findModel(string $id)
+    {
+        $model = Campaigns::findOne($id);
+        if ($model !== null) {
+            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
+                return $model;
+            }
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
@@ -120,6 +140,8 @@ class CampaignsController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->id_user = Yii::$app->user->id;
             if ($model->save()) {
+                $this->sendGoData($model, true);
+
                 return $this->redirect(['index']);
             }
         }
@@ -133,20 +155,81 @@ class CampaignsController extends Controller
     }
 
     /**
-     * Updates an existing Campaigns model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
+     * @param Campaigns $model
+     * @param bool      $create
+     */
+    public function sendGoData($model, $create = false)
+    {
+        // Get Service
+        $service = Services::find()
+            ->select([
+                'id_provider',
+            ])
+            ->where([
+                'id' => $model->id_service,
+            ])
+            ->asArray()
+            ->one();
+
+        // Get instance
+        $instance = Instances::find()
+            ->select("id")
+            ->where([
+                'status' => 1,
+                'id_provider' => $service["id_provider"],
+            ])
+            ->asArray()
+            ->one();
+
+        // If found - send notify
+        if ($instance) {
+            $payload = [];
+
+            $payload['type'] = 'campaign.update';
+            if ($create) {
+                $payload['type'] = 'campaign.new';
+            }
+
+            $payload['for'] = $instance["id"];
+            $data = $model->attributes;
+            $data['lp'] = $data['id_lp'];
+            $data["auto_click_enabled"] = (bool)$data["autoclick_enabled"];
+            $data["auto_click_ratio"] = (int)$data["autoclick_ratio"];
+            $data['id_old'] = "" . $data['id_old'];
+
+            unset(
+                $data["id_user"],
+                $data["created_at"],
+                $data["updated_at"],
+                $data["autoclick_enabled"],
+                $data["autoclick_ratio"],
+                $data["id_lp"]
+            );
+
+            $payload['data'] = json_encode($data, JSON_PRETTY_PRINT);
+            $json = json_encode($payload, JSON_PRETTY_PRINT);
+            Yii::$app->getDb()
+                ->createCommand("NOTIFY xmp_update, '" . $json . "';")
+                ->execute();
+        }
+    }
+
+    /**
      * @param string $id
      *
-     * @return mixed
+     * @return string|\yii\web\Response
      */
-
-    public function actionUpdate($id)
+    public function actionUpdate(string $id)
     {
         $model = CampaignsForm::findOne($id);
         if ($model->load(Yii::$app->request->post())) {
-            unset($model->id_user);
+            if (!$model->id_user) {
+                $model->id_user = Yii::$app->user->id;
+            }
+
             if ($model->save()) {
+                $this->sendGoData($model);
+
                 return $this->redirect(['index']);
             }
         }
@@ -160,40 +243,18 @@ class CampaignsController extends Controller
     }
 
     /**
-     * Deletes an existing Campaigns model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
      * @param string $id
      *
-     * @return mixed
+     * @return \yii\web\Response
      */
-    public function actionDelete($id)
+    public function actionDelete(string $id)
     {
         $model = $this->findModel($id);
         $model->status = 0;
         $model->save();
 
+        $this->sendGoData($model);
+
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Campaigns model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param string $id
-     *
-     * @return Campaigns the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        $model = Campaigns::findOne($id);
-        if ($model !== null) {
-            if ($model->id_user === Yii::$app->user->id || Yii::$app->user->can('Admin')) {
-                return $model;
-            }
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

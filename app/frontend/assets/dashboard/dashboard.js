@@ -6,31 +6,18 @@ var oldData;
 var graphs = [];
 var last = [];
 var first = [];
+var wCountries = {};
 
 function dump(message) {
     console.log(message);
 }
 
 function start() {
-    dump("WS: server: " + server);
     ws = new WebSocket(server);
     if (!ws) {
         dump("Error: WS Creation");
         return false;
     }
-
-    ws.onopen = function () {
-        dump("Connected");
-    };
-
-    ws.onclose = function () {
-        dump("Disconnected");
-        reset();
-        ws = null;
-        setTimeout(function () {
-            start()
-        }, 5000);
-    };
 
     ws.onmessage = function (evt) {
         var data = JSON.parse(evt.data);
@@ -52,22 +39,42 @@ function start() {
             oldData = data['countries'];
             var series = [];
             $.each(data['countries'], function (index, value) {
-                series.push([
-                    iso.countries[index]['ioc'],
-                    value
-                ]);
+                if (index in iso.countries) {
+                    series.push([
+                        iso.countries[index]['ioc'],
+                        value
+                    ]);
+
+                    if (!(index in wCountries)) {
+                        $("#summary").append(
+                            "<div class='col-lg-2'>" +
+                            "<div class='ibox'>" +
+                            "<div class='ibox-content' id='wc_" + index + "'>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>"
+                        );
+
+                        wCountries[index] = $("#wc_" + index);
+                    }
+
+                    wCountries[index].html(
+                        "<h1 class='no-margins'>" +
+                        formatNumber(value) +
+                        "</h1>" +
+                        iso.countries[index]["name"]
+                    );
+                } else {
+                    dump("Error: no index: " + index);
+                }
             });
 
             var onlyValues = series.map(function (obj) {
                 return obj[1];
             });
 
-            var minValue = Math.min.apply(null, onlyValues),
-                maxValue = Math.max.apply(null, onlyValues);
-
-            var paletteScale = d3.scale.linear()
-                .domain([minValue, maxValue])
-                .range(["#EFEFFF", "#0d80ca"]);
+            var maxValue = Math.max.apply(null, onlyValues),
+                paletteScale = d3.scale.linear().domain([0, maxValue]).range(["#EFEFFF", "#0d80ca"]);
 
             var dataset = {};
             series.forEach(function (item) {
@@ -86,8 +93,19 @@ function start() {
         updateGraphs(3, parseInt(conv));
     };
 
+    ws.onopen = function () {
+        dump("Connected");
+    };
+
+    ws.onclose = function () {
+        dump("Disconnected");
+        ws = null;
+        setTimeout(function () {
+            start()
+        }, 5000);
+    };
+
     ws.onerror = function (evt) {
-        reset();
         dump("ERROR: " + evt.data);
     };
 }
@@ -192,15 +210,14 @@ function reset() {
 }
 
 function showPopup(code) {
-    // con(code);
     $.getJSON("/main/country?iso=" + code, function (data) {
         $('.modal_output_table_row').remove();
         if (data && data['total']['name'] !== null) {
-            // dump(data);
             $('#modal_output_name').html(formatNumber(data['total']['name']));
             $('#modal_output_lp').html(formatNumber(data['total']['lp_hits']));
             $('#modal_output_mo').html(formatNumber(data['total']['mo']));
             $('#modal_output_mos').html(formatNumber(data['total']['mo_success']));
+
             var conv = 0;
             if (data['total']['lp_hits'] > 0) {
                 conv = (parseFloat(formatNumber((data['total']['mo_success'] / data['total']['lp_hits']) * 100))).toFixed(2);
@@ -209,26 +226,29 @@ function showPopup(code) {
 
             var table = $('#modal_output_table');
             $.each(data, function (index, value) {
-                if (index !== 'total') {
-                    var convv = 0;
-                    if (value['cnt']['lp_hits'] > 0) {
-                        convv = (parseFloat(formatNumber((value['cnt']['mo_success'] / value['cnt']['lp_hits']) * 100))).toFixed(2);
-                    }
-
-                    table.find('tbody').append(
-                        '<tr class="modal_output_table_row">' +
-                        '<td>' + value['op']['name'] + '</td>' +
-                        '<td class="text-right">' + formatNumber(value['cnt']['lp_hits']) + '</td>' +
-                        '<td class="text-right">' + formatNumber(value['cnt']['mo']) + '</td>' +
-                        '<td class="text-right">' + formatNumber(value['cnt']['mo_success']) + '</td>' +
-                        '<td class="text-right">' + convv + '%</td>' +
-                        '</tr>'
-                    );
+                if (index === 'total') {
+                    return;
                 }
+
+                var convv = 0;
+                if (value['cnt']['lp_hits'] > 0) {
+                    convv = (parseFloat(formatNumber((value['cnt']['mo_success'] / value['cnt']['lp_hits']) * 100))).toFixed(2);
+                }
+
+                table.find('tbody').append(
+                    '<tr class="modal_output_table_row">' +
+                    '<td>' + value['op'] + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + formatNumber(value['cnt']['lp_hits']) + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + formatNumber(value['cnt']['mo']) + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + formatNumber(value['cnt']['mo_success']) + '</td>' +
+                    '<td class="text-right" style="width: 20%;">' + convv + '%</td>' +
+                    '</tr>'
+                );
             });
 
             $('#myModal').modal('show');
         }
     });
+
     return true;
 }

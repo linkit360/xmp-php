@@ -6,8 +6,8 @@ use miloschuman\highcharts\Highcharts;
 use yii\helpers\Html;
 
 /**
- * @var yii\web\View                $this
- * @var frontend\models\ReportsForm $model
+ * @var yii\web\View                       $this
+ * @var frontend\models\Reports\ConvReport $model
  */
 
 $this->title = 'Conversion';
@@ -45,35 +45,67 @@ if (!empty($dp->getModels())) {
     }
 }
 
+$model->getCampaignsLinks();
 $gridColumns = [
     [
         'attribute' => 'report_date',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
         'content' => function ($data) {
             return date('Y-m-d', strtotime($data['report_at_day']));
         },
     ],
     [
         'attribute' => 'id_campaign',
-        'contentOptions' => function () {
-            return ['class' => 'text-right'];
-        },
-        'content' => function ($data) {
-            return number_format($data['id_campaign']);
+        'label' => 'Campaign',
+        'content' => function ($row) use ($model) {
+            if (
+                !array_key_exists($row["id_campaign"], $model->campaigns_links) ||
+                !array_key_exists($row["id_instance"], $model->instances_links)
+            ) {
+                return number_format($row['id_campaign']);
+            }
+
+            $camp = $model->campaigns_links[$row["id_campaign"]];
+            $url = "http://" . $model->instances_links[$row["id_instance"]] . "/" . $camp["link"];
+
+            return Html::a(
+                $camp["title"],
+                $url,
+                [
+                    "target" => "_blank",
+                    "title" => $url,
+                ]
+            );
         },
     ],
     [
         'label' => 'Country',
-        'content' => function ($data) use ($model) {
-            return $model->countries[$model->providersByNamesCountry[$data['provider_name']]]['name'];
+        'content' => function ($row) use ($model) {
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
+
+                return $model->countries[$model->providers[$prov]['id_country']]['name'];
+            }
+
+            return '';
         },
     ],
     [
-        'attribute' => 'id_provider',
         'label' => 'Provider',
-        'content' => function ($data) use ($model) {
-            if (array_key_exists($data['provider_name'], $model->providersByNames)) {
-                return $model->providersByNames[$data['provider_name']];
+        'content' => function ($row) use ($model) {
+            if (array_key_exists($row["id_instance"], $model->getInstancesById())) {
+                $prov = $model->getInstancesById()[$row['id_instance']];
+
+                return $model->providers[$prov]['name'];
             }
+
             return '';
         },
     ],
@@ -84,6 +116,7 @@ $gridColumns = [
             if (array_key_exists($data['operator_code'], $model->operatorsByCode)) {
                 return $model->operatorsByCode[$data['operator_code']];
             }
+
             return '';
         },
     ],

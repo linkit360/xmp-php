@@ -6,6 +6,7 @@ use yii\grid\GridView;
  * @var yii\web\View                $this
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var \common\models\Operators    $search
+ * @var array                       $provs
  */
 
 $this->title = 'Operators';
@@ -14,11 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $helper = new \common\helpers\ModalHelper();
 $helper->modalDelete($this);
-
-$provs = \common\models\Providers::find()
-    ->indexBy('id')
-    ->asArray()
-    ->all()
 ?>
 <div class="col-lg-6">
     <div class="ibox">
@@ -30,13 +26,12 @@ $provs = \common\models\Providers::find()
             <?php
             echo GridView::widget([
                 'dataProvider' => $dataProvider,
-                'filterModel' => $search,
                 'columns' => [
                     [
                         'attribute' => 'id_provider',
                         'filter' => false,
                         'content' => function ($row) use ($provs) {
-                            return $provs[$row['id_provider']]['name'];
+                            return ucfirst($provs[$row['id_provider']]['name']);
                         },
                     ],
                     'name',

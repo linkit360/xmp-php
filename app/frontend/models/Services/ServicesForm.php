@@ -2,21 +2,20 @@
 
 namespace frontend\models\Services;
 
-use function array_merge_recursive;
 use const null;
+use function array_merge_recursive;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+
 use common\models\Services;
 use common\models\Content\Content;
 
-/**
- * Services Form
- */
 class ServicesForm extends Services
 {
     # Fields
     public $content = [];
+    public $price_raw;
 
     /**
      * @inheritdoc
@@ -27,12 +26,24 @@ class ServicesForm extends Services
             parent::rules(),
             [
                 [
-                    ['content'],
+                    [
+                        'content',
+                        'price_raw',
+                    ],
                     'required',
                 ],
                 [
-                    ['content'],
+                    [
+                        'content',
+                    ],
                     'safe',
+                ],
+                [
+                    [
+                        'price_raw',
+                    ],
+                    'double',
+                    'min' => 0,
                 ],
             ]
         );
@@ -44,6 +55,7 @@ class ServicesForm extends Services
             parent::attributeLabels(),
             [
                 'content' => 'Content',
+                'price_raw' => 'Price',
             ]
         );
     }
@@ -51,40 +63,44 @@ class ServicesForm extends Services
     public function beforeValidate()
     {
         $this->id_content = json_encode($this->content);
+        $this->price = (int)(round($this->price_raw, 2) * 100);
+
         return parent::beforeValidate();
     }
 
     public function getContentForm($countryId)
     {
+        $where = [
+            "status" => 1,
+            "id_user" => Yii::$app->user->id,
+        ];
+
+        if (Yii::$app->user->can('Admin')) {
+            unset($where["id_user"]);
+        }
+
         $cont = Content::find()
-            ->select(
+            ->select([
+                'id',
+                'title',
+            ])
+            ->where([
+                'AND',
+                $where,
                 [
-                    'id',
-                    'title',
-                ]
-            )
-            ->where(
-                [
-                    'AND',
+                    'OR',
                     [
-                        'id_user' => Yii::$app->user->id,
+                        "blacklist" => null,
                     ],
                     [
-                        'OR',
-                        [
-                            "blacklist" => null,
-                        ],
-                        [
-                            'NOT',
-                            'blacklist @> \'["' . (integer)$countryId . '"]\'::jsonb',
-                        ],
+                        'NOT',
+                        'blacklist @> \'["' . (integer)$countryId . '"]\'::jsonb',
                     ],
-                ]
-            )
+                ],
+            ])
             ->asArray()
             ->all();
 
-        $cont = ArrayHelper::map($cont, 'id', 'title');
-        return $cont;
+        return ArrayHelper::map($cont, 'id', 'title');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Providers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -38,16 +39,21 @@ class OperatorsController extends Controller
 
     /**
      * Lists all Operators models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
-        $model = new OperatorsForm();
+        $searchModel = new OperatorsForm();
+
         return $this->render(
             'index',
             [
-                'dataProvider' => $model->search(Yii::$app->request->queryParams),
-                'search' => $model,
+                'dataProvider' => $searchModel->search(Yii::$app->request->queryParams),
+                'provs' => Providers::find()
+                    ->indexBy('id')
+                    ->asArray()
+                    ->all(),
             ]
         );
     }
@@ -70,8 +76,27 @@ class OperatorsController extends Controller
     }
 
     /**
+     * Finds the Operators model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param integer $id
+     *
+     * @return Operators the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Operators::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
      * Creates a new Operators model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -127,23 +152,5 @@ class OperatorsController extends Controller
         $model->save();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Operators model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param integer $id
-     *
-     * @return Operators the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Operators::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

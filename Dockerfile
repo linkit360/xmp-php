@@ -1,4 +1,4 @@
-FROM php:7.1.5-fpm-alpine
+FROM php:7.1.6-fpm-alpine
 
 # Deps
 RUN set -ex \
@@ -31,16 +31,19 @@ RUN set -ex \
 
 # REMEMBER: only RUN under non-root USER, not COPY
 USER 1000
-RUN composer global require -n -vv --prefer-dist "hirak/prestissimo:^0.3" "fxp/composer-asset-plugin:^1.2.0"
+RUN composer global require -n -vv --prefer-dist "hirak/prestissimo:^0.3" "fxp/composer-asset-plugin:^1.3.1"
 USER root
 
 # Configs
 COPY config/ /config
 RUN set -ex \
-    && mv /config/php.ini /usr/local/etc/php-fpm.conf \
+    && mkdir -p /usr/local/etc/php \
+    && mv /config/php.ini /usr/local/etc/php/php.ini \
+    && mv /config/php-fpm.ini /usr/local/etc/php-fpm.conf \
     && mv /config/php-www.ini /usr/local/etc/php-fpm.d/www.conf \
     && cp /config/.bashrc /home/docker \
-    && mv /config/.bashrc /root
+    && mv /config/.bashrc /root \
+    && chown -R 1000:1000 /usr/local/etc/php && chmod -R 0700 /usr/local/etc/php
 
 # App
 RUN set -ex \

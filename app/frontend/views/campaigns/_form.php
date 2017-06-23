@@ -15,14 +15,25 @@ $form = ActiveForm::begin();
     <div class="ibox">
         <div class="ibox-content">
             <?php
+            echo $form->field($model, 'id_old')->textInput(['maxlength' => true]);
             echo $form->field($model, 'title')->textInput(['maxlength' => true]);
             echo $form->field($model, 'description')->textarea();
             echo $form->field($model, 'link')->textInput(['maxlength' => true]);
-            echo $form->field($model, 'id_operator')->dropDownList($model->getOperators());
             echo $form->field($model, 'id_service')->dropDownList($model->getServices());
             echo $form->field($model, 'id_lp')->dropDownList($model->getLps());
             echo $form->field($model, 'autoclick_enabled')->checkbox();
-            echo $form->field($model, 'autoclick_ratio')->dropDownList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+            echo $form->field($model, 'autoclick_ratio')->dropDownList([
+                1 => 1,
+                2 => 2,
+                3 => 3,
+                4 => 4,
+                5 => 5,
+                6 => 6,
+                7 => 7,
+                8 => 8,
+                9 => 9,
+                10 => 10,
+            ]);
             ?>
 
             <div class="text-right">
@@ -37,9 +48,9 @@ $form = ActiveForm::begin();
 
                 echo "&nbsp;";
                 echo Html::submitButton(
-                    'Create',
+                    $model->isNewRecord ? 'Create' : 'Update',
                     [
-                        'class' => 'btn btn-success',
+                        'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
                     ]
                 );
                 ?>
