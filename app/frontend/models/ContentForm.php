@@ -5,14 +5,13 @@ namespace frontend\models;
 use function json_encode;
 use function array_merge_recursive;
 
+use Yii;
+
 use common\models\Countries;
 use common\models\Content\Content;
 use common\models\Content\Categories;
 use common\models\Content\Publishers;
 
-/**
- * Content Form
- */
 class ContentForm extends Content
 {
     # Fields
@@ -85,6 +84,7 @@ class ContentForm extends Content
                 ])
                 ->where([
                     'status' => 1,
+                    "id_user" => Yii::$app->user->id,
                 ])
                 ->orderBy([
                     'title' => SORT_ASC,
@@ -106,6 +106,7 @@ class ContentForm extends Content
                 ])
                 ->where([
                     'status' => 1,
+                    "id_user" => Yii::$app->user->id,
                 ])
                 ->orderBy([
                     'title' => SORT_ASC,

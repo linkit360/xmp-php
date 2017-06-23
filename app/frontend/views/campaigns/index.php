@@ -31,8 +31,6 @@ $columns = [
     'title',
     [
         'attribute' => 'link',
-        'visible' => count($users),
-        'filter' => false,
         'headerOptions' => [
             'style' => 'width: 1%; white-space: nowrap;',
         ],
@@ -59,7 +57,6 @@ $columns = [
     [
         'attribute' => 'id_user',
         'visible' => count($users),
-        'filter' => false,
         'headerOptions' => [
             'style' => 'width: 1%; white-space: nowrap;',
         ],

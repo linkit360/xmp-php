@@ -73,7 +73,7 @@ class ContentController extends Controller
         $where = [];
         if (!Yii::$app->user->can('Admin')) {
             $where = [
-                'status' => 1,
+                "status" => 1,
             ];
         }
 
@@ -90,6 +90,9 @@ class ContentController extends Controller
 
         $data['id_category'] = Content::find()
             ->select('id_category')
+            ->where([
+                "id_user" => Yii::$app->user->id,
+            ])
             ->groupBy('id_category')
             ->indexBy('id_category')
             ->column();
@@ -101,6 +104,7 @@ class ContentController extends Controller
             ])
             ->where([
                 'id' => array_keys($data['id_category']),
+                "id_user" => Yii::$app->user->id,
             ])
             ->indexBy('id')
             ->column();
@@ -119,6 +123,7 @@ class ContentController extends Controller
             ])
             ->where([
                 'id' => array_keys($data['id_publisher']),
+                "id_user" => Yii::$app->user->id,
             ])
             ->indexBy('id')
             ->column();

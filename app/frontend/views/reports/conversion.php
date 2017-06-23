@@ -45,20 +45,44 @@ if (!empty($dp->getModels())) {
     }
 }
 
+$model->getCampaignsLinks();
 $gridColumns = [
     [
         'attribute' => 'report_date',
+        'headerOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
+        'contentOptions' => [
+            'class' => 'text-right',
+            'style' => 'width: 1%; white-space: nowrap;',
+        ],
         'content' => function ($data) {
             return date('Y-m-d', strtotime($data['report_at_day']));
         },
     ],
     [
         'attribute' => 'id_campaign',
-        'contentOptions' => function () {
-            return ['class' => 'text-right'];
-        },
-        'content' => function ($data) {
-            return number_format($data['id_campaign']);
+        'label' => 'Campaign',
+        'content' => function ($row) use ($model) {
+            if (
+                !array_key_exists($row["id_campaign"], $model->campaigns_links) ||
+                !array_key_exists($row["id_instance"], $model->instances_links)
+            ) {
+                return number_format($row['id_campaign']);
+            }
+
+            $camp = $model->campaigns_links[$row["id_campaign"]];
+            $url = "http://" . $model->instances_links[$row["id_instance"]] . "/" . $camp["link"];
+
+            return Html::a(
+                $camp["title"],
+                $url,
+                [
+                    "target" => "_blank",
+                    "title" => $url,
+                ]
+            );
         },
     ],
     [

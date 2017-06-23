@@ -102,15 +102,10 @@ class CampaignsController extends Controller
      */
     public function actionView(string $id)
     {
-        $model = $this->findModel($id);
-        if ($model->id_user !== Yii::$app->user->id) {
-            return new NotFoundHttpException();
-        }
-
         return $this->render(
             'view',
             [
-                'model' => $model,
+                'model' => $this->findModel($id),
             ]
         );
     }
