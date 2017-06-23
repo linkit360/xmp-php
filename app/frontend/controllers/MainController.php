@@ -285,12 +285,10 @@ class MainController extends Controller
         $instances = Instances::find()
             ->select([
                 "id",
-                "id_provider",
             ])
             ->where([
                 'id_provider' => array_keys($prov_keys),
             ])
-            ->indexBy('id_provider')
             ->asArray()
             ->column();
 
@@ -340,27 +338,32 @@ class MainController extends Controller
 
         if (count($query)) {
             foreach ($query as $operator) {
-                if (array_key_exists($operator['operator_code'], $operators)) {
-
-                    $z = $operator;
-                    unset(
-                        $z["report_at_day"],
-                        $z["operator_code"]
-                    );
-
-                    $data[$operator['operator_code']] = [
-                        'cnt' => $z,
-                        'op' => $operators[$operator['operator_code']],
-                    ];
+                if (!$operator['lp_hits'] && !$operator['mo'] && !$operator['mo_success']) {
+                    continue;
                 }
 
                 $data['total']['lp_hits'] += $operator['lp_hits'];
                 $data['total']['mo'] += $operator['mo'];
                 $data['total']['mo_success'] += $operator['mo_success'];
+
+                if (!array_key_exists($operator['operator_code'], $operators)) {
+                    continue;
+                }
+
+                $z = $operator;
+                unset(
+                    $z["report_at_day"],
+                    $z["operator_code"]
+                );
+
+                $data[$operator['operator_code']] = [
+                    'cnt' => $z,
+                    'op' => $operators[$operator['operator_code']],
+                ];
             }
         }
 
-//        echo json_encode($data, JSON_PRETTY_PRINT);
+//        echo "<pre>" . json_encode($data, JSON_PRETTY_PRINT);
 //        die;
         Yii::$app->response->format = Response::FORMAT_JSON;
 
