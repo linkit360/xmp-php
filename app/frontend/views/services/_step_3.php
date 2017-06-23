@@ -18,7 +18,7 @@ $this->params['subtitle'] = 'Service Info';
 $model = $models['model_service'];
 $form = ActiveForm::begin();
 ?>
-<div class="col-lg-6">
+<div class="col-lg-4">
     <div class="ibox">
         <div class="ibox-title">
             <h5>
@@ -52,7 +52,7 @@ $form = ActiveForm::begin();
                     MaskMoney::className(),
                     [
                         'pluginOptions' => [
-                            'prefix' => $opts['country']->currency . ' ',
+                            'prefix' => html_entity_decode($opts['country']->currency . " "),
                             'precision' => 2,
                         ],
                     ]
@@ -92,7 +92,7 @@ $form = ActiveForm::begin();
     </div>
 </div>
 
-<div class="col-lg-6">
+<div class="col-lg-4">
     <div class="ibox">
         <div class="ibox-title">
             <h5>
